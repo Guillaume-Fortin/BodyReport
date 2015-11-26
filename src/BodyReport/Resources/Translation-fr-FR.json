@@ -1,1 +1,9 @@
-null
+{
+  "HOME": "Acceuil",
+  "EMAIL": "Email",
+  "PASSWORD": "Mot de passe",
+  "REMEMBER_ME": "Se souvenir de moi",
+  "REGISTER_AS_NEW_USER_PI": "Enregistrer un nouvel utilisateur?",
+  "LOG_IN": "Se connecter",
+  "FORGOT_YOUR_PASSWORD_PI":"Mot de passe oublié?"
+}

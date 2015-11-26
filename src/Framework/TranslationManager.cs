@@ -75,6 +75,7 @@ namespace Framework
                 using (JsonTextWriter jsonWriter = new JsonTextWriter(sr))
                 {
                     JsonSerializer serializer = new JsonSerializer();
+                    serializer.Formatting = Formatting.Indented;
                     serializer.Serialize(jsonWriter, translationList);
                 }
             }
@@ -87,31 +88,54 @@ namespace Framework
         /// <summary>
         /// Create or Update JSON translation file
         /// </summary>
-        public void CreateOrUpdateTranslationFile<T>(string filePath)
+        /// <typeparam name="T">Class who contains translation key</typeparam>
+        /// <param name="filePath">Translation file path</param>
+        /// <param name="isDevelopmentCurrentTranslation">true if it's the current development developer language</param>
+        public void CreateOrUpdateTranslationFile<T>(string filePath, bool isDevelopmentCurrentTranslation)
         {
+            bool newValueFound = false;
+            string trValue;
             Dictionary<string, string> translationList;
             LoadTranslation(filePath, out translationList);
             if (translationList == null)
                 translationList = new Dictionary<string, string>();
 
             var fieldInfos = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-
+            
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 if(fieldInfo.FieldType == typeof(string))
                 {
-                    var trAttr = fieldInfo.GetCustomAttribute< TranslationAttribute>();
-                    if(trAttr != null)
+                    if (isDevelopmentCurrentTranslation)
                     {
+                        trValue = string.Empty;
+                        var trAttr = fieldInfo.GetCustomAttribute<TranslationAttribute>();
+                        if (trAttr != null)
+                            trValue = trAttr.Value;
+                        //Put automatic all traduction on default language file
                         if (!translationList.ContainsKey(fieldInfo.Name))
-                            translationList.Add(fieldInfo.Name, trAttr.Value);
+                        {
+                            newValueFound = true;
+                            translationList.Add(fieldInfo.Name, trValue);
+                        }
                         else
-                            translationList[fieldInfo.Name] = trAttr.Value;
+                            translationList[fieldInfo.Name] = trValue;
+                    }
+                    else
+                    {  // Put only new Key
+                        if (!translationList.ContainsKey(fieldInfo.Name))
+                        {
+                            newValueFound = true;
+                            translationList.Add(fieldInfo.Name, string.Empty);
+                        }
                     }
                 }
             }
 
-            CreateFile(filePath, true, translationList);
+            if (newValueFound)
+            {
+                CreateFile(filePath, true, translationList);
+            }
         }
     }
 }

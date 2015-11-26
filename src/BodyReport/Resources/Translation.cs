@@ -9,6 +9,8 @@ namespace BodyReport.Resources
 {
     public class Translation
     {
+        public readonly static string[] SupportedLanguage = new string[] { "en-US", "fr-FR" };
+
         public static string Get(string key)
         {
             StringLocalizerFactory sl = new StringLocalizerFactory();

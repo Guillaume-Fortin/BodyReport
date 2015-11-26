@@ -38,7 +38,7 @@ namespace BodyReport
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            CreateOrUpdateTranslationFile();
+            PopulateTranslationFile();
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -117,29 +117,39 @@ namespace BodyReport
 
         private void DefineLocalization(IApplicationBuilder app)
         {
+            var cultureInfos = new List<CultureInfo>();
+            var uiCultureInfos = new List<CultureInfo>();
+            foreach (string cultureName in Translation.SupportedLanguage)
+            {
+                cultureInfos.Add(new CultureInfo(cultureName));
+                uiCultureInfos.Add(new CultureInfo(cultureName));
+            }
+
             var requestLocalizationOptions = new RequestLocalizationOptions
             {
-                SupportedCultures = new List<CultureInfo>
-                {
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("en-US")
-                },
-                SupportedUICultures = new List<CultureInfo>
-                {
-                    new CultureInfo("fr-FR"),
-                    new CultureInfo("en-US")
-                }
+                SupportedCultures = cultureInfos,
+                SupportedUICultures = uiCultureInfos
             };
 
-            app.UseRequestLocalization(requestLocalizationOptions, defaultRequestCulture: new RequestCulture("en-US"));
+            app.UseRequestLocalization(requestLocalizationOptions, defaultRequestCulture: new RequestCulture(Translation.SupportedLanguage[0]));
         }
 
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
-        
-        private void CreateOrUpdateTranslationFile()
+
+        /// <summary>
+        /// Create or Update JSON translation files for web application
+        /// </summary>
+        private void PopulateTranslationFile()
         {
-            TranslationManager.Instance.CreateOrUpdateTranslationFile<TRS>(Path.Combine("Resources", "Translation-en-US.json"));
+            String fileName;
+            bool isDevelopmentCurrentTranslation;
+            for (int i = 0; i < Translation.SupportedLanguage.Length; i++)
+            {
+                isDevelopmentCurrentTranslation = i == 0;
+                fileName = string.Format("Translation-{0}.json", Translation.SupportedLanguage[i]);
+                TranslationManager.Instance.CreateOrUpdateTranslationFile<TRS>(Path.Combine("Resources", fileName), isDevelopmentCurrentTranslation);
+            }
         }
     }
 }

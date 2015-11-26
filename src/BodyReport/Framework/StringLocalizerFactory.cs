@@ -11,12 +11,12 @@ namespace BodyReport.Framework
         public IStringLocalizer Create(Type resourceSource)
         {
             string[] namespaces = resourceSource.FullName.Split('.');
-            string resourcePath = string.Empty;
             if(namespaces != null && namespaces.Length>2)
             {
+                string resourcePath = "Resources";
                 if (namespaces[namespaces.Length - 2] == "Resources")
                 {
-                    for (int i = 1; i < namespaces.Length; i++)
+                    for (int i = 2; i < namespaces.Length; i++)
                     {
                         if (i == namespaces.Length - 1)
                             break;
