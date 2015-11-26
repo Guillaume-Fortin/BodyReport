@@ -43,3 +43,10 @@ GNU GPL Version 2
 [ASP.Net]:http://www.asp.net/
 [MySQL]:https://www.mysql.fr/
 [PostgreSQL]:http://www.postgresql.org/
+
+For Clone Repository
+----
+
+You must restore gulp files.
+  -it's automatic inside visual studio 2015
+  -Manual : use command "npm install" inside src\BodyReport directory

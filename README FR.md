@@ -43,3 +43,10 @@ GNU GPL Version 2
 [ASP.Net]:http://www.asp.net/
 [MySQL]:https://www.mysql.fr/
 [PostgreSQL]:http://www.postgresql.org/
+
+Pour cloner le repository
+----
+
+Vous devez restaurer les fichiers gulp.
+  -c'est automatique via visual studio 2015
+  -Manuellement : utiliser la commande "npm install" dans le repertoire src\BodyReport
