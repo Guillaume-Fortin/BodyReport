@@ -38,6 +38,10 @@ namespace BodyReport
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            //Add WebApp Configuration (no dependency injection)
+            WebAppConfiguration.Configuration = builder.Build();
+
             PopulateTranslationFile();
         }
 
