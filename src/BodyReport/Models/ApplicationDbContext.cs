@@ -30,11 +30,12 @@ namespace BodyReport.Models
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            var table = builder.Entity<TranslationRow>();
-            table.Property(p => p.Culture).HasMaxLength(8);
+            //Define translation data table
+            var table = builder.Entity<TranslationRow>().ToTable("Translation");
+            table.Property(p => p.CultureId);
             table.Property(p => p.Key).HasMaxLength(256);
             table.Property(p => p.Value).HasMaxLength(2000);
-            table.HasKey(s => new { s.Culture, s.Key });
+            table.HasKey(s => new { s.CultureId, s.Key });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

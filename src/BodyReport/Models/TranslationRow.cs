@@ -7,26 +7,32 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Models
 {
-    [Table("Translation")]
+    /// <summary>
+    /// Database table Translation
+    /// </summary>
     public class TranslationRow
     {
-        /*[Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 1)]
-        [MaxLength(8)]*/
-        public string Culture
+        /// <summary>
+        /// Regionn Culture id
+        /// </summary>
+        public int CultureId
         {
             get;
             set;
         }
-
-        /*[Key, DatabaseGenerated(DatabaseGeneratedOption.None), Column(Order = 2)]
-        [MaxLength(256)]*/
+        
+        /// <summary>
+        /// Translation key
+        /// </summary>
         public string Key
         {
             get;
             set;
         }
-
-        /*[MaxLength(2000)]*/
+        
+        /// <summary>
+        /// Translation value
+        /// </summary>
         public string Value
         {
             get;

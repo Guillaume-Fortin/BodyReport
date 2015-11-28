@@ -17,13 +17,13 @@ namespace BodyReport.Migrations
                 name: "Translation",
                 columns: table => new
                 {
-                    Culture = table.Column<string>(nullable: false),
+                    CultureId = table.Column<int>(nullable: false),
                     Key = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TranslationRow", x => new { x.Culture, x.Key });
+                    table.PrimaryKey("PK_TranslationRow", x => new { x.CultureId, x.Key });
                 });
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",

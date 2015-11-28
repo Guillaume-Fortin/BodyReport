@@ -1,7 +1,11 @@
 ﻿using BodyReport.Framework;
+using BodyReport.Models;
 using Message;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,13 +13,81 @@ namespace BodyReport.Resources
 {
     public class Translation
     {
-        public readonly static string[] SupportedLanguage = new string[] { "en-US", "fr-FR" };
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(Translation));
 
+        /// <summary>
+        /// Supported culture names
+        /// </summary>
+        public readonly static string[] SupportedCultureNames = new string[] { "en-US", "fr-FR" };
+        
+        /// <summary>
+        /// Get translation in json file
+        /// </summary>
+        /// <param name="key">Translation key</param>
+        /// <returns>Transaltion value</returns>
         public static string Get(string key)
         {
+           
+            return GetLocalizer()[key];
+        }
+
+        /// <summary>
+        /// Get override string localizer
+        /// </summary>
+        /// <returns></returns>
+        private static IStringLocalizer GetLocalizer()
+        {
             StringLocalizerFactory sl = new StringLocalizerFactory();
-            var localizer = sl.Create("Translation", "Resources");
-            return localizer[key];
+            return sl.Create("Translation", "Resources");
+        }
+
+        /// <summary>
+        /// Get translation in database
+        /// </summary>
+        /// <param name="key">Translation key</param>
+        /// <returns>Transaltion value</returns>
+        public static string GetInDB(string key)
+        {
+            string result = key;
+            var localizer = GetLocalizer() as StringLocalizer;
+            if (localizer.IsTranslationInDictionnaryExist("DB_" + key))
+            {
+                //Get translation in memory
+                result = GetLocalizer()["DB_" + key];
+            }
+            else
+            {
+                try
+                {
+                    int currentCultureId = 0;
+                    string culture = CultureInfo.CurrentCulture.Name;
+                    for (int i = 0; i < SupportedCultureNames.Length; i++)
+                    {
+                        if (SupportedCultureNames[i].ToLower() == culture.ToLower())
+                        {
+                            currentCultureId = i;
+                            break;
+                        }
+                    }
+                    ApplicationDbContext dbContext = new ApplicationDbContext();
+                    string value = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).Select(t => t.Value).FirstOrDefault();
+                    if (value != null)
+                        result = value;
+                    else
+                        _logger.LogInformation(string.Format("Translation database not found {0}", key));
+                }
+                catch (Exception except)
+                {
+                    _logger.LogCritical("Get translation database error", except);
+                }
+                //Add translation in memory
+                localizer.AddTranslationInDictionnary("DB_" + key, result);
+            }
+            
+            return result;
         }
 
         public static string HOME { get { return Get(TRS.HOME); } }

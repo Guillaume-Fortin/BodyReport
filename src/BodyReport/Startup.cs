@@ -35,12 +35,12 @@ namespace BodyReport
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
             }
-
+            
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
             //Add WebApp Configuration (no dependency injection)
-            WebAppConfiguration.Configuration = builder.Build();
+            WebAppConfiguration.Configuration = Configuration;
 
             PopulateTranslationFile();
         }
@@ -123,7 +123,7 @@ namespace BodyReport
         {
             var cultureInfos = new List<CultureInfo>();
             var uiCultureInfos = new List<CultureInfo>();
-            foreach (string cultureName in Translation.SupportedLanguage)
+            foreach (string cultureName in Translation.SupportedCultureNames)
             {
                 cultureInfos.Add(new CultureInfo(cultureName));
                 uiCultureInfos.Add(new CultureInfo(cultureName));
@@ -135,7 +135,7 @@ namespace BodyReport
                 SupportedUICultures = uiCultureInfos
             };
 
-            app.UseRequestLocalization(requestLocalizationOptions, defaultRequestCulture: new RequestCulture(Translation.SupportedLanguage[0]));
+            app.UseRequestLocalization(requestLocalizationOptions, defaultRequestCulture: new RequestCulture(Translation.SupportedCultureNames[0]));
         }
 
         // Entry point for the application.
@@ -148,10 +148,10 @@ namespace BodyReport
         {
             String fileName;
             bool isDevelopmentCurrentTranslation;
-            for (int i = 0; i < Translation.SupportedLanguage.Length; i++)
+            for (int i = 0; i < Translation.SupportedCultureNames.Length; i++)
             {
                 isDevelopmentCurrentTranslation = i == 0;
-                fileName = string.Format("Translation-{0}.json", Translation.SupportedLanguage[i]);
+                fileName = string.Format("Translation-{0}.json", Translation.SupportedCultureNames[i]);
                 TranslationManager.Instance.CreateOrUpdateTranslationFile<TRS>(Path.Combine("Resources", fileName), isDevelopmentCurrentTranslation);
             }
         }

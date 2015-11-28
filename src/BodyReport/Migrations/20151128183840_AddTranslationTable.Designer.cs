@@ -8,7 +8,7 @@ using BodyReport.Models;
 namespace BodyReport.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20151126233114_AddTranslationTable")]
+    [Migration("20151128183840_AddTranslationTable")]
     partial class AddTranslationTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,8 +67,7 @@ namespace BodyReport.Migrations
 
             modelBuilder.Entity("BodyReport.Models.TranslationRow", b =>
                 {
-                    b.Property<string>("Culture")
-                        .HasAnnotation("MaxLength", 8);
+                    b.Property<int>("CultureId");
 
                     b.Property<string>("Key")
                         .HasAnnotation("MaxLength", 256);
@@ -76,7 +75,7 @@ namespace BodyReport.Migrations
                     b.Property<string>("Value")
                         .HasAnnotation("MaxLength", 2000);
 
-                    b.HasKey("Culture", "Key");
+                    b.HasKey("CultureId", "Key");
 
                     b.HasAnnotation("Relational:TableName", "Translation");
                 });

@@ -66,8 +66,7 @@ namespace BodyReport.Migrations
 
             modelBuilder.Entity("BodyReport.Models.TranslationRow", b =>
                 {
-                    b.Property<string>("Culture")
-                        .HasAnnotation("MaxLength", 8);
+                    b.Property<int>("CultureId");
 
                     b.Property<string>("Key")
                         .HasAnnotation("MaxLength", 256);
@@ -75,7 +74,7 @@ namespace BodyReport.Migrations
                     b.Property<string>("Value")
                         .HasAnnotation("MaxLength", 2000);
 
-                    b.HasKey("Culture", "Key");
+                    b.HasKey("CultureId", "Key");
 
                     b.HasAnnotation("Relational:TableName", "Translation");
                 });
