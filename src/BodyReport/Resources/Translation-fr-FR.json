@@ -15,5 +15,13 @@
   "THE_P0_FIELD_IS_REQUIRED": "Le champ {0} est requis",
   "THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1": "Le champ {0} doit être une chaîne d'une longueur minimum de {2} and maximum de {1}",
   "THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH": "Le mot de passe et la confirmation du mot de passe ne correspondent pas",
-  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Utiliser un compte local pour se connecter"
+  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Utiliser un compte local pour se connecter",
+  "ADMIN": "Admin",
+  "BODY_EXERCISES": "Exercices de musculation",
+  "NAME": "Nom",
+  "PICTURE": "Image",
+  "ACTION": "Action",
+  "CREATE": "Créer",
+  "CREATE_NEW": "Créer nouveau",
+  "SUBMIT": "Soumettre"
 }

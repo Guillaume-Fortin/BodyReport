@@ -15,5 +15,13 @@
   "THE_P0_FIELD_IS_REQUIRED": "The {0} field is required",
   "THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1": "The field {0} must be a string with a minimum length of {2} and a maximum length of {1}",
   "THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH": "The password and confirmation password do not match",
-  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Use a local account to log in"
+  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Use a local account to log in",
+  "ADMIN": "Admin",
+  "BODY_EXERCISES": "Body exercises",
+  "NAME": "Name",
+  "PICTURE": "Picture",
+  "ACTION": "Action",
+  "CREATE": "Create",
+  "CREATE_NEW": "Create New",
+  "SUBMIT": "Submit"
 }

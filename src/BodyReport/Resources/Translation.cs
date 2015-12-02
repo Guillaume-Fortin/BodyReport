@@ -106,6 +106,14 @@ namespace BodyReport.Resources
         public static string THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1 { get { return Get(TRS.THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1); } }
         public static string THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH { get { return Get(TRS.THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH); } }
         public static string USE_A_LOCAL_ACCOUNT_TO_LOG_IN { get { return Get(TRS.USE_A_LOCAL_ACCOUNT_TO_LOG_IN); } }
+        public static string ADMIN { get { return Get(TRS.ADMIN); } }
+        public static string BODY_EXERCISES { get { return Get(TRS.BODY_EXERCISES); } }
+        public static string NAME { get { return Get(TRS.NAME); } }
+        public static string PICTURE { get { return Get(TRS.PICTURE); } }
+        public static string ACTION { get { return Get(TRS.ACTION); } }
+        public static string CREATE { get { return Get(TRS.CREATE); } }
+        public static string CREATE_NEW { get { return Get(TRS.CREATE_NEW); } }
+        public static string SUBMIT { get { return Get(TRS.SUBMIT); } }
     }
 
     /// <summary>
@@ -198,5 +206,45 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Use a local account to log in")]
         public const string USE_A_LOCAL_ACCOUNT_TO_LOG_IN = "USE_A_LOCAL_ACCOUNT_TO_LOG_IN";
+        /// <summary>
+        /// Admin
+        /// </summary>
+        [Translation("Admin")]
+        public const string ADMIN = "ADMIN";
+        /// <summary>
+        /// Body exercises
+        /// </summary>
+        [Translation("Body exercises")]
+        public const string BODY_EXERCISES = "BODY_EXERCISES";
+        // <summary>
+        /// Name
+        /// </summary>
+        [Translation("Name")]
+        public const string NAME = "NAME";
+        /// <summary>
+        /// Picture
+        /// </summary>
+        [Translation("Picture")]
+        public const string PICTURE = "PICTURE";
+        /// <summary>
+        /// Action
+        /// </summary>
+        [Translation("Action")]
+        public const string ACTION = "ACTION";
+        /// <summary>
+        /// Create
+        /// </summary>
+        [Translation("Create")]
+        public const string CREATE = "CREATE";
+        /// <summary>
+        /// Create New
+        /// </summary>
+        [Translation("Create New")]
+        public const string CREATE_NEW = "CREATE_NEW";
+        /// <summary>
+        /// Submit
+        /// </summary>
+        [Translation("Submit")]
+        public const string SUBMIT = "SUBMIT";
     }
 }
