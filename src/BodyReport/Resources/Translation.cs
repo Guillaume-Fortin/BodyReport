@@ -30,7 +30,6 @@ namespace BodyReport.Resources
         /// <returns>Transaltion value</returns>
         public static string Get(string key)
         {
-           
             return GetLocalizer()[key];
         }
 
@@ -91,12 +90,22 @@ namespace BodyReport.Resources
         }
 
         public static string HOME { get { return Get(TRS.HOME); } }
+        public static string USER_NAME { get { return Get(TRS.USER_NAME); } }
         public static string EMAIL { get { return Get(TRS.EMAIL); } }
         public static string PASSWORD { get { return Get(TRS.PASSWORD); } }
+        public static string CONFIRM_PASSWORD { get { return Get(TRS.CONFIRM_PASSWORD); } }
         public static string REMEMBER_ME { get { return Get(TRS.REMEMBER_ME); } }
         public static string REGISTER_AS_NEW_USER_PI { get { return Get(TRS.REGISTER_AS_NEW_USER_PI); } }
         public static string FORGOT_YOUR_PASSWORD_PI { get { return Get(TRS.FORGOT_YOUR_PASSWORD_PI); } }
         public static string LOG_IN { get { return Get(TRS.LOG_IN); } }
+        public static string CREATE_NEW_ACCOUNT { get { return Get(TRS.CREATE_NEW_ACCOUNT); } }
+        public static string REGISTER { get { return Get(TRS.REGISTER); } }
+        public static string HELLO { get { return Get(TRS.HELLO); } }
+        public static string EMAIL_IS_NOT_VALID { get { return Get(TRS.EMAIL_IS_NOT_VALID); } }
+        public static string THE_P0_FIELD_IS_REQUIRED { get { return Get(TRS.THE_P0_FIELD_IS_REQUIRED); } }
+        public static string THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1 { get { return Get(TRS.THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1); } }
+        public static string THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH { get { return Get(TRS.THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH); } }
+        public static string USE_A_LOCAL_ACCOUNT_TO_LOG_IN { get { return Get(TRS.USE_A_LOCAL_ACCOUNT_TO_LOG_IN); } }
     }
 
     /// <summary>
@@ -110,6 +119,11 @@ namespace BodyReport.Resources
         [Translation("Home")]
         public const string HOME = "HOME";
         /// <summary>
+        /// User name
+        /// </summary>
+        [Translation("User name")]
+        public const string USER_NAME = "USER_NAME";
+        /// <summary>
         /// Email
         /// </summary>
         [Translation("Email")]
@@ -119,6 +133,11 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Password")]
         public const string PASSWORD = "PASSWORD";
+        /// <summary>
+        /// Confirm Password
+        /// </summary>
+        [Translation("Confirm Password")]
+        public const string CONFIRM_PASSWORD = "CONFIRM_PASSWORD";
         /// <summary>
         /// Remember Me
         /// </summary>
@@ -139,5 +158,45 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Log In")]
         public const string LOG_IN = "LOG_IN";
+        /// <summary>
+        /// Create a new account
+        /// </summary>
+        [Translation("Create a new account")]
+        public const string CREATE_NEW_ACCOUNT = "CREATE_NEW_ACCOUNT";
+        /// <summary>
+        /// Register
+        /// </summary>
+        [Translation("Register")]
+        public const string REGISTER = "REGISTER";
+        /// <summary>
+        /// Email is not valid
+        /// </summary>
+        [Translation("Email is not valid")]
+        public const string EMAIL_IS_NOT_VALID = "EMAIL_IS_NOT_VALID";
+        /// <summary>
+        /// Hello
+        /// </summary>
+        [Translation("Hello")]
+        public const string HELLO = "HELLO";
+        /// <summary>
+        /// The {0} is required
+        /// </summary>
+        [Translation("The {0} field is required")]
+        public const string THE_P0_FIELD_IS_REQUIRED = "THE_P0_FIELD_IS_REQUIRED";
+        /// <summary>
+        /// The field {0} must be a string with a minimum length of {2} and a maximum length of {1}
+        /// </summary>
+        [Translation("The field {0} must be a string with a minimum length of {2} and a maximum length of {1}")]
+        public const string THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1 = "THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1";
+        /// <summary>
+        /// The password and confirmation password do not match
+        /// </summary>
+        [Translation("The password and confirmation password do not match")]
+        public const string THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH = "THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH";
+        /// <summary>
+        /// Use a local account to log in
+        /// </summary>
+        [Translation("Use a local account to log in")]
+        public const string USE_A_LOCAL_ACCOUNT_TO_LOG_IN = "USE_A_LOCAL_ACCOUNT_TO_LOG_IN";
     }
 }

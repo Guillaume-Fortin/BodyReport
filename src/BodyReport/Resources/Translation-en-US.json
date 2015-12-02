@@ -5,5 +5,15 @@
   "REMEMBER_ME": "Remember Me",
   "REGISTER_AS_NEW_USER_PI": "Register as a new user?",
   "FORGOT_YOUR_PASSWORD_PI": "Forgot your password?",
-  "LOG_IN": "Log In"
+  "LOG_IN": "Log In",
+  "USER_NAME": "User name",
+  "CONFIRM_PASSWORD": "Confirm Password",
+  "CREATE_NEW_ACCOUNT": "Create a new account",
+  "REGISTER": "Register",
+  "HELLO": "Hello",
+  "EMAIL_IS_NOT_VALID": "Email is not valid",
+  "THE_P0_FIELD_IS_REQUIRED": "The {0} field is required",
+  "THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1": "The field {0} must be a string with a minimum length of {2} and a maximum length of {1}",
+  "THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH": "The password and confirmation password do not match",
+  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Use a local account to log in"
 }

@@ -5,5 +5,15 @@
   "REMEMBER_ME": "Se souvenir de moi",
   "REGISTER_AS_NEW_USER_PI": "Enregistrer un nouvel utilisateur?",
   "LOG_IN": "Se connecter",
-  "FORGOT_YOUR_PASSWORD_PI":"Mot de passe oublié?"
+  "FORGOT_YOUR_PASSWORD_PI": "Mot de passe oublié?",
+  "USER_NAME": "Nom d'utilisateur",
+  "CONFIRM_PASSWORD": "Confirmer mot de passe",
+  "CREATE_NEW_ACCOUNT": "Création d'un nouvel utilisateur",
+  "REGISTER": "S'enregister",
+  "HELLO": "Bonjour",
+  "EMAIL_IS_NOT_VALID": "Email non valide",
+  "THE_P0_FIELD_IS_REQUIRED": "Le champ {0} est requis",
+  "THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1": "Le champ {0} doit être une chaîne d'une longueur minimum de {2} and maximum de {1}",
+  "THE_PASSWORD_AND_CONFIRMATION_PASSWORD_DO_NOT_MATCH": "Le mot de passe et la confirmation du mot de passe ne correspondent pas",
+  "USE_A_LOCAL_ACCOUNT_TO_LOG_IN": "Utiliser un compte local pour se connecter"
 }

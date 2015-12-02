@@ -70,6 +70,17 @@ namespace BodyReport
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            //Configure identity policies
+            // Add Identity services to the services container.
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                o => {
+                    o.Password.RequireDigit = false;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireUppercase = false;
+                    o.Password.RequireNonLetterOrDigit = false;
+                    o.Password.RequiredLength = 6;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

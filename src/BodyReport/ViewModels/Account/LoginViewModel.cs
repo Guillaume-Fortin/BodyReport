@@ -9,12 +9,11 @@ namespace BodyReport.ViewModels.Account
 {
     public class LoginViewModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = TRS.EMAIL, ResourceType = typeof(Translation))]
-        public string Email { get; set; }
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.USER_NAME, ResourceType = typeof(Translation))]
+        public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [DataType(DataType.Password)]
         [Display(Name = TRS.PASSWORD, ResourceType = typeof(Translation))]
         public string Password { get; set; }
