@@ -5,27 +5,23 @@ using System.Threading.Tasks;
 
 namespace Message
 {
-    public class BodyExerciseKey
+    public class MuscularGroupKey
     {
         /// <summary>
-        /// Exercise Id
+        /// Muscular group Id
         /// </summary>
         public int Id { get; set; } = 0;
     }
 
-    public class BodyExercise : BodyExerciseKey
+    public class MuscularGroup : MuscularGroupKey
     {
         /// <summary>
-        /// Exercise Name
+        /// Muscular group Name
         /// </summary>
         public string Name { get; set; } = string.Empty;
         /// <summary>
-        /// Exercise Picture name
+        /// Image Name
         /// </summary>
-        public string ImageName { get; set; } = string.Empty;
-        /// <summary>
-        /// Muscular Group Id
-        /// </summary>
-        public int MuscularGroupId { get; set; } = 0;
+        public string ImageName { get; set; }
     }
 }

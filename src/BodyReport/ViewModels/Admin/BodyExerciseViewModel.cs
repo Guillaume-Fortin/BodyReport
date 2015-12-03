@@ -18,9 +18,7 @@ namespace BodyReport.ViewModels.Admin
         [Display(Name = TRS.NAME, ResourceType = typeof(Translation))]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
-        [StringLength(10, MinimumLength = 4, ErrorMessageResourceName = TRS.THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1, ErrorMessageResourceType = typeof(Translation))]
-        [Display(Name = TRS.PICTURE, ResourceType = typeof(Translation))]
+        [Display(Name = TRS.IMAGE, ResourceType = typeof(Translation))]
         public string ImageUrl { get; set; } = string.Empty;
     }
 }

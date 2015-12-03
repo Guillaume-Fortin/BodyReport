@@ -109,11 +109,13 @@ namespace BodyReport.Resources
         public static string ADMIN { get { return Get(TRS.ADMIN); } }
         public static string BODY_EXERCISES { get { return Get(TRS.BODY_EXERCISES); } }
         public static string NAME { get { return Get(TRS.NAME); } }
-        public static string PICTURE { get { return Get(TRS.PICTURE); } }
+        public static string IMAGE { get { return Get(TRS.IMAGE); } }
         public static string ACTION { get { return Get(TRS.ACTION); } }
         public static string CREATE { get { return Get(TRS.CREATE); } }
         public static string CREATE_NEW { get { return Get(TRS.CREATE_NEW); } }
         public static string SUBMIT { get { return Get(TRS.SUBMIT); } }
+        public static string CHOOSE_FILE { get { return Get(TRS.CHOOSE_FILE); } }
+        public static string MODIFY { get { return Get(TRS.MODIFY); } }
     }
 
     /// <summary>
@@ -222,10 +224,10 @@ namespace BodyReport.Resources
         [Translation("Name")]
         public const string NAME = "NAME";
         /// <summary>
-        /// Picture
+        /// Image
         /// </summary>
-        [Translation("Picture")]
-        public const string PICTURE = "PICTURE";
+        [Translation("Image")]
+        public const string IMAGE = "IMAGE";
         /// <summary>
         /// Action
         /// </summary>
@@ -246,5 +248,15 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Submit")]
         public const string SUBMIT = "SUBMIT";
+        /// <summary>
+        /// Choose file
+        /// </summary>
+        [Translation("Choose file")]
+        public const string CHOOSE_FILE = "CHOOSE_FILE";
+        /// <summary>
+        /// Modify
+        /// </summary>
+        [Translation("Modify")]
+        public const string MODIFY = "MODIFY";
     }
 }

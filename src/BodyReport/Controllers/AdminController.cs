@@ -1,8 +1,15 @@
-﻿using BodyReport.ViewModels.Admin;
+﻿using BodyReport.Manager;
+using BodyReport.Models;
+using BodyReport.ViewModels.Admin;
+using Message;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,40 +17,14 @@ namespace BodyReport.Controllers
 {
     public class AdminController : Controller
     {
-        //
-        // GET: /Admin/BodyExercises
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult BodyExercises(string returnUrl = null)
-        {
-            // ViewData["ReturnUrl"] = returnUrl;
-            var result = new List<BodyExerciseViewModel>();
-            for (int i = 0; i < 30; i++)
-                result.Add(new BodyExerciseViewModel() { Id = i, Name="name "+ i, ImageUrl= "http://thumbs.dreamstime.com/z/gros-exercice-d-homme-28195227.jpg" });
-            return View(result);
-        }
+        /// <summary>
+        /// Database db context
+        /// </summary>
+        ApplicationDbContext _dbContext = null;
 
-        //
-        // GET: /Admin/CreateBodyExercise
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult CreateBodyExercise(string returnUrl = null)
+        public AdminController(ApplicationDbContext dbContext, IHostingEnvironment env)
         {
-            return View(new BodyExerciseViewModel());
-        }
-
-        //
-        // POST: /Admin/CreateBodyExercise
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult CreateBodyExercise(BodyExerciseViewModel bodyExerciseViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction("BodyExercises");
-            }
-
-            return View(bodyExerciseViewModel);
+            _dbContext = dbContext;
         }
     }
 }

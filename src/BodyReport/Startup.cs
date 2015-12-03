@@ -18,6 +18,9 @@ using BodyReport.Framework;
 using Framework;
 using BodyReport.Resources;
 using System.IO;
+using Microsoft.AspNet.FileProviders;
+using Microsoft.AspNet.StaticFiles;
+using Microsoft.AspNet.Http;
 
 namespace BodyReport
 {
@@ -116,7 +119,11 @@ namespace BodyReport
 
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "images")),
+                RequestPath = new PathString("/images")
+            });
 
             app.UseIdentity();
 

@@ -19,9 +19,11 @@
   "ADMIN": "Admin",
   "BODY_EXERCISES": "Body exercises",
   "NAME": "Name",
-  "PICTURE": "Picture",
+  "IMAGE": "Image",
   "ACTION": "Action",
   "CREATE": "Create",
   "CREATE_NEW": "Create New",
-  "SUBMIT": "Submit"
+  "SUBMIT": "Submit",
+  "CHOOSE_FILE": "Choose file",
+  "MODIFY": "Modify"
 }

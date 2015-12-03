@@ -5,7 +5,7 @@
 
 <h2>@Translation.ADMIN : @ViewData["Title"]. @Translation.CREATE</h2>
 
-<form asp-controller="Admin" asp-action="CreateBodyExercise" method="post" class="form-horizontal" role="form">
+<form asp-controller="Admin" asp-action="Create" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
     <h4>@Translation.CREATE_NEW.</h4>
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
@@ -20,10 +20,9 @@
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="ImageUrl" class="col-md-2 control-label"></label>
+        <label class="col-md-2 control-label">@Translation.CHOOSE_FILE : @Translation.IMAGE</label>
         <div class="col-md-10">
-            <input asp-for="ImageUrl" class="form-control" />
-            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            <input type="file" id="imageFile" name="imageFile" />
         </div>
     </div>
     <div class="form-group">

@@ -31,11 +31,27 @@ namespace BodyReport.Models
             // Add your customizations after calling base.OnModelCreating(builder);
 
             //Define translation data table
-            var table = builder.Entity<TranslationRow>().ToTable("Translation");
-            table.Property(p => p.CultureId);
-            table.Property(p => p.Key).HasMaxLength(256);
-            table.Property(p => p.Value).HasMaxLength(2000);
-            table.HasKey(s => new { s.CultureId, s.Key });
+            var transactionTable = builder.Entity<TranslationRow>().ToTable("Translation");
+            transactionTable.Property(p => p.CultureId).ValueGeneratedNever();
+            transactionTable.Property(p => p.Key).HasMaxLength(256).ValueGeneratedNever();
+            transactionTable.Property(p => p.Value).HasMaxLength(2000);
+            transactionTable.HasKey(s => new { s.CultureId, s.Key });
+
+            var muscularGroupTable = builder.Entity<MuscularGroupRow>().ToTable("MuscularGroup");
+            muscularGroupTable.Property(p => p.Id).ValueGeneratedNever();
+            muscularGroupTable.Property(p => p.Name).HasMaxLength(100);
+            muscularGroupTable.HasKey(s => new { s.Id });
+
+            var sequencerTable = builder.Entity<SequencerRow>().ToTable("Sequencer");
+            sequencerTable.Property(p => p.Id).ValueGeneratedNever();
+            sequencerTable.Property(p => p.Name).HasMaxLength(100).ValueGeneratedNever();
+            sequencerTable.Property(p => p.Value);
+            sequencerTable.HasKey(s => new { s.Id, s.Name });
+
+            var bodyExerciseTable = builder.Entity<BodyExerciseRow>().ToTable("BodyExercise");
+            bodyExerciseTable.Property(p => p.Id).ValueGeneratedNever();
+            bodyExerciseTable.Property(p => p.Name).HasMaxLength(100);
+            bodyExerciseTable.HasKey(s => new { s.Id });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -44,5 +60,8 @@ namespace BodyReport.Models
         }
 
         public DbSet<TranslationRow> Translations { get; set; }
+        public DbSet<MuscularGroupRow> MuscularGroups { get; set; }
+        public DbSet<SequencerRow> Sequencers { get; set; }
+        public DbSet<BodyExerciseRow> BodyExercises { get; set; }
     }
 }

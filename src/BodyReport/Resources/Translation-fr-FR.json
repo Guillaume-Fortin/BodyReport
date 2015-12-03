@@ -1,4 +1,4 @@
-{
+﻿{
   "HOME": "Acceuil",
   "EMAIL": "Email",
   "PASSWORD": "Mot de passe",
@@ -19,9 +19,11 @@
   "ADMIN": "Admin",
   "BODY_EXERCISES": "Exercices de musculation",
   "NAME": "Nom",
-  "PICTURE": "Image",
+  "IMAGE": "Image",
   "ACTION": "Action",
   "CREATE": "Créer",
   "CREATE_NEW": "Créer nouveau",
-  "SUBMIT": "Soumettre"
+  "SUBMIT": "Soumettre",
+  "CHOOSE_FILE": "Choisir un fichier",
+  "MODIFY": "Modifier"
 }
