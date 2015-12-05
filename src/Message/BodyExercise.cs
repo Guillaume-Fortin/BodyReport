@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Message;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,5 +28,18 @@ namespace Message
         /// Muscular Group Id
         /// </summary>
         public int MuscularGroupId { get; set; } = 0;
+    }
+
+    public class BodyExerciceCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Exercise Name
+        /// </summary>
+        public StringCriteria Name { get; set; }
+
+        /// <summary>
+        /// Muscular Group Id
+        /// </summary>
+        public IntegerCriteria MuscularGroupId { get; set; }
     }
 }

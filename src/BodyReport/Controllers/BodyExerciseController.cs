@@ -80,10 +80,13 @@ namespace BodyReport.Controllers
             {
                 // Verify not exist on bodyExercise name
                 var manager = new BodyExerciseManager(_dbContext);
-                var bodyExercise = manager.GetBodyExercise(bodyExerciseViewModel.Name);
-                if (bodyExercise == null)
-                {
-                    bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name };
+
+                var criteria = new BodyExerciceCriteria();
+                criteria.Name = new StringCriteria() { EqualList = new List<string>() { bodyExerciseViewModel.Name } };
+                var bodyExerciseList = manager.FindBodyExercise(criteria);
+                if (bodyExerciseList == null || bodyExerciseList.Count == 0)
+                { // no exist
+                    var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name };
                     bodyExercise = manager.CreateBodyExercise(bodyExercise);
                     if(bodyExercise == null || bodyExercise.Id == 0)
                     {
@@ -171,6 +174,9 @@ namespace BodyReport.Controllers
 
         private void RenameImage(string oldImageName, string newImageName)
         {
+            if (oldImageName.ToLower() == newImageName.ToLower())
+                return;
+
             var oldFilePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", oldImageName);
             var newFilePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", newImageName);
             if (System.IO.File.Exists(oldFilePath))

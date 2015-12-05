@@ -31,13 +31,9 @@ namespace BodyReport.Manager
             return _bodyExerciseModule.Get(key);
         }
 
-        public BodyExercise GetBodyExercise(string name)
+        public List<BodyExercise> FindBodyExercise(CriteriaField criteriaField)
         {
-            var bodyExerciseRow = _dbContext.BodyExercises.Where(b => name == b.Name).FirstOrDefault();
-            if (bodyExerciseRow == null)
-                return null;
-            else
-                return BodyExerciseTransformer.ToBean(bodyExerciseRow);
+            return _bodyExerciseModule.Find(criteriaField);
         }
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
