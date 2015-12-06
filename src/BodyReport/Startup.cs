@@ -119,6 +119,8 @@ namespace BodyReport
 
             app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 
+            app.UseStaticFiles();
+            
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "images")),
