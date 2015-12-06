@@ -29,6 +29,10 @@ namespace Message
     public class StringCriteria : CriteriaType<string>
     {
         /// <summary>
+        /// Ignore case on String comparaison
+        /// </summary>
+        public bool IgnoreCase { get; set; }  = true;
+        /// <summary>
         /// Equals citeria
         /// </summary>
         public List<string> StartsWithList { get; set; } = null;

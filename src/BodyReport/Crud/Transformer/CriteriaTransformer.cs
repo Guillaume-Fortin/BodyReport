@@ -54,44 +54,66 @@ namespace BodyReport.Crud.Transformer
             return expression;
         }
 
-        private static Expression AddEqualExpression<T>(ParameterExpression entityParameter, PropertyInfo entityProperty, T value)
+        private static Expression AddEqualExpression<T>(ParameterExpression entityParameter, PropertyInfo entityProperty, T value, bool ignoreCase)
         {
-            return Expression.Equal(
-                    Expression.Property(entityParameter, entityProperty),
-                    Expression.Constant(value)
-                   );
+            if(typeof(T) != typeof(string))
+            {
+                return Expression.Equal(
+                        Expression.Property(entityParameter, entityProperty),
+                        Expression.Constant(value)
+                       );
+            }
+            else
+            {
+                MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
+                ConstantExpression c = Expression.Constant(value, typeof(string));
+                MethodInfo mi = typeof(string).GetMethod("IndexOf", new Type[] { typeof(string), typeof(StringComparison) });
+                var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
+                return Expression.NotEqual(expression, Expression.Constant(-1));
+            }
         }
 
-        private static Expression AddNotEqualExpression<T>(ParameterExpression entityParameter, PropertyInfo entityProperty, T value)
+        private static Expression AddNotEqualExpression<T>(ParameterExpression entityParameter, PropertyInfo entityProperty, T value, bool ignoreCase)
         {
-            return Expression.NotEqual(
-                    Expression.Property(entityParameter, entityProperty),
-                    Expression.Constant(value)
-                   );
+            if (typeof(T) != typeof(string))
+            {
+                return Expression.Equal(
+                        Expression.Property(entityParameter, entityProperty),
+                        Expression.Constant(value)
+                       );
+            }
+            else
+            {
+                MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
+                ConstantExpression c = Expression.Constant(value, typeof(string));
+                MethodInfo mi = typeof(string).GetMethod("IndexOf", new Type[] { typeof(string), typeof(StringComparison) });
+                var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
+                return Expression.Equal(expression, Expression.Constant(-1));
+            }
         }
 
-        private static Expression AddStartsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value)
+        private static Expression AddStartsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
             MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
             ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) });
-            return Expression.Call(m, mi, c);
+            MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string), typeof(StringComparison) });
+            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
         }
 
-        private static Expression AddEndsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value)
+        private static Expression AddEndsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
             MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
             ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
-            return Expression.Call(m, mi, c);
+            MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string), typeof(StringComparison) });
+            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
         }
 
-        private static Expression AddContainsStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value)
+        private static Expression AddContainsStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
             MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
             ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
-            return Expression.Call(m, mi, c);
+            MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string), typeof(StringComparison) });
+            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
         }
 
         private static void CompleteQueryWithCriteria<TEntity>(ref IQueryable<TEntity> source, string fieldName, object criteria) where TEntity : class
@@ -134,7 +156,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(int)))
                     {
-                        expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue, false));
                     }
                 }
             }
@@ -144,7 +166,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(int)))
                     {
-                        expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, equalValue, false));
                     }
                 }
             }
@@ -157,7 +179,7 @@ namespace BodyReport.Crud.Transformer
             {
                 if (propertyType.Equals(typeof(string)))
                 {
-                    expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue));
+                    expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
                 }
             }
             if (criteria.NotEqualList != null)
@@ -166,7 +188,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(string)))
                     {
-                        expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
                     }
                 }
             }
@@ -176,7 +198,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(string)))
                     {
-                        expressionList.Add(AddStartsWithStringExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddStartsWithStringExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
                     }
                 }
             }
@@ -186,7 +208,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(string)))
                     {
-                        expressionList.Add(AddEndsWithStringExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddEndsWithStringExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
                     }
                 }
             }
@@ -196,7 +218,7 @@ namespace BodyReport.Crud.Transformer
                 {
                     if (propertyType.Equals(typeof(string)))
                     {
-                        expressionList.Add(AddContainsStringExpression(entityParameter, entityProperty, equalValue));
+                        expressionList.Add(AddContainsStringExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
                     }
                 }
             }
