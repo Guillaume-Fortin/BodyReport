@@ -33,6 +33,11 @@ namespace Message
     public class BodyExerciceCriteria : CriteriaField
     {
         /// <summary>
+        /// Exercise Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+
+        /// <summary>
         /// Exercise Name
         /// </summary>
         public StringCriteria Name { get; set; }

@@ -1,4 +1,5 @@
-﻿using BodyReport.Manager;
+﻿using BodyReport.Framework;
+using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
 using Message;
@@ -6,6 +7,7 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,11 @@ namespace BodyReport.Controllers
 {
     public class BodyExerciseController : Controller
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(BodyExerciseController));
+
         /// <summary>
         /// Database db context
         /// </summary>
@@ -78,28 +85,19 @@ namespace BodyReport.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Verify not exist on bodyExercise name
                 var manager = new BodyExerciseManager(_dbContext);
-
-                var criteria = new BodyExerciceCriteria();
-                criteria.Name = new StringCriteria() { EqualList = new List<string>() { bodyExerciseViewModel.Name } };
-                var bodyExerciseList = manager.FindBodyExercise(criteria);
-                if (bodyExerciseList == null || bodyExerciseList.Count == 0)
-                { // no exist
-                    var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name };
-                    bodyExercise = manager.CreateBodyExercise(bodyExercise);
-                    if(bodyExercise == null || bodyExercise.Id == 0)
-                    {
-                        //Big problem
-                        //TODO LOG
-                    }
-                    else if (imageFile != null)
-                    {
-                        SaveImage(imageFile, bodyExercise.ImageName);
-                    }
-
-                    return RedirectToAction("Index");
+                var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name };
+                bodyExercise = manager.CreateBodyExercise(bodyExercise);
+                if(bodyExercise == null || bodyExercise.Id == 0)
+                {
+                    _logger.LogError("Create new Body Exercise fail");
                 }
+                else if (CheckUploadedImageIsCorrect(imageFile))
+                {
+                    SaveImage(imageFile, bodyExercise.ImageName);
+                }
+
+                return RedirectToAction("Index");
             }
 
             return View(bodyExerciseViewModel);
@@ -145,14 +143,9 @@ namespace BodyReport.Controllers
                     string oldImageName = bodyExercise.ImageName;
                     bodyExercise.Name = bodyExerciseViewModel.Name;
                     bodyExercise = manager.UpdateBodyExercise(bodyExercise);
-
-                    if (imageFile == null)
+                    //Save a new Image if it's correct
+                    if (CheckUploadedImageIsCorrect(imageFile))
                     {
-                        RenameImage(oldImageName, bodyExercise.ImageName);
-                    }
-                    else
-                    {
-                        DeleteImage(oldImageName);
                         SaveImage(imageFile, bodyExercise.ImageName);
                     }
 
@@ -171,22 +164,8 @@ namespace BodyReport.Controllers
                 System.IO.File.Delete(filePath);
             }
         }
-
-        private void RenameImage(string oldImageName, string newImageName)
-        {
-            if (oldImageName.ToLower() == newImageName.ToLower())
-                return;
-
-            var oldFilePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", oldImageName);
-            var newFilePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", newImageName);
-            if (System.IO.File.Exists(oldFilePath))
-            {
-                System.IO.File.Copy(oldFilePath, newFilePath, true);
-                System.IO.File.Delete(oldFilePath);
-            }
-        }
-
-        private void SaveImage(IFormFile imageFile, string imageName)
+        
+        private bool CheckUploadedImageIsCorrect(IFormFile imageFile)
         {
             if (imageFile != null)
             {
@@ -197,12 +176,22 @@ namespace BodyReport.Controllers
                     var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
                     if (fileName.EndsWith(".png"))// Accept only png file
                     {
-                        var filePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", imageName);
-                        if (System.IO.File.Exists(filePath))
-                            System.IO.File.Delete(filePath);
-                        imageFile.SaveAsAsync(filePath).Wait();
+                        return true;
                     }
                 }
+            }
+            return false;
+        }
+
+        private void SaveImage(IFormFile imageFile, string imageName)
+        {
+            if (imageFile != null)
+            {
+                var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
+                var filePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", imageName);
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath);
+                imageFile.SaveAsAsync(filePath).Wait();
             }
         }
 

@@ -26,8 +26,8 @@ namespace BodyReport.Crud.Transformer
             var bean = new BodyExercise();
             bean.Id = row.Id;
             bean.Name = row.Name;
-            //Image name is same that name
-            bean.ImageName = row.Name + ".png";
+            //Image name is "{id}.png"
+            bean.ImageName = string.Format("{0}.png", row.Id);
             return bean;
         }
     }
