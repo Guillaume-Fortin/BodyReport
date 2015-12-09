@@ -36,5 +36,7 @@
   "EDIT": "Edit",
   "DELETE": "Delete",
   "SUSPEND": "Suspend",
-  "USER": "User"
+  "USER": "User",
+  "SUSPENDED": "Suspended",
+  "ACTIVATE": "Activate"
 }

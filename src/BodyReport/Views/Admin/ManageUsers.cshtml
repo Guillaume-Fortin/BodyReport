@@ -42,8 +42,15 @@
                     @Html.DisplayFor(modelItem => item.RoleName)
                 </td>
                 <td>
-                    <a asp-action="EditUser" asp-route-id="@item.Id">@Translation.EDIT</a>
-                    <a asp-action="SuspendUser" asp-route-id="@item.Id">@Translation.SUSPEND</a>
+                    <a asp-action="EditUser" asp-route-id="@item.Id">@Translation.EDIT</a> |
+                    @if (item.Suspended)
+                    {
+                        <a asp-action="ActivateUser" asp-route-id="@item.Id">@Translation.ACTIVATE</a>
+                    }
+                    else
+                    {
+                        <a asp-action="SuspendUser" asp-route-id="@item.Id">@Translation.SUSPEND</a>
+                    }
                 </td>
             </tr>
         }

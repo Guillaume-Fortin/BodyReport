@@ -9,5 +9,9 @@ namespace BodyReport.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        /// <summary>
+        /// User supended
+        /// </summary>
+        public bool Suspended { get; set; }
     }
 }

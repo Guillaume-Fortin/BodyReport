@@ -71,7 +71,7 @@ namespace BodyReport.Controllers
             {
                 foreach (var user in users)
                 {
-                    userViewModel = new UserViewModel() { Id = user.Id, Name = user.Name, Email = user.Email };
+                    userViewModel = new UserViewModel() { Id = user.Id, Name = user.Name, Email = user.Email, Suspended = user.Suspended };
                     if (user.Role != null)
                     {
                         userViewModel.RoleId = user.Role.Id;
@@ -101,7 +101,8 @@ namespace BodyReport.Controllers
                     viewModel.Id = user.Id;
                     viewModel.Name = user.Name;
                     viewModel.Email = user.Email;
-                    if(user.Role != null)
+                    viewModel.Suspended = user.Suspended;
+                    if (user.Role != null)
                         viewModel.RoleId = user.Role.Id;
 
                     // Populate SelectListItem of roles
@@ -130,6 +131,7 @@ namespace BodyReport.Controllers
                     user.Id = viewModel.Id;
                     user.Name = viewModel.Name;
                     user.Email = viewModel.Email;
+                    user.Suspended = viewModel.Suspended;
 
                     //Verify role exist
                     var roleKey = new RoleKey();
@@ -147,6 +149,46 @@ namespace BodyReport.Controllers
             // Populate SelectListItem of roles
             ViewBag.Roles = CreateSelectRoleItemList(manager.FindRoles(), viewModel.Id);
             return View(viewModel);
+        }
+
+        //
+        // GET: /Admin/SuspendUser
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult SuspendUser(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                var manager = new UserManager(_dbContext);
+                var key = new UserKey() { Id = id };
+                var user = manager.GetUser(key);
+                if (user != null)
+                {
+                    user.Suspended = true;
+                    manager.UpdateUser(user);
+                }
+            }
+            return RedirectToAction("ManageUsers");
+        }
+
+        //
+        // GET: /Admin/ActivateUser
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ActivateUser(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                var manager = new UserManager(_dbContext);
+                var key = new UserKey() { Id = id };
+                var user = manager.GetUser(key);
+                if (user != null)
+                {
+                    user.Suspended = false;
+                    manager.UpdateUser(user);
+                }
+            }
+            return RedirectToAction("ManageUsers");
         }
 
         #region manage roles
@@ -270,3 +312,4 @@ namespace BodyReport.Controllers
         #endregion
     }
 }
+

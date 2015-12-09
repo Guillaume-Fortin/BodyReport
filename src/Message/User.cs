@@ -24,6 +24,10 @@ namespace Message
         /// </summary>
         public string Email { get; set; } = string.Empty;
         /// <summary>
+        /// User suspended
+        /// </summary>
+        public bool Suspended { get; set; }
+        /// <summary>
         /// User role
         /// </summary>
         public Role Role { get; set; } = null;

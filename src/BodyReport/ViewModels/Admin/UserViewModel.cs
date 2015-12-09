@@ -30,5 +30,9 @@ namespace BodyReport.ViewModels.Admin
 
         [Display(Name = TRS.ROLE, ResourceType = typeof(Translation))]
         public string RoleName { get; set; } = string.Empty;
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.SUSPENDED, ResourceType = typeof(Translation))]
+        public bool Suspended { get; set; }
     }
 }

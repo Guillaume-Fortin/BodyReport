@@ -17,6 +17,7 @@ namespace BodyReport.Crud.Transformer
             row.Id = bean.Id;
             row.UserName = bean.Name;
             row.Email = bean.Email;
+            row.Suspended = bean.Suspended;
         }
 
         internal static User ToBean(ApplicationUser row)
@@ -28,6 +29,7 @@ namespace BodyReport.Crud.Transformer
             bean.Id = row.Id;
             bean.Name = row.UserName;
             bean.Email = row.Email;
+            bean.Suspended = row.Suspended;
             return bean;
         }
     }
