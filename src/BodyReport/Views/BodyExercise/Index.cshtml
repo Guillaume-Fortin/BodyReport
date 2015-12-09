@@ -35,8 +35,8 @@
                 <img src="@item.ImageUrl" width="120" height="80"/>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Translation.EDIT</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Translation.DELETE</a>
             </td>
         </tr>
     }

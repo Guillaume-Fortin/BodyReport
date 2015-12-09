@@ -116,6 +116,17 @@ namespace BodyReport.Resources
         public static string SUBMIT { get { return Get(TRS.SUBMIT); } }
         public static string CHOOSE_FILE { get { return Get(TRS.CHOOSE_FILE); } }
         public static string MODIFY { get { return Get(TRS.MODIFY); } }
+        public static string USER { get { return Get(TRS.USER); } }
+        public static string USERS { get { return Get(TRS.USERS); } }
+        public static string ROLE { get { return Get(TRS.ROLE); } }
+        public static string MANAGE { get { return Get(TRS.MANAGE); } }
+        public static string LIST_OF_USERS { get { return Get(TRS.LIST_OF_USERS); } }
+        public static string ID { get { return Get(TRS.ID); } }
+        public static string LIST_OF_ROLES { get { return Get(TRS.LIST_OF_ROLES); } }
+        public static string NORMALIZED_NAME { get { return Get(TRS.NORMALIZED_NAME); } }
+        public static string EDIT { get { return Get(TRS.EDIT); } }
+        public static string DELETE { get { return Get(TRS.DELETE); } }
+        public static string SUSPEND { get { return Get(TRS.SUSPEND); } }
     }
 
     /// <summary>
@@ -258,5 +269,60 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Modify")]
         public const string MODIFY = "MODIFY";
+        /// <summary>
+        /// User
+        /// </summary>
+        [Translation("User")]
+        public const string USER = "USER";
+        /// <summary>
+        /// Users
+        /// </summary>
+        [Translation("Users")]
+        public const string USERS = "USERS";
+        /// <summary>
+        /// Role
+        /// </summary>
+        [Translation("Role")]
+        public const string ROLE = "ROLE";
+        /// <summary>
+        /// Manage
+        /// </summary>
+        [Translation("Manage")]
+        public const string MANAGE = "MANAGE";
+        /// <summary>
+        /// List of users
+        /// </summary>
+        [Translation("List of users")]
+        public const string LIST_OF_USERS = "LIST_OF_USERS";
+        /// <summary>
+        /// Id
+        /// </summary>
+        [Translation("Id")]
+        public const string ID = "ID";
+        /// <summary>
+        /// List of roles
+        /// </summary>
+        [Translation("List of roles")]
+        public const string LIST_OF_ROLES = "LIST_OF_ROLES";
+        // <summary>
+        /// Normalized name
+        /// </summary>
+        [Translation("Normalized name")]
+        public const string NORMALIZED_NAME = "NORMALIZED_NAME";
+        // <summary>
+        /// Edit
+        /// </summary>
+        [Translation("Edit")]
+        public const string EDIT = "EDIT";
+        // <summary>
+        /// Delete
+        /// </summary>
+        [Translation("Delete")]
+        public const string DELETE = "DELETE";
+        // <summary>
+        /// Suspend
+        /// </summary>
+        [Translation("Suspend")]
+        public const string SUSPEND = "SUSPEND";
     }
 }

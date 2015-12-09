@@ -1,5 +1,5 @@
-﻿using BodyReport.Models;
-using Message;
+﻿using Message;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Transformer
 {
-    public static class BodyExerciseTransformer
+    public class RoleTransformer
     {
-        public static void ToRow(BodyExercise bean, BodyExerciseRow row)
+        public static void ToRow(Role bean, IdentityRole row)
         {
             if (bean == null)
                 return;
 
             row.Id = bean.Id;
             row.Name = bean.Name;
+            row.NormalizedName = bean.NormalizedName;
         }
 
-        internal static BodyExercise ToBean(BodyExerciseRow row)
+        internal static Role ToBean(IdentityRole row)
         {
             if (row == null)
                 return null;
 
-            var bean = new BodyExercise();
+            var bean = new Role();
             bean.Id = row.Id;
             bean.Name = row.Name;
-            //Image name is "{id}.png"
-            bean.ImageName = string.Format("{0}.png", row.Id);
+            bean.NormalizedName = row.NormalizedName;
             return bean;
         }
     }

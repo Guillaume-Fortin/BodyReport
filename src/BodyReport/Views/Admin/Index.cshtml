@@ -1,0 +1,23 @@
+﻿@model IEnumerable<BodyExerciseViewModel>
+@{
+}
+
+<h2>@Translation.ADMIN.</h2>
+
+<div>
+    <h4>@Translation.MANAGE</h4>
+    <ul>
+        <li>
+            <a asp-action="ManageUsers" asp-controller="Admin">@Translation.USERS</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="BodyExercise">@Translation.BODY_EXERCISES</a>
+        </li>
+        <li>
+            <a asp-action="ManageRoles" asp-controller="Admin">@Translation.ROLE</a>
+        </li>
+    </ul>
+</div>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

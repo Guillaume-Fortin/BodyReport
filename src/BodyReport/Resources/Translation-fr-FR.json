@@ -1,4 +1,4 @@
-﻿{
+{
   "HOME": "Acceuil",
   "EMAIL": "Email",
   "PASSWORD": "Mot de passe",
@@ -25,5 +25,16 @@
   "CREATE_NEW": "Créer nouveau",
   "SUBMIT": "Soumettre",
   "CHOOSE_FILE": "Choisir un fichier",
-  "MODIFY": "Modifier"
+  "MODIFY": "Modifier",
+  "USERS": "Utilisateurs",
+  "ROLE": "Rôle",
+  "MANAGE": "Gérer",
+  "LIST_OF_USERS": "Liste des utilisateurs",
+  "ID": "Identifiant",
+  "LIST_OF_ROLES": "Liste des rôles",
+  "NORMALIZED_NAME": "Nom normalisé",
+  "EDIT": "Editer",
+  "DELETE": "Supprimer",
+  "SUSPEND": "Suspendre",
+  "USER": "Utilisateur"
 }

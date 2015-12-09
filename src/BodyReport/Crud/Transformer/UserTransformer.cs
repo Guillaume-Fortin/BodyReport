@@ -7,27 +7,27 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Transformer
 {
-    public static class BodyExerciseTransformer
+    public static class UserTransformer
     {
-        public static void ToRow(BodyExercise bean, BodyExerciseRow row)
+        public static void ToRow(User bean, ApplicationUser row)
         {
             if (bean == null)
                 return;
 
             row.Id = bean.Id;
-            row.Name = bean.Name;
+            row.UserName = bean.Name;
+            row.Email = bean.Email;
         }
 
-        internal static BodyExercise ToBean(BodyExerciseRow row)
+        internal static User ToBean(ApplicationUser row)
         {
             if (row == null)
                 return null;
 
-            var bean = new BodyExercise();
+            var bean = new User();
             bean.Id = row.Id;
-            bean.Name = row.Name;
-            //Image name is "{id}.png"
-            bean.ImageName = string.Format("{0}.png", row.Id);
+            bean.Name = row.UserName;
+            bean.Email = row.Email;
             return bean;
         }
     }

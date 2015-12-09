@@ -25,5 +25,16 @@
   "CREATE_NEW": "Create New",
   "SUBMIT": "Submit",
   "CHOOSE_FILE": "Choose file",
-  "MODIFY": "Modify"
+  "MODIFY": "Modify",
+  "USERS": "Users",
+  "ROLE": "Role",
+  "MANAGE": "Manage",
+  "LIST_OF_USERS": "List of users",
+  "ID": "Id",
+  "LIST_OF_ROLES": "List of roles",
+  "NORMALIZED_NAME": "Normalized name",
+  "EDIT": "Edit",
+  "DELETE": "Delete",
+  "SUSPEND": "Suspend",
+  "USER": "User"
 }

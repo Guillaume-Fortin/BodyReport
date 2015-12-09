@@ -64,7 +64,7 @@ namespace BodyReport.Crud.Module
         }
 
         /// <summary>
-        /// 
+        /// Find body exercises
         /// </summary>
         /// <returns></returns>
         public List<BodyExercise> Find(CriteriaField criteriaField = null)
