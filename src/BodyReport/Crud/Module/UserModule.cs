@@ -108,6 +108,7 @@ namespace BodyReport.Crud.Module
                     loadRole = true;
                     var userRoleRowList = _dbContext.UserRoles.Where(ur => ur.UserId == user.Id);
                     _dbContext.UserRoles.RemoveRange(userRoleRowList);
+                    _dbContext.SaveChanges();
 
                     var userRoleRow = new IdentityUserRole<string>() { UserId = user.Id, RoleId = user.Role.Id };
                     _dbContext.UserRoles.Add(userRoleRow);
