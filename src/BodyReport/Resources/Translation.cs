@@ -129,6 +129,7 @@ namespace BodyReport.Resources
         public static string SUSPEND { get { return Get(TRS.SUSPEND); } }
         public static string SUSPENDED { get { return Get(TRS.SUSPENDED); } }
         public static string ACTIVATE { get { return Get(TRS.ACTIVATE); } }
+        public static string SEARCH { get { return Get(TRS.SEARCH); } }
     }
 
     /// <summary>
@@ -336,5 +337,10 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Activate")]
         public const string ACTIVATE = "ACTIVATE";
+        // <summary>
+        /// Search
+        /// </summary>
+        [Translation("Search")]
+        public const string SEARCH = "SEARCH";
     }
 }

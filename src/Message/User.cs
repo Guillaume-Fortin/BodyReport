@@ -32,4 +32,16 @@ namespace Message
         /// </summary>
         public Role Role { get; set; } = null;
     }
+
+    public class UserCriteria : CriteriaField
+    {
+        /// <summary>
+        /// User Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+        /// <summary>
+        /// User Name
+        /// </summary>
+        public StringCriteria UserName { get; set; }
+    }
 }

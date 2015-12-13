@@ -38,5 +38,6 @@
   "SUSPEND": "Suspend",
   "USER": "User",
   "SUSPENDED": "Suspended",
-  "ACTIVATE": "Activate"
+  "ACTIVATE": "Activate",
+  "SEARCH": "Search"
 }

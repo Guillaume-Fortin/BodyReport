@@ -1,45 +1,63 @@
 ﻿@using System.Security.Claims
 
-@model IEnumerable<UserViewModel>
+@model SearchUserViewModel
 @{
 }
 
 <h2>@Translation.ADMIN : @Translation.USERS.</h2>
 
 <div>
-    <h4>@Translation.LIST_OF_USERS</h4>
+    <form asp-controller="Admin" asp-action="ManageUsers" method="get" class="form-horizontal" role="form">
+        <h4>@Translation.LIST_OF_USERS.</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="UserName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="UserName" class="form-control" type="text" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-default">@Translation.SUBMIT</button>
+            </div>
+        </div>
+    </form>
 
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+               @Translation.ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Translation.NAME
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+               @Translation.EMAIL
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RoleName)
+                @Translation.ROLE
             </th>
             <th>@Translation.ACTION</th>
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (UserViewModel item in ViewBag.Users)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                    @item.Id
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @item.Name
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Email)
+                    @item.Email
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RoleName)
+                    @item.RoleName
                 </td>
                 <td>
                     <a asp-action="EditUser" asp-route-id="@item.Id">@Translation.EDIT</a> |

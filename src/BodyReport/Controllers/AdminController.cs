@@ -61,12 +61,25 @@ namespace BodyReport.Controllers
         // GET: /Admin/ManageUsers
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ManageUsers(string returnUrl = null)
+        public IActionResult ManageUsers(SearchUserViewModel searchUserViewModel = null)
         {
             UserViewModel userViewModel;
-            var result = new List<UserViewModel>();
+            var result = new SearchUserViewModel();
+            var userViewModels = new List<UserViewModel>();
             var manager = new UserManager(_dbContext);
-            var users = manager.FindUsers();
+
+            UserCriteria userCriteria = null;
+            if (searchUserViewModel != null)
+            {
+                if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserName))
+                {
+                    userCriteria = new UserCriteria();
+                    userCriteria.UserName = new StringCriteria();
+                    userCriteria.UserName.EqualList = new List<string>() { searchUserViewModel.UserName };
+                }
+            }
+
+            var users = manager.FindUsers(userCriteria);
             if (users != null)
             {
                 foreach (var user in users)
@@ -77,9 +90,12 @@ namespace BodyReport.Controllers
                         userViewModel.RoleId = user.Role.Id;
                         userViewModel.RoleName = user.Role.Name;
                     }
-                    result.Add(userViewModel);
+                    userViewModels.Add(userViewModel);
                 }
             }
+
+            ViewBag.Users = userViewModels;
+
 
             return View(result);
         }
