@@ -67,9 +67,9 @@ namespace BodyReport.Crud.Transformer
             {
                 MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
                 ConstantExpression c = Expression.Constant(value, typeof(string));
-                MethodInfo mi = typeof(string).GetMethod("IndexOf", new Type[] { typeof(string), typeof(StringComparison) });
+                MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(StringComparison) });
                 var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-                return Expression.NotEqual(expression, Expression.Constant(-1));
+                return Expression.Equal(expression, Expression.Constant(true));
             }
         }
 
@@ -86,9 +86,9 @@ namespace BodyReport.Crud.Transformer
             {
                 MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
                 ConstantExpression c = Expression.Constant(value, typeof(string));
-                MethodInfo mi = typeof(string).GetMethod("IndexOf", new Type[] { typeof(string), typeof(StringComparison) });
+                MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(StringComparison) });
                 var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-                return Expression.Equal(expression, Expression.Constant(-1));
+                return Expression.Equal(expression, Expression.Constant(false));
             }
         }
 
