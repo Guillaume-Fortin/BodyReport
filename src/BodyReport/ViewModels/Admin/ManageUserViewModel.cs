@@ -1,4 +1,5 @@
 ﻿using BodyReport.Resources;
+using BodyReport.ViewModels.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

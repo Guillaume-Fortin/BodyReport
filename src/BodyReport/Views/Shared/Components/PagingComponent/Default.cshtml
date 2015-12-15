@@ -1,0 +1,39 @@
+﻿@model PagingViewModel
+@{
+    int totalPage = 1;
+    if (Model.TotalRecords > 0)
+    {
+        totalPage = (Model.TotalRecords / Model.PageSize) + ((Model.TotalRecords % Model.PageSize == 0) ? 0 : 1);
+    }
+
+    const int maxDisplayPage = 2;
+    int minPage = Math.Max(1, Model.CurrentPage - maxDisplayPage);
+    int maxPage = Math.Min(totalPage, Model.CurrentPage + maxDisplayPage);
+    int previousPage = Math.Max(1, Model.CurrentPage - 1);
+    int nextPage = Math.Min(totalPage, Model.CurrentPage + 1);
+}
+
+@if (totalPage > 1)
+{
+<ul class="pagination">
+   
+    @if(minPage != Model.CurrentPage)
+    { 
+        <li><a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-route-currentPage="1">&lt;&lt;</a></li>
+        <li><a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-route-currentPage="@previousPage">&lt;</a></li>
+    }
+
+    @for (int i = minPage; i <= maxPage; i++)
+    {
+        <li class="@(Model.CurrentPage == i ? "active" : "")">
+            <a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-all-route-data="Model.RouteValues" asp-route-currentPage="@i" >@i</a>
+        </li>
+    }
+
+    @if (maxPage != Model.CurrentPage)
+    {
+        <li><a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-route-currentPage="@nextPage">&gt;</a></li>
+        <li><a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-route-currentPage="@totalPage">&gt;&gt;</a></li>
+    }
+</ul>
+}

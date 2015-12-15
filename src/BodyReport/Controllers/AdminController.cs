@@ -57,29 +57,36 @@ namespace BodyReport.Controllers
             return result;
         }
 
+
         // manage users
         // GET: /Admin/ManageUsers
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ManageUsers(SearchUserViewModel searchUserViewModel = null)
+        public IActionResult ManageUsers(SearchUserViewModel searchUserViewModel=null, int currentPage=1)
         {
+            if(searchUserViewModel == null)
+                searchUserViewModel = new SearchUserViewModel();
+
+                if (currentPage < 1 || currentPage > 999)
+            {
+                return View(searchUserViewModel);
+            }
             UserViewModel userViewModel;
-            var result = new SearchUserViewModel();
+            const int pageSize = 10;
+            int currentRecordIndex = (currentPage - 1) * pageSize;
             var userViewModels = new List<UserViewModel>();
             var manager = new UserManager(_dbContext);
 
             UserCriteria userCriteria = null;
-            if (searchUserViewModel != null)
+            if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserName))
             {
-                if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserName))
-                {
-                    userCriteria = new UserCriteria();
-                    userCriteria.UserName = new StringCriteria();
-                    userCriteria.UserName.EqualList = new List<string>() { searchUserViewModel.UserName };
-                }
-            }
+                userCriteria = new UserCriteria();
+                userCriteria.UserName = new StringCriteria();
+                userCriteria.UserName.StartsWithList = new List<string>() { searchUserViewModel.UserName };
+            }   
 
-            var users = manager.FindUsers(userCriteria);
+            int totalRecords;
+            var users = manager.FindUsers(out totalRecords, userCriteria, true, currentRecordIndex, pageSize);
             if (users != null)
             {
                 foreach (var user in users)
@@ -95,9 +102,17 @@ namespace BodyReport.Controllers
             }
 
             ViewBag.Users = userViewModels;
+            ViewBag.CurrentPage = currentPage;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = totalRecords;
 
+            //Security
+            if (currentRecordIndex > totalRecords)
+            {
+                ViewBag.CurrentPage = 1;
+            }
 
-            return View(result);
+            return View(searchUserViewModel);
         }
 
         // Edit a user

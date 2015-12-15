@@ -2,6 +2,12 @@
 
 @model SearchUserViewModel
 @{
+
+    Dictionary<string, string> pagingRouteValues = new Dictionary<string, string>();
+    if (Model != null && Model.UserName != null)
+    {
+        pagingRouteValues.Add("UserName", Model.UserName);
+    }
 }
 
 <h2>@Translation.ADMIN : @Translation.USERS.</h2>
@@ -22,7 +28,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <button type="submit" class="btn btn-default">@Translation.SUBMIT</button>
+                <button type="submit" class="btn btn-default">@Translation.SEARCH</button>
             </div>
         </div>
     </form>
@@ -73,6 +79,7 @@
             </tr>
         }
     </table>
+    @Component.Invoke("PagingComponent", "Admin", "ManageUsers", ViewBag.CurrentPage, ViewBag.PageSize, ViewBag.TotalRecords, pagingRouteValues)
 </div>
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

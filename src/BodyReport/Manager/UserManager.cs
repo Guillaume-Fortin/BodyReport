@@ -29,9 +29,9 @@ namespace BodyReport.Manager
             return _userModule.Get(key, manageRole);
         }
 
-        public List<User> FindUsers(CriteriaField criteriaField = null, bool manageRole = true)
+        public List<User> FindUsers(out int totalRecords, CriteriaField criteriaField = null, bool manageRole = true, int currentRecordIndex = 0, int maxRecord = 0)
         {
-            var userList = _userModule.Find(criteriaField);
+            var userList = _userModule.Find(out totalRecords, criteriaField, currentRecordIndex, maxRecord);
 
             if(userList != null && manageRole)
             {
