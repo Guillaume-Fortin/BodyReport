@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BodyExerciseController : Controller
     {
         /// <summary>
@@ -51,7 +52,6 @@ namespace BodyReport.Controllers
         //
         // GET: /BodyExercise/Index
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Index(string returnUrl = null)
         {
             var result = new List<BodyExerciseViewModel>();
@@ -70,7 +70,6 @@ namespace BodyReport.Controllers
         //
         // GET: /BodyExercise/Create
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Create(string returnUrl = null)
         {
             return View(new BodyExerciseViewModel());
@@ -80,7 +79,6 @@ namespace BodyReport.Controllers
         // Create new Body Exercise
         // POST: /Admin/Create
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult Create(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
         {
             if (ModelState.IsValid)
@@ -106,7 +104,6 @@ namespace BodyReport.Controllers
         //
         // GET: /BodyExercise/Create
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Edit(int id)
         {
             if (id > 0)
@@ -129,7 +126,6 @@ namespace BodyReport.Controllers
         // Edit an Body Exercise
         // POST: /Admin/Create
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult Edit(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
         {
             if (ModelState.IsValid)
@@ -198,7 +194,6 @@ namespace BodyReport.Controllers
         //
         // GET: /BodyExercise/Delete
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Delete(int id)
         {
             if(id >0)

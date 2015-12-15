@@ -35,10 +35,10 @@
                         <li><a asp-controller="Home" asp-action="Index">@Translation.HOME</a></li>
                         <li><a asp-controller="Home" asp-action="About">About</a></li>
                         <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
-                        @*if (User.IsSignedIn() && User.IsInRole("Admin"))
-    {*@
-                        <li><a asp-controller="Admin" asp-action="Index">@Translation.ADMIN</a></li>
-       @*                 }*@
+                        @if (User.IsSignedIn() && User.IsInRole("Admin"))
+                        {
+                            <li><a asp-controller="Admin" asp-action="Index">@Translation.ADMIN</a></li>
+                        }
                         
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")

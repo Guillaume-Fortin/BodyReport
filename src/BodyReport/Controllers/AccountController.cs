@@ -39,6 +39,15 @@ namespace BodyReport.Controllers
         }
 
         //
+        // GET: /Account/AccessDenied
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        //
         // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]

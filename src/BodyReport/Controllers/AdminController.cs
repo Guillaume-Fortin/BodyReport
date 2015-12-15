@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Controllers
 {
-    [Authorize]
+    [Authorize(Roles="Admin")]
     public class AdminController : Controller
     {
         /// <summary>
@@ -39,7 +39,6 @@ namespace BodyReport.Controllers
         //
         // GET: /Admin/Index
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Index(string returnUrl = null)
         {
             return View();
@@ -61,7 +60,6 @@ namespace BodyReport.Controllers
         // manage users
         // GET: /Admin/ManageUsers
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult ManageUsers(SearchUserViewModel searchUserViewModel=null, int currentPage=1)
         {
             if(searchUserViewModel == null)
@@ -118,7 +116,6 @@ namespace BodyReport.Controllers
         // Edit a user
         // GET: /Admin/EditUser
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult EditUser(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
@@ -148,7 +145,6 @@ namespace BodyReport.Controllers
         // Edit a role
         // POST: /Admin/EditRole
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult EditUser(UserViewModel viewModel, IFormFile imageFile)
         {
             var manager = new UserManager(_dbContext);
@@ -185,7 +181,6 @@ namespace BodyReport.Controllers
         //
         // GET: /Admin/SuspendUser
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult SuspendUser(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
@@ -205,7 +200,6 @@ namespace BodyReport.Controllers
         //
         // GET: /Admin/ActivateUser
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult ActivateUser(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
@@ -226,7 +220,6 @@ namespace BodyReport.Controllers
         //
         // GET: /Admin/ManageRoles
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult ManageRoles(string returnUrl = null)
         {
             var result = new List<RoleViewModel>();
@@ -246,7 +239,6 @@ namespace BodyReport.Controllers
         // Create new role
         // GET: /Admin/CreateRole
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult CreateRole(string returnUrl = null)
         {
             return View(new RoleViewModel());
@@ -256,7 +248,6 @@ namespace BodyReport.Controllers
         // Create new role
         // POST: /Admin/CreateRole
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult CreateRole(RoleViewModel roleViewModel)
         {
             if (ModelState.IsValid)
@@ -278,7 +269,6 @@ namespace BodyReport.Controllers
         // Edit a role
         // GET: /Admin/EditRole
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult EditRole(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
@@ -301,7 +291,6 @@ namespace BodyReport.Controllers
         // Edit a role
         // POST: /Admin/EditRole
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult EditRole(RoleViewModel viewModel, IFormFile imageFile)
         {
             if (ModelState.IsValid)
@@ -325,7 +314,6 @@ namespace BodyReport.Controllers
         //
         // GET: /Admin/DeleteRole
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult DeleteRole(string id)
         {
             if (!string.IsNullOrWhiteSpace(id))
