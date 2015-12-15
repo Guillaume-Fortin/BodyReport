@@ -175,11 +175,14 @@ namespace BodyReport.Crud.Transformer
         private static void StringCriteriaTreatment(StringCriteria criteria, List<Expression> expressionList, Type propertyType,
                                                     ParameterExpression entityParameter, PropertyInfo entityProperty)
         {
-            foreach (string equalValue in criteria.EqualList)
+            if (criteria.EqualList != null)
             {
-                if (propertyType.Equals(typeof(string)))
+                foreach (string equalValue in criteria.EqualList)
                 {
-                    expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
+                    if (propertyType.Equals(typeof(string)))
+                    {
+                        expressionList.Add(AddEqualExpression(entityParameter, entityProperty, equalValue, criteria.IgnoreCase));
+                    }
                 }
             }
             if (criteria.NotEqualList != null)
@@ -194,7 +197,7 @@ namespace BodyReport.Crud.Transformer
             }
             if(criteria.StartsWithList != null)
             {
-                foreach (string equalValue in criteria.NotEqualList)
+                foreach (string equalValue in criteria.StartsWithList)
                 {
                     if (propertyType.Equals(typeof(string)))
                     {
