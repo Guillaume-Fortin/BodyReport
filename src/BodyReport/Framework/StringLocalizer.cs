@@ -57,23 +57,13 @@ namespace BodyReport.Framework
         /// </summary>
         /// <param name="isDatabaseTranslation">check for database translation</param>
         /// <returns>translation dictionary</returns>
-        private Dictionary<string, string> GetCurrentTranslationList(bool isDatabaseTranslation = false)
+        private Dictionary<string, string> GetCurrentTranslationList()
         {
-            if(isDatabaseTranslation)
-            {
-                string dicoDbName = string.Format("{0}-{1}.db", _resourceName, _cultureName);
-                if (_translationDictionary.ContainsKey(dicoDbName))
-                    _translationDictionary.Add(dicoDbName, new Dictionary<string, string>());
-                return _translationDictionary[dicoDbName];
-            }
+            string fileName = string.Format("{0}-{1}.json", _resourceName, _cultureName);
+            if (_translationDictionary.ContainsKey(_resourcePath + fileName))
+                return _translationDictionary[_resourcePath + fileName];
             else
-            {
-                string fileName = string.Format("{0}-{1}.json", _resourceName, _cultureName);
-                if (_translationDictionary.ContainsKey(_resourcePath + fileName))
-                    return _translationDictionary[_resourcePath + fileName];
-                else
-                    return null;
-            }
+                return null;
         }
 
         /// <summary>
@@ -134,9 +124,9 @@ namespace BodyReport.Framework
         /// <param name="key">key</param>
         /// <param name="isDatabaseTranslation">in db translation</param>
         /// <returns></returns>
-        public bool IsTranslationInDictionnaryExist(string key, bool isDatabaseTranslation=false)
+        public bool IsTranslationInDictionnaryExist(string key)
         {
-            Dictionary<string, string> translationList = GetCurrentTranslationList(isDatabaseTranslation);
+            Dictionary<string, string> translationList = GetCurrentTranslationList();
             return translationList.ContainsKey(key);
         }
 
@@ -146,13 +136,22 @@ namespace BodyReport.Framework
         /// <param name="key">key</param>
         /// <param name="value">value</param>
         /// <param name="isDatabaseTranslation">in db translation</param>
-        public void AddTranslationInDictionnary(string key, string value, bool isDatabaseTranslation = false)
+        public void AddTranslationInDictionnary(string key, string value)
         {
-            Dictionary<string, string> translationList = GetCurrentTranslationList(isDatabaseTranslation);
+            Dictionary<string, string> translationList = GetCurrentTranslationList();
             if(translationList.ContainsKey(key))
                 _logger.LogError("Programming error, multiple adding same value in dictionry");
             else
                 translationList.Add(key, value);
+        }
+        
+        internal void RemoveTranslationInDictionnary(string key)
+        {
+            Dictionary<string, string> translationList = GetCurrentTranslationList();
+            if (translationList.ContainsKey(key))
+            {
+                translationList.Remove(key);
+            }
         }
     }
 }

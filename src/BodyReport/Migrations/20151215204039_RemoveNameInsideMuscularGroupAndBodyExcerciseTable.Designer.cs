@@ -8,9 +8,10 @@ using BodyReport.Models;
 namespace BodyReport.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20151215204039_RemoveNameInsideMuscularGroupAndBodyExcerciseTable")]
+    partial class RemoveNameInsideMuscularGroupAndBodyExcerciseTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -70,22 +71,9 @@ namespace BodyReport.Migrations
                 {
                     b.Property<int>("Id");
 
-                    b.Property<int>("MuscleId");
-
                     b.HasKey("Id");
 
                     b.HasAnnotation("Relational:TableName", "BodyExercise");
-                });
-
-            modelBuilder.Entity("BodyReport.Models.MuscleRow", b =>
-                {
-                    b.Property<int>("Id");
-
-                    b.Property<int>("MuscularGroupId");
-
-                    b.HasKey("Id");
-
-                    b.HasAnnotation("Relational:TableName", "Muscle");
                 });
 
             modelBuilder.Entity("BodyReport.Models.MuscularGroupRow", b =>

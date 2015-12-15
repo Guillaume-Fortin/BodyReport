@@ -1,11 +1,11 @@
-﻿@model BodyExerciseViewModel
+﻿@model MuscleViewModel
 @{
-    ViewData["Title"] = Translation.BODY_EXERCISES;
+    ViewData["Title"] = Translation.MUSCLE;
 }
 
 <h2>@Translation.ADMIN : @ViewData["Title"]. @Translation.CREATE</h2>
 
-<form asp-controller="Admin" asp-action="Create" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+<form asp-controller="Admin" asp-action="CreateMuscle" method="post" class="form-horizontal" role="form">
     <h4>@Translation.CREATE_NEW.</h4>
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
@@ -13,12 +13,13 @@
     <input asp-for="Id" hidden="hidden"/>
 
     <div class="form-group">
-        <label asp-for="MuscleId" class="col-md-2 control-label"></label>
+        <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <select asp-for="MuscleId" asp-items="ViewBag.Muscles"></select>
-            <span asp-validation-for="MuscleId" class="text-danger"></span>
+            <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups"></select>
+            <span asp-validation-for="MuscularGroupId" class="text-danger"></span>
         </div>
     </div>
+
     <div class="form-group">
         <label asp-for="Name" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -26,12 +27,7 @@
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">@Translation.CHOOSE_FILE : @Translation.IMAGE</label>
-        <div class="col-md-10">
-            <input type="file" id="imageFile" name="imageFile" />
-        </div>
-    </div>
+
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <button type="submit" class="btn btn-default">@Translation.SUBMIT</button>

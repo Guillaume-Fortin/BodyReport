@@ -1,11 +1,11 @@
-﻿@model BodyExerciseViewModel
+﻿@model MuscleViewModel
 @{
-    ViewData["Title"] = Translation.BODY_EXERCISES;
+    ViewData["Title"] = Translation.MUSCLE;
 }
 
 <h2>@Translation.ADMIN : @ViewData["Title"]. @Translation.MODIFY</h2>
 
-<form asp-controller="Admin" asp-action="Edit" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+<form asp-controller="Admin" asp-action="EditMuscle" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
     <h4>@Translation.MODIFY.</h4>
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
@@ -14,14 +14,14 @@
         <label asp-for="Id" class="col-md-2 control-label"></label>
         <div class="col-md-10">
             <input asp-for="Id" class="form-control" readonly="readonly" type="text" />
-            <span asp-validation-for="Id" class="text-danger"></span>
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="MuscleId" class="col-md-2 control-label"></label>
+        <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <select asp-for="MuscleId" asp-items="ViewBag.Muscles"></select>
-            <span asp-validation-for="MuscleId" class="text-danger"></span>
+            <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups"></select>
+            <span asp-validation-for="MuscularGroupId" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
@@ -29,19 +29,6 @@
         <div class="col-md-10">
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">@Translation.CHOOSE_FILE</label>
-        <div class="col-md-10">
-            <br />  
-            <input type="file" id="imageFile" name="imageFile" />
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">@Translation.IMAGE</label>
-        <div class="col-md-10">
-            <image src="@Model.ImageUrl" width="200px" height="200px"/>
         </div>
     </div>
     <div class="form-group">

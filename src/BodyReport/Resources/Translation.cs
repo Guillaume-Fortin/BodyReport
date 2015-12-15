@@ -43,12 +43,67 @@ namespace BodyReport.Resources
             return sl.Create("Translation", "Resources");
         }
 
+        private static int GetCurrentCultureId()
+        {
+            int currentCultureId = 0;
+            string culture = CultureInfo.CurrentCulture.Name;
+            for (int i = 0; i < SupportedCultureNames.Length; i++)
+            {
+                if (SupportedCultureNames[i].ToLower() == culture.ToLower())
+                {
+                    currentCultureId = i;
+                    break;
+                }
+            }
+            return currentCultureId;
+        }
+
+        public static void DeleteInDB(string key, ApplicationDbContext dbContext = null)
+        {
+            if (dbContext == null)
+                dbContext = new ApplicationDbContext();
+
+            var localizer = GetLocalizer() as StringLocalizer;
+            localizer.RemoveTranslationInDictionnary("DB_" + key);
+
+            int currentCultureId = GetCurrentCultureId();
+            var rows = dbContext.Translations.Where(t => t.Key.ToLower() == key.ToLower());
+            foreach (TranslationRow row in rows)
+            {
+                dbContext.Translations.Remove(row);
+            }
+            dbContext.SaveChanges();
+        }
+
+        public static void UpdateInDB(string key, string value, ApplicationDbContext dbContext = null)
+        {
+            if (dbContext == null)
+                dbContext = new ApplicationDbContext();
+
+            var localizer = GetLocalizer() as StringLocalizer;
+            localizer.RemoveTranslationInDictionnary("DB_" + key);
+
+                int currentCultureId = GetCurrentCultureId();
+            TranslationRow row = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).FirstOrDefault();
+            if(row == null)
+            {
+                row = new TranslationRow();
+                row.CultureId = currentCultureId;
+                row.Key = key;
+                row.Value = value;
+                dbContext.Translations.Add(row);
+            }
+            else
+                row.Value = value;
+            dbContext.SaveChanges();
+        }
+
         /// <summary>
         /// Get translation in database
         /// </summary>
         /// <param name="key">Translation key</param>
         /// <returns>Transaltion value</returns>
-        public static string GetInDB(string key)
+        public static string GetInDB(string key, ApplicationDbContext dbContext = null)
         {
             string result = key;
             var localizer = GetLocalizer() as StringLocalizer;
@@ -61,17 +116,9 @@ namespace BodyReport.Resources
             {
                 try
                 {
-                    int currentCultureId = 0;
-                    string culture = CultureInfo.CurrentCulture.Name;
-                    for (int i = 0; i < SupportedCultureNames.Length; i++)
-                    {
-                        if (SupportedCultureNames[i].ToLower() == culture.ToLower())
-                        {
-                            currentCultureId = i;
-                            break;
-                        }
-                    }
-                    ApplicationDbContext dbContext = new ApplicationDbContext();
+                    if (dbContext == null)
+                        dbContext = new ApplicationDbContext();
+                    int currentCultureId = GetCurrentCultureId();
                     string value = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).Select(t => t.Value).FirstOrDefault();
                     if (value != null)
                         result = value;
@@ -130,6 +177,10 @@ namespace BodyReport.Resources
         public static string SUSPENDED { get { return Get(TRS.SUSPENDED); } }
         public static string ACTIVATE { get { return Get(TRS.ACTIVATE); } }
         public static string SEARCH { get { return Get(TRS.SEARCH); } }
+        public static string MUSCULAR_GROUP { get { return Get(TRS.MUSCULAR_GROUP); } }
+        public static string LIST_OF_MUSCULAR_GROUP { get { return Get(TRS.LIST_OF_MUSCULAR_GROUP); } }
+        public static string MUSCLES { get { return Get(TRS.MUSCLES); } }
+        public static string MUSCLE { get { return Get(TRS.MUSCLE); } }
     }
 
     /// <summary>
@@ -342,5 +393,25 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Search")]
         public const string SEARCH = "SEARCH";
+        // <summary>
+        /// Muscular group
+        /// </summary>
+        [Translation("Muscular group")]
+        public const string MUSCULAR_GROUP = "MUSCULAR_GROUP";
+        // <summary>
+        /// List of muscular group
+        /// </summary>
+        [Translation("List of muscular group")]
+        public const string LIST_OF_MUSCULAR_GROUP = "LIST_OF_MUSCULAR_GROUP";
+        // <summary>
+        /// Muscles
+        /// </summary>
+        [Translation("Muscles")]
+        public const string MUSCLES = "MUSCLES";
+        // <summary>
+        /// Muscle
+        /// </summary>
+        [Translation("Muscle")]
+        public const string MUSCLE = "MUSCLE";
     }
 }

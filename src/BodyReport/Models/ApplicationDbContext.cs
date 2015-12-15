@@ -39,7 +39,6 @@ namespace BodyReport.Models
 
             var muscularGroupTable = builder.Entity<MuscularGroupRow>().ToTable("MuscularGroup");
             muscularGroupTable.Property(p => p.Id).ValueGeneratedNever();
-            muscularGroupTable.Property(p => p.Name).HasMaxLength(100);
             muscularGroupTable.HasKey(s => new { s.Id });
 
             var sequencerTable = builder.Entity<SequencerRow>().ToTable("Sequencer");
@@ -50,8 +49,11 @@ namespace BodyReport.Models
 
             var bodyExerciseTable = builder.Entity<BodyExerciseRow>().ToTable("BodyExercise");
             bodyExerciseTable.Property(p => p.Id).ValueGeneratedNever();
-            bodyExerciseTable.Property(p => p.Name).HasMaxLength(100);
             bodyExerciseTable.HasKey(s => new { s.Id });
+
+            var muscleTable = builder.Entity<MuscleRow>().ToTable("Muscle");
+            muscleTable.Property(p => p.Id).ValueGeneratedNever();
+            muscleTable.HasKey(s => new { s.Id });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -63,5 +65,6 @@ namespace BodyReport.Models
         public DbSet<MuscularGroupRow> MuscularGroups { get; set; }
         public DbSet<SequencerRow> Sequencers { get; set; }
         public DbSet<BodyExerciseRow> BodyExercises { get; set; }
+        public DbSet<MuscleRow> Muscles { get; set; }
     }
 }

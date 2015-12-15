@@ -39,5 +39,9 @@
   "USER": "User",
   "SUSPENDED": "Suspended",
   "ACTIVATE": "Activate",
-  "SEARCH": "Search"
+  "SEARCH": "Search",
+  "MUSCULAR_GROUP": "Muscular group",
+  "LIST_OF_MUSCULAR_GROUP": "List of muscular group",
+  "MUSCLES": "Muscles",
+  "MUSCLE": "Muscle"
 }

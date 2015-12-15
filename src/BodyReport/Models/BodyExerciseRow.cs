@@ -14,9 +14,10 @@ namespace BodyReport.Models
         /// Id
         /// </summary>
         public int Id { get; set; }
+
         /// <summary>
-        /// Name
+        /// Muscle Id
         /// </summary>
-        public string Name { get; set; }
+        public int MuscleId { get; set; }
     }
 }

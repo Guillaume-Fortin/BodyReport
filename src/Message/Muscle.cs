@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Message
+{
+    public class MuscleKey
+    {
+        /// <summary>
+        /// Muscle Id
+        /// </summary>
+        public int Id { get; set; }
+    }
+
+    /// <summary>
+    /// Muscle
+    /// </summary>
+    public class Muscle : MuscleKey
+    {
+        /// <summary>
+        /// Muscular group Id
+        /// </summary>
+        public int MuscularGroupId { get; set; }
+
+        /// <summary>
+        /// Muscle Name
+        /// </summary>
+        public string Name { get; set; }
+    }
+}

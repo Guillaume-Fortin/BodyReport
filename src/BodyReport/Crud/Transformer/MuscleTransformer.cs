@@ -7,28 +7,30 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Transformer
 {
-    public static class MuscularGroupTransformer
+    public static class MuscleTransformer
     {
-        public static string GetTranslationKey(int muscularGroupId)
+        public static string GetTranslationKey(int muscleId)
         {
-            return string.Format("MG-{0}", muscularGroupId);
+            return string.Format("MUSCLE-{0}", muscleId);
         }
 
-        public static void ToRow(MuscularGroup bean, MuscularGroupRow row)
+        public static void ToRow(Muscle bean, MuscleRow row)
         {
             if (bean == null)
                 return;
 
             row.Id = bean.Id;
+            row.MuscularGroupId = bean.MuscularGroupId;
         }
 
-        internal static MuscularGroup ToBean(MuscularGroupRow row)
+        internal static Muscle ToBean(MuscleRow row)
         {
             if (row == null)
                 return null;
 
-            var bean = new MuscularGroup();
+            var bean = new Muscle();
             bean.Id = row.Id;
+            bean.MuscularGroupId = row.MuscularGroupId;
             bean.Name = Resources.Translation.GetInDB(GetTranslationKey(row.Id));
             return bean;
         }

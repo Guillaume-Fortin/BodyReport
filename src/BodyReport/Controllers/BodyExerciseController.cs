@@ -1,4 +1,5 @@
-﻿using BodyReport.Framework;
+﻿using BodyReport.Crud.Transformer;
+using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
@@ -7,6 +8,7 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
@@ -61,10 +63,28 @@ namespace BodyReport.Controllers
             {
                 foreach(var bodyExercise in bodyExercises)
                 {
-                    result.Add(new BodyExerciseViewModel() { Id = bodyExercise.Id, Name = bodyExercise.Name, ImageUrl = GetImageUrl(bodyExercise.ImageName) });
+                    result.Add(new BodyExerciseViewModel() {
+                        Id = bodyExercise.Id,
+                        Name = bodyExercise.Name,
+                        ImageUrl = GetImageUrl(bodyExercise.ImageName),
+                        MuscleId = bodyExercise.MuscleId,
+                        MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId))
+                    });
                 }
             }
             return View(result);
+        }
+
+        private List<SelectListItem> CreateSelectMuscleItemList(List<Muscle> muscleList, int currentId)
+        {
+            var result = new List<SelectListItem>();
+
+            foreach (Muscle muscle in muscleList)
+            {
+                result.Add(new SelectListItem { Text = muscle.Name, Value = muscle.Id.ToString(), Selected = currentId == muscle.Id });
+            }
+
+            return result;
         }
 
         //
@@ -72,8 +92,10 @@ namespace BodyReport.Controllers
         [HttpGet]
         public IActionResult Create(string returnUrl = null)
         {
+            var muscleManager = new MuscleManager(_dbContext);
+            ViewBag.Muscles = CreateSelectMuscleItemList(muscleManager.FindMuscles(), 0);
+
             return View(new BodyExerciseViewModel());
-           
         }
 
         // Create new Body Exercise
@@ -84,7 +106,7 @@ namespace BodyReport.Controllers
             if (ModelState.IsValid)
             {
                 var manager = new BodyExerciseManager(_dbContext);
-                var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name };
+                var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name, MuscleId = bodyExerciseViewModel.MuscleId };
                 bodyExercise = manager.CreateBodyExercise(bodyExercise);
                 if(bodyExercise == null || bodyExercise.Id == 0)
                 {
@@ -97,6 +119,9 @@ namespace BodyReport.Controllers
 
                 return RedirectToAction("Index");
             }
+
+            var muscleManager = new MuscleManager(_dbContext);
+            ViewBag.Muscles = CreateSelectMuscleItemList(muscleManager.FindMuscles(), 0);
 
             return View(bodyExerciseViewModel);
         }
@@ -116,7 +141,13 @@ namespace BodyReport.Controllers
                     var bodyExerciseViewModel = new BodyExerciseViewModel();
                     bodyExerciseViewModel.Id = bodyExercise.Id;
                     bodyExerciseViewModel.Name = bodyExercise.Name;
+                    bodyExerciseViewModel.MuscleId = bodyExercise.MuscleId;
+                    bodyExerciseViewModel.MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId));
                     bodyExerciseViewModel.ImageUrl = GetImageUrl(bodyExercise.ImageName);
+
+                    var muscleManager = new MuscleManager(_dbContext);
+                    ViewBag.Muscles = CreateSelectMuscleItemList(muscleManager.FindMuscles(), bodyExercise.MuscleId);
+
                     return View(bodyExerciseViewModel);
                 }
             }
@@ -138,6 +169,7 @@ namespace BodyReport.Controllers
                 {
                     string oldImageName = bodyExercise.ImageName;
                     bodyExercise.Name = bodyExerciseViewModel.Name;
+                    bodyExercise.MuscleId = bodyExerciseViewModel.MuscleId;
                     bodyExercise = manager.UpdateBodyExercise(bodyExercise);
                     //Save a new Image if it's correct
                     if (CheckUploadedImageIsCorrect(imageFile))
@@ -148,6 +180,13 @@ namespace BodyReport.Controllers
                     return RedirectToAction("Index");
                 }
             }
+
+            int muscleId = 0;
+            if (bodyExerciseViewModel != null)
+                muscleId = bodyExerciseViewModel.MuscleId;
+
+            var muscleManager = new MuscleManager(_dbContext);
+            ViewBag.Muscles = CreateSelectMuscleItemList(muscleManager.FindMuscles(), muscleId);
 
             return View(bodyExerciseViewModel);
         }

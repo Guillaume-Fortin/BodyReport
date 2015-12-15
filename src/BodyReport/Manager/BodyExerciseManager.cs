@@ -1,6 +1,7 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Crud.Transformer;
 using BodyReport.Models;
+using BodyReport.Resources;
 using Message;
 using System;
 using System.Collections.Generic;
@@ -38,16 +39,25 @@ namespace BodyReport.Manager
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
+            //Update Translation Name
+            Translation.UpdateInDB(BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id), bodyExercise.Name, _dbContext);
+
             return _bodyExerciseModule.Create(bodyExercise);
         }
 
         internal void DeleteBodyExercise(BodyExerciseKey key)
         {
+            //Update Translation Name
+            Translation.DeleteInDB(MuscularGroupTransformer.GetTranslationKey(key.Id), _dbContext);
+
             _bodyExerciseModule.Delete(key);
         }
 
         internal BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
         {
+            //Update Translation Name
+            Translation.UpdateInDB(BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id), bodyExercise.Name, _dbContext);
+
             return _bodyExerciseModule.Update(bodyExercise);
         }
     }

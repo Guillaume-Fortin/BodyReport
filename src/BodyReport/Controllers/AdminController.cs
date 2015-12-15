@@ -1,6 +1,8 @@
-﻿using BodyReport.Framework;
+﻿using BodyReport.Crud.Transformer;
+using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Models;
+using BodyReport.Resources;
 using BodyReport.ViewModels.Admin;
 using Message;
 using Microsoft.AspNet.Authorization;
@@ -55,7 +57,6 @@ namespace BodyReport.Controllers
 
             return result;
         }
-
 
         // manage users
         // GET: /Admin/ManageUsers
@@ -327,6 +328,278 @@ namespace BodyReport.Controllers
                 }
             }
             return RedirectToAction("ManageRoles");
+        }
+        #endregion
+
+        #region ManageMuscularGroups
+
+        // manage users
+        // GET: /Admin/ManageMuscularGroups
+        [HttpGet]
+        public IActionResult ManageMuscularGroups()
+        {
+            MuscularGroupViewModel muscularGroupViewModel;
+            var muscularGroupsViewModels = new List<MuscularGroupViewModel>();
+            var manager = new MuscularGroupManager(_dbContext);
+
+            var muscularGroups = manager.FindMuscularGroups();
+            if (muscularGroups != null)
+            {
+                foreach (var muscularGroup in muscularGroups)
+                {
+                    muscularGroupViewModel = new MuscularGroupViewModel() { Id = muscularGroup.Id, Name = muscularGroup.Name };
+                    muscularGroupsViewModels.Add(muscularGroupViewModel);
+                }
+            }
+
+            ViewBag.MuscularGroups = muscularGroupsViewModels;
+            
+            return View();
+        }
+        
+        // Create new role
+        // GET: /Admin/CreateMuscularGroup
+        [HttpGet]
+        public IActionResult CreateMuscularGroup()
+        {
+            return View(new MuscularGroupViewModel());
+        }
+
+        // Create new role
+        // POST: /Admin/CreateMuscularGroup
+        [HttpPost]
+        public IActionResult CreateMuscularGroup(MuscularGroupViewModel muscularGroupViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var manager = new MuscularGroupManager(_dbContext);
+                var muscularGroup = new MuscularGroup() { Name = muscularGroupViewModel.Name };
+                muscularGroup = manager.CreateMuscularGroup(muscularGroup);
+                if (muscularGroup == null || muscularGroup.Id == 0)
+                {
+                    _logger.LogError("Create new muscular group fail");
+                }
+
+                return RedirectToAction("ManageMuscularGroups");
+            }
+
+            return View(muscularGroupViewModel);
+        }
+
+        // Edit a Muscular Group
+        // GET: /Admin/EditMuscularGroup
+        [HttpGet]
+        public IActionResult EditMuscularGroup(int id)
+        {
+            if (id != 0)
+            {
+                var manager = new MuscularGroupManager(_dbContext);
+                var key = new MuscularGroupKey() { Id = id };
+                var muscularGroup = manager.GetMuscularGroup(key);
+                if (muscularGroup != null)
+                {
+                    var viewModel = new MuscularGroupViewModel();
+                    viewModel.Id = muscularGroup.Id;
+                    viewModel.Name = muscularGroup.Name;
+                    return View(viewModel);
+                }
+            }
+
+            return RedirectToAction("ManageMuscularGroups");
+        }
+
+        // Edit a role
+        // POST: /Admin/EditMuscularGroup
+        [HttpPost]
+        public IActionResult EditMuscularGroup(MuscularGroupViewModel viewModel)
+        {
+            if (ModelState.IsValid && viewModel.Id > 0)
+            {
+                // Verify not exist on id
+                var manager = new MuscularGroupManager(_dbContext);
+                var key = new MuscularGroupKey() { Id = viewModel.Id };
+                var muscularGroup = manager.GetMuscularGroup(key);
+                if (muscularGroup != null)
+                {
+                    muscularGroup.Name = viewModel.Name;
+                    muscularGroup = manager.UpdateMuscularGroup(muscularGroup);
+                    return RedirectToAction("ManageMuscularGroups");
+                }
+            }
+
+            return View(viewModel);
+        }
+
+        //
+        // GET: /Admin/DeleteMuscularGroup
+        [HttpGet]
+        public IActionResult DeleteMuscularGroup(int id)
+        {
+            if (id != 0)
+            {
+                var manager = new MuscularGroupManager(_dbContext);
+                var key = new MuscularGroupKey() { Id = id };
+                var muscularGroup = manager.GetMuscularGroup(key);
+                if (muscularGroup != null)
+                {
+                    manager.DeleteMuscularGroup(muscularGroup);
+                }
+            }
+            return RedirectToAction("ManageMuscularGroups");
+        }
+        #endregion
+
+        #region ManageMuscles
+
+        // manage muscles
+        // GET: /Admin/ManageMuscles
+        [HttpGet]
+        public IActionResult ManageMuscles()
+        {
+            MuscleViewModel muscleViewModel;
+            var musculeViewModels = new List<MuscleViewModel>();
+
+            var manager = new MuscleManager(_dbContext);
+            var muscles = manager.FindMuscles();
+            if (muscles != null)
+            {
+                foreach (var muscle in muscles)
+                {
+                    muscleViewModel = new MuscleViewModel() {
+                        Id = muscle.Id,
+                        Name = muscle.Name,
+                        MuscularGroupId = muscle.MuscularGroupId,
+                        MuscularGroupName = Translation.GetInDB(MuscularGroupTransformer.GetTranslationKey(muscle.MuscularGroupId))
+                    };
+                    musculeViewModels.Add(muscleViewModel);
+                }
+            }
+
+            ViewBag.Muscles = musculeViewModels;
+
+            return View();
+        }
+
+        private List<SelectListItem> CreateSelectMuscularGroupItemList(List<MuscularGroup> muscularGroupList, int currentId)
+        {
+            var result = new List<SelectListItem>();
+
+            foreach (MuscularGroup muscularGroup in muscularGroupList)
+            {
+                result.Add(new SelectListItem { Text = muscularGroup.Name, Value = muscularGroup.Id.ToString(), Selected = currentId == muscularGroup.Id });
+            }
+
+            return result;
+        }
+
+        // Create
+        // GET: /Admin/CreateMuscle
+        [HttpGet]
+        public IActionResult CreateMuscle()
+        {
+            var muscularGroupManager = new MuscularGroupManager(_dbContext);
+            ViewBag.MuscularGroups = CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), 0);
+
+            return View(new MuscleViewModel());
+        }
+
+        // Create
+        // POST: /Admin/CreateMuscle
+        [HttpPost]
+        public IActionResult CreateMuscle(MuscleViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var manager = new MuscleManager(_dbContext);
+                var muscle = new Muscle() { Name = viewModel.Name, MuscularGroupId = viewModel.MuscularGroupId };
+                muscle = manager.CreateMuscle(muscle);
+                if (muscle == null || muscle.Id == 0)
+                {
+                    _logger.LogError("Create new muscle fail");
+                }
+
+                return RedirectToAction("ManageMuscles");
+            }
+
+            var muscularGroupManager = new MuscularGroupManager(_dbContext);
+            ViewBag.MuscularGroups = CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), 0);
+
+            return View(viewModel);
+        }
+
+        // Edit
+        // GET: /Admin/EditMuscle
+        [HttpGet]
+        public IActionResult EditMuscle(int id)
+        {
+            if (id != 0)
+            {
+                var manager = new MuscleManager(_dbContext);
+                var key = new MuscleKey() { Id = id };
+                var muscle = manager.GetMuscle(key);
+                if (muscle != null)
+                {
+                    var viewModel = new MuscleViewModel();
+                    viewModel.Id = muscle.Id;
+                    viewModel.Name = muscle.Name;
+                    viewModel.MuscularGroupId = muscle.MuscularGroupId;
+
+                    var muscularGroupManager = new MuscularGroupManager(_dbContext);
+                    ViewBag.MuscularGroups = CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), viewModel.MuscularGroupId);
+
+                    return View(viewModel);
+                }
+            }
+
+            return RedirectToAction("ManageMuscles");
+        }
+
+        // Edit
+        // POST: /Admin/EditMuscle
+        [HttpPost]
+        public IActionResult EditMuscle(MuscleViewModel viewModel)
+        {
+            if (ModelState.IsValid && viewModel.Id > 0)
+            {
+                // Verify not exist on id
+                var manager = new MuscleManager(_dbContext);
+                var key = new MuscleKey() { Id = viewModel.Id };
+                var muscle = manager.GetMuscle(key);
+                if (muscle != null)
+                {
+                    muscle.Name = viewModel.Name;
+                    muscle.MuscularGroupId = viewModel.MuscularGroupId;
+                    muscle = manager.UpdateMuscle(muscle);
+                    return RedirectToAction("ManageMuscles");
+                }
+            }
+
+            int muscularGroupId = 0;
+            if (viewModel != null)
+                muscularGroupId = viewModel.MuscularGroupId;
+
+            var muscularGroupManager = new MuscularGroupManager(_dbContext);
+            ViewBag.MuscularGroups = CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), muscularGroupId);
+
+            return View(viewModel);
+        }
+
+        //Delete
+        // GET: /Admin/DeleteMuscle
+        [HttpGet]
+        public IActionResult DeleteMuscle(int id)
+        {
+            if (id != 0)
+            {
+                var manager = new MuscleManager(_dbContext);
+                var key = new MuscleKey() { Id = id };
+                var muscle = manager.GetMuscle(key);
+                if (muscle != null)
+                {
+                    manager.DeleteMuscle(muscle);
+                }
+            }
+            return RedirectToAction("ManageMuscles");
         }
         #endregion
     }

@@ -25,9 +25,9 @@ namespace Message
         /// </summary>
         public string ImageName { get; set; } = string.Empty;
         /// <summary>
-        /// Muscular Group Id
+        /// Muscle Id
         /// </summary>
-        public int MuscularGroupId { get; set; } = 0;
+        public int MuscleId { get; set; } = 0;
     }
 
     public class BodyExerciceCriteria : CriteriaField
