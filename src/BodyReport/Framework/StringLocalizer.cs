@@ -80,12 +80,15 @@ namespace BodyReport.Framework
                 string culture = CultureInfo.CurrentCulture.Name;
 
                 Dictionary<string, string> translationList = GetCurrentTranslationList();
-                if (translationList != null)
+                lock(translationList)
                 {
-                    if (translationList.ContainsKey(name))
+                    if (translationList != null)
                     {
-                        found = true;
-                        value = translationList[name];
+                        if (translationList.ContainsKey(name))
+                        {
+                            found = true;
+                            value = translationList[name];
+                        }
                     }
                 }
                 if (value == null)
@@ -127,7 +130,10 @@ namespace BodyReport.Framework
         public bool IsTranslationInDictionnaryExist(string key)
         {
             Dictionary<string, string> translationList = GetCurrentTranslationList();
-            return translationList.ContainsKey(key);
+            lock (translationList)
+            {
+                return translationList.ContainsKey(key);
+            }
         }
 
         /// <summary>
@@ -139,18 +145,24 @@ namespace BodyReport.Framework
         public void AddTranslationInDictionnary(string key, string value)
         {
             Dictionary<string, string> translationList = GetCurrentTranslationList();
-            if(translationList.ContainsKey(key))
-                _logger.LogError("Programming error, multiple adding same value in dictionry");
-            else
-                translationList.Add(key, value);
+            lock (translationList)
+            {
+                if (translationList.ContainsKey(key))
+                    _logger.LogError("Programming error, multiple adding same value in dictionry");
+                else
+                    translationList.Add(key, value);
+            }
         }
         
         internal void RemoveTranslationInDictionnary(string key)
         {
             Dictionary<string, string> translationList = GetCurrentTranslationList();
-            if (translationList.ContainsKey(key))
+            lock (translationList)
             {
-                translationList.Remove(key);
+                if (translationList.ContainsKey(key))
+                {
+                    translationList.Remove(key);
+                }
             }
         }
     }
