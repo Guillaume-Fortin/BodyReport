@@ -6,7 +6,7 @@
 <h2>@Translation.ADMIN : @ViewData["Title"].</h2>
 
 <p>
-    <a asp-action="Create">@Translation.CREATE_NEW</a>
+    <a asp-action="CreateBodyExercise">@Translation.CREATE_NEW</a>
 </p>
 <table class="table">
     <tr>
@@ -41,8 +41,8 @@
                 <img src="@item.ImageUrl" width="120" height="80"/>
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">@Translation.EDIT</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Translation.DELETE</a>
+                <a asp-action="EditBodyExercise" asp-route-id="@item.Id">@Translation.EDIT</a> |
+                <a asp-action="DeleteBodyExercise" asp-route-id="@item.Id">@Translation.DELETE</a>
             </td>
         </tr>
     }

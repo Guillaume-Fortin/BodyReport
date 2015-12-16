@@ -39,10 +39,16 @@ namespace BodyReport.Manager
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
-            //Update Translation Name
-            Translation.UpdateInDB(BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id), bodyExercise.Name, _dbContext);
-
-            return _bodyExerciseModule.Create(bodyExercise);
+            string name = bodyExercise.Name;
+            bodyExercise = _bodyExerciseModule.Create(bodyExercise);
+            if (bodyExercise != null && bodyExercise.Id > 0)
+            {
+                //Update Translation Name
+                string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
+                Translation.UpdateInDB(trKey, name, _dbContext);
+                bodyExercise.Name = Translation.GetInDB(trKey, _dbContext);
+            }
+            return bodyExercise;
         }
 
         internal void DeleteBodyExercise(BodyExerciseKey key)
