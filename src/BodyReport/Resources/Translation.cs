@@ -181,6 +181,17 @@ namespace BodyReport.Resources
         public static string LIST_OF_MUSCULAR_GROUP { get { return Get(TRS.LIST_OF_MUSCULAR_GROUP); } }
         public static string MUSCLES { get { return Get(TRS.MUSCLES); } }
         public static string MUSCLE { get { return Get(TRS.MUSCLE); } }
+        public static string MY_PROFIL { get { return Get(TRS.MY_PROFIL); } }
+        public static string ACCOUNT_INFORMATION { get { return Get(TRS.ACCOUNT_INFORMATION); } }
+        public static string SEX { get { return Get(TRS.SEX); } }
+        public static string HEIGHT { get { return Get(TRS.HEIGHT); } }
+        public static string WEIGHT { get { return Get(TRS.WEIGHT); } }
+        public static string ZIP_CODE { get { return Get(TRS.ZIP_CODE); } }
+        public static string CITY { get { return Get(TRS.CITY); } }
+        public static string OBJECTIVES_OF_BODY_BUILDING { get { return Get(TRS.OBJECTIVES_OF_BODY_BUILDING); } }
+        public static string MORPHOLOGY { get { return Get(TRS.MORPHOLOGY); } }
+        public static string MAN { get { return Get(TRS.MAN); } }
+        public static string WOMAN { get { return Get(TRS.WOMAN); } }
     }
 
     /// <summary>
@@ -413,5 +424,60 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Muscle")]
         public const string MUSCLE = "MUSCLE";
+        // <summary>
+        /// My profil
+        /// </summary>
+        [Translation("My profil")]
+        public const string MY_PROFIL = "MY_PROFIL";
+        // <summary>
+        /// Account information
+        /// </summary>
+        [Translation("Account information")]
+        public const string ACCOUNT_INFORMATION = "ACCOUNT_INFORMATION";
+        // <summary>
+        /// Sex
+        /// </summary>
+        [Translation("Sex")]
+        public const string SEX = "SEX";
+        // <summary>
+        /// Height
+        /// </summary>
+        [Translation("Height")]
+        public const string HEIGHT = "HEIGHT";
+        // <summary>
+        /// Weight
+        /// </summary>
+        [Translation("Weight")]
+        public const string WEIGHT = "WEIGHT";
+        // <summary>
+        /// Zip code
+        /// </summary>
+        [Translation("Zip code")]
+        public const string ZIP_CODE = "ZIP_CODE";
+        // <summary>
+        /// City
+        /// </summary>
+        [Translation("City")]
+        public const string CITY = "CITY";
+        // <summary>
+        /// Objectives of body building
+        /// </summary>
+        [Translation("Objectives of body building")]
+        public const string OBJECTIVES_OF_BODY_BUILDING = "OBJECTIVES_OF_BODY_BUILDING";
+        // <summary>
+        /// Morphology
+        /// </summary>
+        [Translation("Morphology")]
+        public const string MORPHOLOGY = "MORPHOLOGY";
+        // <summary>
+        /// Man
+        /// </summary>
+        [Translation("Man")]
+        public const string MAN = "MAN";
+        // <summary>
+        /// Woman
+        /// </summary>
+        [Translation("Woman")]
+        public const string WOMAN = "WOMAN";
     }
 }

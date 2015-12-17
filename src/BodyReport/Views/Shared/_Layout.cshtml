@@ -33,8 +33,9 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index">@Translation.HOME</a></li>
-                        <li><a asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                        <li><a asp-controller="User" asp-action="Index">@Translation.MY_PROFIL</a></li>
+                        @*<li><a asp-controller="Home" asp-action="About">About</a></li>*@
+                        @*<li><a asp-controller="Home" asp-action="Contact">Contact</a></li>*@
                         @if (User.IsSignedIn() && User.IsInRole("Admin"))
                         {
                             <li><a asp-controller="Admin" asp-action="Index">@Translation.ADMIN</a></li>

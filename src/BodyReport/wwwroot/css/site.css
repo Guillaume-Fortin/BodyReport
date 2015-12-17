@@ -32,3 +32,8 @@ textarea {
         z-index: 10 !important;
     }
 }
+
+IMG.Center-Display {
+    display: block;
+    margin-left: auto;
+    margin-right: auto }

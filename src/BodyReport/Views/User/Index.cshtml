@@ -1,0 +1,70 @@
+﻿@model UserProfilViewModel
+@using Message;
+
+<h2>@Translation.MY_PROFIL.</h2>
+<div class="panel-group">
+    <div class="panel panel-info">
+        <div class="panel-heading">@Translation.ACCOUNT_INFORMATION <a asp-controller="User" asp-action="EditUserProfil">[@Translation.EDIT]</a></div>
+        <div class="panel-body">
+             <div class="row">
+                <div class="col-sm-8">
+                <dl class="dl-horizontal">
+                    <dt>@Translation.USER_NAME :</dt>
+                    <dd>
+                        @Model.Name
+                    </dd>
+                    <dt>@Translation.EMAIL :</dt>
+                    <dd>
+                        @Model.Email
+                    </dd>
+                    <dt>@Translation.SEX :</dt>
+                    <dd>
+                        @if(Model.SexId == (int)TSexType.MAN)
+                        {
+                            @Translation.MAN
+                        }
+                        else
+                        {
+                            @Translation.WOMAN
+                        }
+                    </dd>
+                    <dt>@Translation.HEIGHT :</dt>
+                    <dd>
+                        @Model.Height cm
+                    </dd>
+                    <dt>@Translation.WEIGHT :</dt>
+                    <dd>
+                        @Model.Weight kg
+                    </dd>
+                    <dt>@Translation.ZIP_CODE :</dt>
+                    <dd>
+                        @Model.ZipCode
+                    </dd>
+                    <dt>@Translation.CITY :</dt>
+                    <dd>
+                        @Model.City
+                    </dd>
+                </dl>
+                 </div>
+                 <div class="col-sm-4">
+                     <img class="Center-Display" src="https://avatars0.githubusercontent.com/u/11698693?v=3&s=460" width="120", height="120"/>
+                 </div>
+             </div>
+        </div>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">@Translation.OBJECTIVES_OF_BODY_BUILDING <a asp-controller="User" asp-action="EditProfil">[@Translation.EDIT]</a></div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>@Translation.WEIGHT :</dt>
+                <dd>
+                    Weight loss
+                </dd>
+                <dt>@Translation.MORPHOLOGY :</dt>
+                <dd>
+                    Mesomorph
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>

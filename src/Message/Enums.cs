@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 
 namespace Message
 {
+    public enum TSexType : int
+    {
+        MAN=0, WOMAN=1
+    }
+
     public enum TExerciseType
     {
 

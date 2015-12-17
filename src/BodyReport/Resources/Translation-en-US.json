@@ -43,5 +43,17 @@
   "MUSCULAR_GROUP": "Muscular group",
   "LIST_OF_MUSCULAR_GROUP": "List of muscular group",
   "MUSCLES": "Muscles",
-  "MUSCLE": "Muscle"
+  "MUSCLE": "Muscle",
+  "MY_PROFIL": "My profil",
+  "ACCOUNT_INFORMATION": "Account information",
+  "SEX": "Sex",
+  "HEIGHT": "Height",
+  "WEIGHT": "Weight",
+  "POSTAL_CODE": "Postal code",
+  "CITY": "City",
+  "OBJECTIVES_OF_BODY_BUILDING": "Objectives of body building",
+  "MORPHOLOGY": "Morphology",
+  "ZIP_CODE": "Zip code",
+  "MAN": "Man",
+  "WOMAN": "Woman"
 }
