@@ -60,7 +60,8 @@ namespace BodyReport.Controllers
                 var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
                 if (userInfo != null)
                 {
-                    viewModel.SexId = userInfo.Sex;
+                    viewModel.SexId = (int)userInfo.Sex;
+                    viewModel.Unit = (int)userInfo.Unit;
                     viewModel.Height = userInfo.Height;
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
@@ -81,7 +82,15 @@ namespace BodyReport.Controllers
             result.Add(new SelectListItem { Text = Translation.WOMAN, Value = ((int)TSexType.WOMAN).ToString(), Selected = sexId == (int)TSexType.WOMAN });
             return result;
         }
-        
+
+        private List<SelectListItem> CreateSelectUnitItemList(int unitId)
+        {
+            var result = new List<SelectListItem>();
+            result.Add(new SelectListItem { Text = Translation.IMPERIAL, Value = ((int)TUnitType.Imperial).ToString(), Selected = unitId == (int)TUnitType.Imperial });
+            result.Add(new SelectListItem { Text = Translation.METRIC, Value = ((int)TUnitType.Metric).ToString(), Selected = unitId == (int)TUnitType.Metric });
+            return result;
+        }
+
         private List<SelectListItem> CreateSelectCityItemList(List<City> cityList, int userCityId)
         {
             var result = new List<SelectListItem>();
@@ -113,7 +122,8 @@ namespace BodyReport.Controllers
                 viewModel.Email = user.Email;
                 if (userInfo != null)
                 {
-                    viewModel.SexId = userInfo.Sex;
+                    viewModel.SexId = (int)userInfo.Sex;
+                    viewModel.Unit = (int)userInfo.Unit;
                     viewModel.Height = userInfo.Height;
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
@@ -121,6 +131,7 @@ namespace BodyReport.Controllers
                 }
                 ViewBag.Sex = CreateSelectSexItemList(viewModel.SexId);
                 ViewBag.Cities = CreateSelectCityItemList(GetTemporaryCities(), viewModel.CityId);
+                ViewBag.Units = CreateSelectUnitItemList(viewModel.Unit);
                 return View(viewModel);
             }
             
@@ -154,11 +165,12 @@ namespace BodyReport.Controllers
                     var userInfo = new UserInfo()
                     {
                         UserId = viewModel.UserId,
+                        Unit = (TUnitType)viewModel.Unit,
                         Height = viewModel.Height,
                         Weight = viewModel.Weight,
                         ZipCode = viewModel.ZipCode,
                         CityId = viewModel.CityId,
-                        Sex = viewModel.SexId
+                        Sex = (TSexType)viewModel.SexId
                     };
 
                     userInfoManager.UpdateUserInfo(userInfo);
@@ -168,6 +180,7 @@ namespace BodyReport.Controllers
 
             ViewBag.Sex = CreateSelectSexItemList(sexId);
             ViewBag.Cities = CreateSelectCityItemList(GetTemporaryCities(), cityId);
+            ViewBag.Units = CreateSelectUnitItemList(viewModel.Unit);
             return View(viewModel);
         }
     }

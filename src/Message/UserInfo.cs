@@ -22,7 +22,16 @@ namespace Message
         /// <summary>
         /// Sex
         /// </summary>
-        public int Sex
+        public TSexType Sex
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Unit Type
+        /// </summary>
+        public TUnitType Unit
         {
             get;
             set;
@@ -31,7 +40,7 @@ namespace Message
         /// <summary>
         /// Height
         /// </summary>
-        public int Height
+        public double Height
         {
             get;
             set;
@@ -40,7 +49,7 @@ namespace Message
         /// <summary>
         /// Weight
         /// </summary>
-        public int Weight
+        public double Weight
         {
             get;
             set;

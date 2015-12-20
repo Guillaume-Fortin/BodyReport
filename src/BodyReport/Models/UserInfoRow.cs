@@ -26,9 +26,18 @@ namespace BodyReport.Models
         }
 
         /// <summary>
+        /// Unit system
+        /// </summary>
+        public int Unit
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Height
         /// </summary>
-        public int Height
+        public double Height
         {
             get;
             set;
@@ -37,7 +46,7 @@ namespace BodyReport.Models
         /// <summary>
         /// Weight
         /// </summary>
-        public int Weight
+        public double Weight
         {
             get;
             set;

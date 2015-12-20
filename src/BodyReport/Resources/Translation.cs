@@ -192,6 +192,12 @@ namespace BodyReport.Resources
         public static string MORPHOLOGY { get { return Get(TRS.MORPHOLOGY); } }
         public static string MAN { get { return Get(TRS.MAN); } }
         public static string WOMAN { get { return Get(TRS.WOMAN); } }
+        public static string UNIT { get { return Get(TRS.UNIT); } }
+        public static string IMPERIAL { get { return Get(TRS.IMPERIAL); } }
+        public static string METRIC { get { return Get(TRS.METRIC); } }
+        public static string UNIT_SYSTEM_INFO { get { return Get(TRS.UNIT_SYSTEM_INFO); } }
+        public static string POUND { get { return Get(TRS.POUND); } }
+        public static string INCH { get { return Get(TRS.INCH); } }
     }
 
     /// <summary>
@@ -479,5 +485,35 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Woman")]
         public const string WOMAN = "WOMAN";
+        // <summary>
+        /// Unit
+        /// </summary>
+        [Translation("Unit")]
+        public const string UNIT = "UNIT";
+        // <summary>
+        /// Imperial
+        /// </summary>
+        [Translation("Imperial")]
+        public const string IMPERIAL = "IMPERIAL";
+        // <summary>
+        /// Metric
+        /// </summary>
+        [Translation("Metric")]
+        public const string METRIC = "METRIC";
+        // <summary>
+        /// Unit System: Imperial (pound, inch), Metric (kg, cm)
+        /// </summary>
+        [Translation("Unit System: Imperial (pound, inch), Metric (kg, cm)")]
+        public const string UNIT_SYSTEM_INFO = "UNIT_SYSTEM_INFO";
+        // <summary>
+        /// Pound
+        /// </summary>
+        [Translation("Pound")]
+        public const string POUND = "POUND";
+        // <summary>
+        /// Inch
+        /// </summary>
+        [Translation("Inch")]
+        public const string INCH = "INCH";
     }
 }

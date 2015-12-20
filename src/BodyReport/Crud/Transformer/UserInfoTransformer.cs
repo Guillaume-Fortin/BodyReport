@@ -15,9 +15,10 @@ namespace BodyReport.Crud.Transformer
                 return;
 
             row.UserId = bean.UserId;
+            row.Unit = (int)bean.Unit;
             row.Height = bean.Height;
             row.Weight = bean.Weight;
-            row.Sex = bean.Sex;
+            row.Sex = (int)bean.Sex;
             row.ZipCode = bean.ZipCode;
             row.CityId = bean.CityId;
         }
@@ -29,9 +30,10 @@ namespace BodyReport.Crud.Transformer
 
             var bean = new UserInfo();
             bean.UserId = row.UserId;
+            bean.Unit = (TUnitType)row.Unit;
             bean.Height = row.Height;
             bean.Weight = row.Weight;
-            bean.Sex = row.Sex;
+            bean.Sex = (TSexType)row.Sex;
             bean.ZipCode = row.ZipCode;
             bean.CityId = row.CityId;
             return bean;

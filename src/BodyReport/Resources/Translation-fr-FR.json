@@ -54,5 +54,11 @@
   "MORPHOLOGY": "Morphologie",
   "ZIP_CODE": "Code postal",
   "MAN": "Homme",
-  "WOMAN": "Femme"
+  "WOMAN": "Femme",
+  "UNIT": "Unité",
+  "IMPERIAL": "Système impérial",
+  "METRIC": "Système métrique",
+  "UNIT_SYSTEM_INFO": "Unité : Impériale (Livres, Pouces), Métrique (kg, cm)",
+  "POUND": "Livres",
+  "INCH": "Pouces"
 }

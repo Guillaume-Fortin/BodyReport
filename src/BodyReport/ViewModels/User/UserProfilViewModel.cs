@@ -24,11 +24,15 @@ namespace BodyReport.ViewModels.User
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.HEIGHT, ResourceType = typeof(Translation))]
-        public int Height { get; set; }
+        public double Height { get; set; }
+        
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.UNIT, ResourceType = typeof(Translation))]
+        public int Unit { get; set; }
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
-        public int Weight { get; set; }
+        public double Weight { get; set; }
 
         [Display(Name = TRS.ZIP_CODE, ResourceType = typeof(Translation))]
         public string ZipCode { get; set; }

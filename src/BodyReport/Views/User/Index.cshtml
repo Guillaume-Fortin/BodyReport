@@ -1,6 +1,19 @@
 ﻿@model UserProfilViewModel
 @using Message;
 
+@{
+    string weightUnit = "kg",  lengthUnit = "cm", unit = Translation.METRIC;
+
+    if(Model.Unit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
+
+
+}
+
 <h2>@Translation.MY_PROFIL.</h2>
 <div class="panel-group">
     <div class="panel panel-info">
@@ -28,13 +41,17 @@
                             @Translation.WOMAN
                         }
                     </dd>
+                    <dt>@Translation.UNIT :</dt>
+                    <dd>
+                        @unit
+                    </dd>
                     <dt>@Translation.HEIGHT :</dt>
                     <dd>
-                        @Model.Height cm
+                        @(Math.Round(Model.Height, 2)) @lengthUnit
                     </dd>
                     <dt>@Translation.WEIGHT :</dt>
                     <dd>
-                        @Model.Weight kg
+                        @(Math.Round(Model.Weight, 2)) @weightUnit
                     </dd>
                     <dt>@Translation.ZIP_CODE :</dt>
                     <dd>

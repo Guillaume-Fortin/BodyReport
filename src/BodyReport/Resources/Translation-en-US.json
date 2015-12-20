@@ -55,5 +55,11 @@
   "MORPHOLOGY": "Morphology",
   "ZIP_CODE": "Zip code",
   "MAN": "Man",
-  "WOMAN": "Woman"
+  "WOMAN": "Woman",
+  "UNIT": "Unit",
+  "IMPERIAL": "Imperial",
+  "METRIC": "Metric",
+  "UNIT_SYSTEM_INFO": "Unit System: Imperial (pound, inch), Metric (kg, cm)",
+  "POUND": "Pound",
+  "INCH": "Inch"
 }

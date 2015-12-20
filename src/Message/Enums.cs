@@ -14,4 +14,10 @@ namespace Message
     {
 
     }
+
+    public enum TUnitType
+    {
+        Imperial,
+        Metric
+    }
 }
