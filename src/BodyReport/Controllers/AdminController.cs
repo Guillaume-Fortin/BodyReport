@@ -296,7 +296,7 @@ namespace BodyReport.Controllers
         // Edit a role
         // POST: /Admin/EditRole
         [HttpPost]
-        public IActionResult EditRole(RoleViewModel viewModel, IFormFile imageFile)
+        public IActionResult EditRole(RoleViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -609,18 +609,6 @@ namespace BodyReport.Controllers
 
         #region BodyExercise
 
-        private string GetImageUrl(string imageName)
-        {
-            if (!System.IO.File.Exists(Path.Combine(_env.WebRootPath, "images", "bodyexercises", imageName)))
-            {
-                return "/images/unknown.png";
-            }
-            else
-            {
-                return string.Format("/images/bodyexercises/{0}", imageName);
-            }
-        }
-
         private void DeleteImage(string imageName)
         {
             var filePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", imageName);
@@ -629,37 +617,7 @@ namespace BodyReport.Controllers
                 System.IO.File.Delete(filePath);
             }
         }
-
-        private bool CheckUploadedImageIsCorrect(IFormFile imageFile)
-        {
-            if (imageFile != null)
-            {
-                // Treat upload image
-                double fileSizeKo = imageFile.Length / (double)1024;
-                if (fileSizeKo <= 500)
-                { // Accept little file image <= 500ko
-                    var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                    if (fileName.EndsWith(".png"))// Accept only png file
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private void SaveImage(IFormFile imageFile, string imageName)
-        {
-            if (imageFile != null)
-            {
-                var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                var filePath = Path.Combine(_env.WebRootPath, "images", "bodyexercises", imageName);
-                if (System.IO.File.Exists(filePath))
-                    System.IO.File.Delete(filePath);
-                imageFile.SaveAsAsync(filePath).Wait();
-            }
-        }
-
+        
         //Manage body exercise
         // GET: /BodyExercise/ManageBodyExercises
         [HttpGet]
@@ -676,7 +634,7 @@ namespace BodyReport.Controllers
                     {
                         Id = bodyExercise.Id,
                         Name = bodyExercise.Name,
-                        ImageUrl = GetImageUrl(bodyExercise.ImageName),
+                        ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName),
                         MuscleId = bodyExercise.MuscleId,
                         MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId))
                     });
@@ -722,9 +680,9 @@ namespace BodyReport.Controllers
                 {
                     _logger.LogError("Create new Body Exercise fail");
                 }
-                else if (CheckUploadedImageIsCorrect(imageFile))
+                else if (ImageUtils.CheckUploadedImageIsCorrect(imageFile))
                 {
-                    SaveImage(imageFile, bodyExercise.ImageName);
+                    ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "bodyexercises"), bodyExercise.ImageName);
                 }
 
                 return RedirectToAction("ManageBodyExercises");
@@ -753,7 +711,7 @@ namespace BodyReport.Controllers
                     bodyExerciseViewModel.Name = bodyExercise.Name;
                     bodyExerciseViewModel.MuscleId = bodyExercise.MuscleId;
                     bodyExerciseViewModel.MuscleName = Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId));
-                    bodyExerciseViewModel.ImageUrl = GetImageUrl(bodyExercise.ImageName);
+                    bodyExerciseViewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName);
 
                     var muscleManager = new MuscleManager(_dbContext);
                     ViewBag.Muscles = CreateSelectMuscleItemList(muscleManager.FindMuscles(), bodyExercise.MuscleId);
@@ -782,9 +740,9 @@ namespace BodyReport.Controllers
                     bodyExercise.MuscleId = bodyExerciseViewModel.MuscleId;
                     bodyExercise = manager.UpdateBodyExercise(bodyExercise);
                     //Save a new Image if it's correct
-                    if (CheckUploadedImageIsCorrect(imageFile))
+                    if (ImageUtils.CheckUploadedImageIsCorrect(imageFile))
                     {
-                        SaveImage(imageFile, bodyExercise.ImageName);
+                        ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "bodyexercises"), bodyExercise.ImageName);
                     }
 
                     return RedirectToAction("ManageBodyExercises");

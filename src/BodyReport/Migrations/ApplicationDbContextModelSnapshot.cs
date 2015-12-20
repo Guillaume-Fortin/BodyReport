@@ -77,6 +77,38 @@ namespace BodyReport.Migrations
                     b.HasAnnotation("Relational:TableName", "BodyExercise");
                 });
 
+            modelBuilder.Entity("BodyReport.Models.CityRow", b =>
+                {
+                    b.Property<int>("CountryId");
+
+                    b.Property<string>("ZipCode")
+                        .HasAnnotation("MaxLength", 80);
+
+                    b.Property<int>("Id");
+
+                    b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 400);
+
+                    b.HasKey("CountryId", "ZipCode", "Id");
+
+                    b.HasAnnotation("Relational:TableName", "City");
+                });
+
+            modelBuilder.Entity("BodyReport.Models.CountryRow", b =>
+                {
+                    b.Property<int>("Id");
+
+                    b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 400);
+
+                    b.Property<string>("ShortName")
+                        .HasAnnotation("MaxLength", 10);
+
+                    b.HasKey("Id");
+
+                    b.HasAnnotation("Relational:TableName", "Country");
+                });
+
             modelBuilder.Entity("BodyReport.Models.MuscleRow", b =>
                 {
                     b.Property<int>("Id");
@@ -131,7 +163,7 @@ namespace BodyReport.Migrations
                     b.Property<string>("UserId")
                         .HasAnnotation("MaxLength", 450);
 
-                    b.Property<int>("CityId");
+                    b.Property<int>("CountryId");
 
                     b.Property<double>("Height");
 

@@ -53,18 +53,25 @@
                     <dd>
                         @(Math.Round(Model.Weight, 2)) @weightUnit
                     </dd>
-                    <dt>@Translation.ZIP_CODE :</dt>
+                    @if (!string.IsNullOrWhiteSpace(Model.ZipCode))
+                    {
+                        <dt>@Translation.ZIP_CODE :</dt>
+                        <dd>
+                            @Model.ZipCode
+                        </dd>
+                        <dt>@Translation.CITY :</dt>
+                        <dd>
+                            @ViewBag.City
+                        </dd>
+                    }
+                    <dt>@Translation.COUNTRY :</dt>
                     <dd>
-                        @Model.ZipCode
-                    </dd>
-                    <dt>@Translation.CITY :</dt>
-                    <dd>
-                        @Model.City
+                        @ViewBag.Country
                     </dd>
                 </dl>
                  </div>
                  <div class="col-sm-4">
-                     <img class="Center-Display" src="https://avatars0.githubusercontent.com/u/11698693?v=3&s=460" width="120", height="120"/>
+                     <img class="Center-Display" src="@Model.ImageUrl" width="120", height="120"/>
                  </div>
              </div>
         </div>

@@ -20,7 +20,7 @@ namespace BodyReport.Crud.Transformer
             row.Weight = bean.Weight;
             row.Sex = (int)bean.Sex;
             row.ZipCode = bean.ZipCode;
-            row.CityId = bean.CityId;
+            row.CountryId = bean.CountryId;
         }
 
         internal static UserInfo ToBean(UserInfoRow row)
@@ -35,7 +35,7 @@ namespace BodyReport.Crud.Transformer
             bean.Weight = row.Weight;
             bean.Sex = (TSexType)row.Sex;
             bean.ZipCode = row.ZipCode;
-            bean.CityId = row.CityId;
+            bean.CountryId = row.CountryId;
             return bean;
         }
     }

@@ -65,9 +65,9 @@ namespace Message
         }
 
         /// <summary>
-        /// CityId
+        /// CountryId
         /// </summary>
-        public int CityId
+        public int CountryId
         {
             get;
             set;

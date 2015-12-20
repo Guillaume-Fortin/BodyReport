@@ -188,6 +188,7 @@ namespace BodyReport.Resources
         public static string WEIGHT { get { return Get(TRS.WEIGHT); } }
         public static string ZIP_CODE { get { return Get(TRS.ZIP_CODE); } }
         public static string CITY { get { return Get(TRS.CITY); } }
+        public static string COUNTRY { get { return Get(TRS.COUNTRY); } }
         public static string OBJECTIVES_OF_BODY_BUILDING { get { return Get(TRS.OBJECTIVES_OF_BODY_BUILDING); } }
         public static string MORPHOLOGY { get { return Get(TRS.MORPHOLOGY); } }
         public static string MAN { get { return Get(TRS.MAN); } }
@@ -198,6 +199,9 @@ namespace BodyReport.Resources
         public static string UNIT_SYSTEM_INFO { get { return Get(TRS.UNIT_SYSTEM_INFO); } }
         public static string POUND { get { return Get(TRS.POUND); } }
         public static string INCH { get { return Get(TRS.INCH); } }
+        public static string UNKNOWN { get { return Get(TRS.UNKNOWN); } }
+        public static string NOT_SPECIFIED { get { return Get(TRS.NOT_SPECIFIED); } }
+        public static string INVALID_INPUT_2P { get { return Get(TRS.INVALID_INPUT_2P); } }
     }
 
     /// <summary>
@@ -466,6 +470,11 @@ namespace BodyReport.Resources
         [Translation("City")]
         public const string CITY = "CITY";
         // <summary>
+        /// Country
+        /// </summary>
+        [Translation("Country")]
+        public const string COUNTRY = "COUNTRY";
+        // <summary>
         /// Objectives of body building
         /// </summary>
         [Translation("Objectives of body building")]
@@ -515,5 +524,21 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Inch")]
         public const string INCH = "INCH";
+        // <summary>
+        /// Unknown
+        /// </summary>
+        [Translation("Unknown")]
+        public const string UNKNOWN = "UNKNOWN";
+        // <summary>
+        /// Not Specified
+        /// </summary>
+        [Translation("Not Specified")]
+        public const string NOT_SPECIFIED = "NOT_SPECIFIED";
+        // <summary>
+        /// Invalid input :
+        /// </summary>
+        [Translation("Invalid input :")]
+        public const string INVALID_INPUT_2P = "INVALID_INPUT_2P";
+        
     }
 }

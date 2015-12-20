@@ -51,6 +51,7 @@
   "WEIGHT": "Weight",
   "POSTAL_CODE": "Postal code",
   "CITY": "City",
+  "COUNTRY": "Country",
   "OBJECTIVES_OF_BODY_BUILDING": "Objectives of body building",
   "MORPHOLOGY": "Morphology",
   "ZIP_CODE": "Zip code",
@@ -61,5 +62,8 @@
   "METRIC": "Metric",
   "UNIT_SYSTEM_INFO": "Unit System: Imperial (pound, inch), Metric (kg, cm)",
   "POUND": "Pound",
-  "INCH": "Inch"
+  "INCH": "Inch",
+  "UNKNOWN": "Unknown",
+  "NOT_SPECIFIED": "Not Specified",
+  "INVALID_INPUT_2P": "Invalid input :"
 }

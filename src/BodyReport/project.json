@@ -28,7 +28,8 @@
     "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
     "System.IO": "4.0.11-beta-23516",
     "Framework": "1.0.0-*",
-    "Message": "1.0.0-*"
+    "Message": "1.0.0-*",
+    "EntityFramework.Relational": "7.0.0-rc1-final"
   },
 
   "commands": {

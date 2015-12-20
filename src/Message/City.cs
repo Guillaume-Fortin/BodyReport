@@ -10,6 +10,24 @@ namespace Message
         /// <summary>
         /// Id (Key)
         /// </summary>
+        public int CountryId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// ZipCode (key)
+        /// </summary>
+        public string ZipCode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Id (Key)
+        /// </summary>
         public int Id
         {
             get;
@@ -20,7 +38,7 @@ namespace Message
     public class City : CityKey
     {
         /// <summary>
-        /// Name
+        /// City name
         /// </summary>
         public string Name
         {

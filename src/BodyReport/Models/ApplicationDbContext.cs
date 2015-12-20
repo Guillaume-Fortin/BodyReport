@@ -59,6 +59,19 @@ namespace BodyReport.Models
             userInfoTable.Property(p => p.UserId).HasMaxLength(450).ValueGeneratedNever();
             userInfoTable.Property(p => p.ZipCode).HasMaxLength(80).ValueGeneratedNever();
             userInfoTable.HasKey(s => new { s.UserId });
+
+            var cityTable = builder.Entity<CityRow>().ToTable("City");
+            cityTable.Property(p => p.CountryId).ValueGeneratedNever();
+            cityTable.Property(p => p.ZipCode).HasMaxLength(80).ValueGeneratedNever();
+            cityTable.Property(p => p.Id).ValueGeneratedNever();
+            cityTable.Property(p => p.Name).HasMaxLength(400).ValueGeneratedNever();
+            cityTable.HasKey(c => new { c.CountryId, c.ZipCode, c.Id });
+
+            var countryTable = builder.Entity<CountryRow>().ToTable("Country");
+            countryTable.Property(p => p.Id).ValueGeneratedNever();
+            countryTable.Property(p => p.Name).HasMaxLength(400);
+            countryTable.Property(p => p.ShortName).HasMaxLength(10);
+            countryTable.HasKey(c => new { c.Id });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -72,5 +85,7 @@ namespace BodyReport.Models
         public DbSet<BodyExerciseRow> BodyExercises { get; set; }
         public DbSet<MuscleRow> Muscles { get; set; }
         public DbSet<UserInfoRow> UserInfos { get; set; }
+        public DbSet<CityRow> Cities { get; set; }
+        public DbSet<CountryRow> Countries { get; set; }
     }
 }

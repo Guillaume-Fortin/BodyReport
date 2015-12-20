@@ -21,6 +21,7 @@ using System.IO;
 using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.StaticFiles;
 using Microsoft.AspNet.Http;
+using BodyReport.Models.Initializer;
 
 namespace BodyReport
 {
@@ -44,11 +45,13 @@ namespace BodyReport
 
             //Add WebApp Configuration (no dependency injection)
             WebAppConfiguration.Configuration = Configuration;
+            _env = env;
 
             PopulateTranslationFile();
         }
 
         public IConfigurationRoot Configuration { get; set; }
+        private IHostingEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -137,6 +140,8 @@ namespace BodyReport
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            PopulateDataBase();
         }
 
         private void DefineLocalization(IApplicationBuilder app)
@@ -174,6 +179,15 @@ namespace BodyReport
                 fileName = string.Format("Translation-{0}.json", Translation.SupportedCultureNames[i]);
                 TranslationManager.Instance.CreateOrUpdateTranslationFile<TRS>(Path.Combine("Resources", fileName), isDevelopmentCurrentTranslation);
             }
+        }
+
+        /// <summary>
+        /// Populate data in database
+        /// </summary>
+        private void PopulateDataBase()
+        {
+            var dataInitialzer = new ApplicationDataInitializer(new ApplicationDbContext(), _env);
+            dataInitialzer.InitializeData();
         }
     }
 }

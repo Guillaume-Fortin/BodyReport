@@ -15,6 +15,8 @@ using BodyReport.Manager;
 using Message;
 using Microsoft.AspNet.Mvc.Rendering;
 using BodyReport.Resources;
+using Microsoft.AspNet.Http;
+using System.IO;
 
 namespace BodyReport.Controllers
 {
@@ -65,10 +67,27 @@ namespace BodyReport.Controllers
                     viewModel.Height = userInfo.Height;
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
-                    viewModel.CityId = userInfo.CityId;
+                    viewModel.CountryId = userInfo.CountryId;
 
-                    var city = GetTemporaryCities().Where(c => c.Id == userInfo.CityId).FirstOrDefault();
-                    viewModel.City = city == null ? "" : city.Name;
+                    if (userInfo.CountryId == 0)
+                        ViewBag.City = Translation.NOT_SPECIFIED;
+                    else
+                    {
+                        if (string.IsNullOrEmpty(userInfo.ZipCode))
+                        {
+                            ViewBag.City = Translation.NOT_SPECIFIED;
+                        }
+                        else
+                        {
+                            var city = (new CityManager(_dbContext)).GetCity(new CityKey() { CountryId = userInfo.CountryId, ZipCode = userInfo.ZipCode });
+                            ViewBag.City = city == null ? Translation.NOT_SPECIFIED : city.Name;
+                        }
+                    }
+
+                    var countryManager = new CountryManager(_dbContext);
+                    var country = countryManager.GetCountry(new CountryKey() { Id = userInfo.CountryId });
+                    ViewBag.Country = country == null ? Translation.NOT_SPECIFIED : country.Name;
+                    viewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "userprofil", viewModel.UserId + ".png");
                 }
             }
 
@@ -91,13 +110,15 @@ namespace BodyReport.Controllers
             return result;
         }
 
-        private List<SelectListItem> CreateSelectCityItemList(List<City> cityList, int userCityId)
+        private List<SelectListItem> CreateSelectCountryItemList(List<Country> countryList, int userCountryId)
         {
             var result = new List<SelectListItem>();
 
-            foreach (City city in cityList)
+            result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = userCountryId == 0 });
+
+            foreach (var country in countryList)
             {
-                result.Add(new SelectListItem { Text = city.Name, Value = city.Id.ToString(), Selected = userCityId == city.Id });
+                result.Add(new SelectListItem { Text = country.Name, Value = country.Id.ToString(), Selected = userCountryId == country.Id });
             }
 
             return result;
@@ -127,59 +148,98 @@ namespace BodyReport.Controllers
                     viewModel.Height = userInfo.Height;
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
-                    viewModel.CityId = userInfo.CityId;
+                    viewModel.CountryId = userInfo.CountryId;
+                    viewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "userprofil", userInfo.UserId + ".png");
                 }
+
                 ViewBag.Sex = CreateSelectSexItemList(viewModel.SexId);
-                ViewBag.Cities = CreateSelectCityItemList(GetTemporaryCities(), viewModel.CityId);
+
+                var countryManager = new CountryManager(_dbContext);
+                ViewBag.Countries = CreateSelectCountryItemList(countryManager.FindCountries(), viewModel.CountryId);
+
                 ViewBag.Units = CreateSelectUnitItemList(viewModel.Unit);
                 return View(viewModel);
             }
             
             return RedirectToAction("Index");
         }
-
-        private List<City> GetTemporaryCities()
-        {
-            return new List<City>()
-            {
-                new City() {Id=0, Name="Undefined" },
-                new City() {Id=1, Name="France" },
-                new City() {Id=2, Name="USA" },
-                new City() {Id=3, Name="England" }
-            };
-        }
-
+        
         //
-        // GET: /User/EditUserProfil
+        // POST: /User/EditUserProfil
         [HttpPost]
-        public IActionResult EditUserProfil(UserProfilViewModel viewModel)
+        public IActionResult EditUserProfil(UserProfilViewModel viewModel, IFormFile imageFile)
         {
-            int sexId = 0, cityId = 0;
+            var countryManager = new CountryManager(_dbContext);
+            int sexId = 0, countryId = 0;
             if (ModelState.IsValid && User.IsSignedIn() && viewModel != null)
             {
                 if (viewModel.UserId == User.GetUserId())
                 {
-                    sexId = viewModel.SexId;
-                    cityId = viewModel.CityId;
-                    var userInfoManager = new UserInfoManager(_dbContext);
-                    var userInfo = new UserInfo()
+                    if (viewModel.CountryId == 0) // not specified
                     {
-                        UserId = viewModel.UserId,
-                        Unit = (TUnitType)viewModel.Unit,
-                        Height = viewModel.Height,
-                        Weight = viewModel.Weight,
-                        ZipCode = viewModel.ZipCode,
-                        CityId = viewModel.CityId,
-                        Sex = (TSexType)viewModel.SexId
-                    };
+                        viewModel.ZipCode = string.Empty;
+                    }
+                    bool continute = true;
+                    if (sexId < 0 && sexId > 1)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format("{0} {1}", Translation.INVALID_INPUT_2P, Translation.SEX));
+                        viewModel.SexId = 0;
+                        continute = false;
+                    }
 
-                    userInfoManager.UpdateUserInfo(userInfo);
-                    return RedirectToAction("Index");
+                    if (continute && viewModel.CountryId != 0)
+                    {
+                        var country = countryManager.GetCountry(new CountryKey() { Id = viewModel.CountryId });
+                        if (country == null)
+                        {
+                            ModelState.AddModelError(string.Empty, string.Format("{0} {1}", Translation.INVALID_INPUT_2P, Translation.COUNTRY));
+                            viewModel.CountryId = 0;
+                            continute = false;
+                        }
+                    }
+
+                    if (continute && !string.IsNullOrEmpty(viewModel.ZipCode))
+                    { // ZipCode not Required
+                        var cityManager = new CityManager(_dbContext);
+                        var city = cityManager.GetCity(new CityKey() { CountryId = viewModel.CountryId, ZipCode = viewModel.ZipCode });
+                        if (city == null)
+                        {
+                            ModelState.AddModelError(string.Empty, string.Format("{0} {1}", Translation.INVALID_INPUT_2P, Translation.ZIP_CODE));
+                            continute = false;
+                        }
+                    }
+
+                    sexId = viewModel.SexId;
+                    countryId = viewModel.CountryId;
+
+                    if (continute)
+                    {
+                        var userInfoManager = new UserInfoManager(_dbContext);
+                        var userInfo = new UserInfo()
+                        {
+                            UserId = viewModel.UserId,
+                            Unit = (TUnitType)viewModel.Unit,
+                            Height = viewModel.Height,
+                            Weight = viewModel.Weight,
+                            ZipCode = viewModel.ZipCode,
+                            CountryId = viewModel.CountryId,
+                            Sex = (TSexType)viewModel.SexId
+                        };
+
+                        userInfo = userInfoManager.UpdateUserInfo(userInfo);
+
+                        if (!string.IsNullOrWhiteSpace(userInfo.UserId) && ImageUtils.CheckUploadedImageIsCorrect(imageFile))
+                        {
+                            ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userInfo.UserId + ".png");
+                        }
+
+                        return RedirectToAction("Index");
+                    }
                 }
             }
 
             ViewBag.Sex = CreateSelectSexItemList(sexId);
-            ViewBag.Cities = CreateSelectCityItemList(GetTemporaryCities(), cityId);
+            ViewBag.Countries = CreateSelectCountryItemList(countryManager.FindCountries(), countryId);
             ViewBag.Units = CreateSelectUnitItemList(viewModel.Unit);
             return View(viewModel);
         }

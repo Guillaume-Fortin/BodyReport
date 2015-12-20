@@ -37,11 +37,8 @@ namespace BodyReport.ViewModels.User
         [Display(Name = TRS.ZIP_CODE, ResourceType = typeof(Translation))]
         public string ZipCode { get; set; }
 
-        [Display(Name = TRS.CITY, ResourceType = typeof(Translation))]
-        public int CityId { get; set; }
-
-        [Display(Name = TRS.CITY, ResourceType = typeof(Translation))]
-        public string City { get; set; } = string.Empty;
+        [Display(Name = TRS.COUNTRY, ResourceType = typeof(Translation))]
+        public int CountryId { get; set; }
 
         [Display(Name = TRS.IMAGE, ResourceType = typeof(Translation))]
         public string ImageUrl { get; set; } = string.Empty;

@@ -49,7 +49,8 @@
   "SEX": "Sexe",
   "HEIGHT": "Taille",
   "WEIGHT": "Poids",
-  "CITY": "Pays",
+  "CITY": "Ville",
+  "COUNTRY": "Pays",
   "OBJECTIVES_OF_BODY_BUILDING": "Objectifs de musculation",
   "MORPHOLOGY": "Morphologie",
   "ZIP_CODE": "Code postal",
@@ -60,5 +61,8 @@
   "METRIC": "Système métrique",
   "UNIT_SYSTEM_INFO": "Unité : Impériale (Livres, Pouces), Métrique (kg, cm)",
   "POUND": "Livres",
-  "INCH": "Pouces"
+  "INCH": "Pouces",
+  "UNKNOWN": "Inconnu",
+  "NOT_SPECIFIED": "Non renseigné",
+  "INVALID_INPUT_2P": "Saisie invalide : "
 }

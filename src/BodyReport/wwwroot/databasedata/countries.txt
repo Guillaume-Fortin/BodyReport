@@ -1,0 +1,10 @@
+﻿1;US;USA
+2;GB;United Kingdom
+3;FR;France
+4;ES;España
+5;DE;Deutschland
+6;BE;Belgique
+7;CH;Suisse
+8;AT;Österreich
+9;IT;Italia
+10;IE;Ireland
