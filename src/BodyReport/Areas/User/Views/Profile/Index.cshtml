@@ -1,0 +1,94 @@
+﻿@model UserProfilViewModel
+@using Message;
+
+@{
+    string weightUnit = "kg",  lengthUnit = "cm", unit = Translation.METRIC;
+
+    if(Model.Unit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
+
+
+}
+
+<h2>@Translation.MY_PROFILE.</h2>
+<div class="panel-group">
+    <div class="panel panel-info">
+        <div class="panel-heading">@Translation.ACCOUNT_INFORMATION <a asp-route-area="User" asp-controller="Profile" asp-action="Edit">[@Translation.EDIT]</a></div>
+        <div class="panel-body">
+             <div class="row">
+                <div class="col-sm-8">
+                <dl class="dl-horizontal">
+                    <dt>@Translation.USER_NAME :</dt>
+                    <dd>
+                        @Model.Name
+                    </dd>
+                    <dt>@Translation.EMAIL :</dt>
+                    <dd>
+                        @Model.Email
+                    </dd>
+                    <dt>@Translation.SEX :</dt>
+                    <dd>
+                        @if(Model.SexId == (int)TSexType.MAN)
+                        {
+                            @Translation.MAN
+                        }
+                        else
+                        {
+                            @Translation.WOMAN
+                        }
+                    </dd>
+                    <dt>@Translation.UNIT :</dt>
+                    <dd>
+                        @unit
+                    </dd>
+                    <dt>@Translation.HEIGHT :</dt>
+                    <dd>
+                        @(Math.Round(Model.Height, 2)) @lengthUnit
+                    </dd>
+                    <dt>@Translation.WEIGHT :</dt>
+                    <dd>
+                        @(Math.Round(Model.Weight, 2)) @weightUnit
+                    </dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.ZipCode))
+                    {
+                        <dt>@Translation.ZIP_CODE :</dt>
+                        <dd>
+                            @Model.ZipCode
+                        </dd>
+                        <dt>@Translation.CITY :</dt>
+                        <dd>
+                            @ViewBag.City
+                        </dd>
+                    }
+                    <dt>@Translation.COUNTRY :</dt>
+                    <dd>
+                        @ViewBag.Country
+                    </dd>
+                </dl>
+                 </div>
+                 <div class="col-sm-4">
+                     <img class="Center-Display" src="@Model.ImageUrl" width="120", height="120"/>
+                 </div>
+             </div>
+        </div>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">@Translation.OBJECTIVES_OF_BODY_BUILDING <a asp-controller="User" asp-action="EditProfil">[@Translation.EDIT]</a></div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>@Translation.WEIGHT :</dt>
+                <dd>
+                    Weight loss
+                </dd>
+                <dt>@Translation.MORPHOLOGY :</dt>
+                <dd>
+                    Mesomorph
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>

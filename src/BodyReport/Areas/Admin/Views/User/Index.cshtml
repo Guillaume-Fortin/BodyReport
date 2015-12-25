@@ -1,0 +1,86 @@
+﻿@using System.Security.Claims
+
+@model SearchUserViewModel
+@{
+
+    Dictionary<string, string> pagingRouteValues = new Dictionary<string, string>();
+    if (Model != null && Model.UserName != null)
+    {
+        pagingRouteValues.Add("UserName", Model.UserName);
+    }
+}
+
+<h2>@Translation.ADMIN : @Translation.USERS.</h2>
+
+<div>
+    <form asp-controller="Admin" asp-action="ManageUsers" method="get" class="form-horizontal" role="form">
+        <h4>@Translation.LIST_OF_USERS.</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="UserName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="UserName" class="form-control" type="text" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-default">@Translation.SEARCH</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table">
+        <tr>
+            <th>
+               @Translation.ID
+            </th>
+            <th>
+                @Translation.NAME
+            </th>
+            <th>
+               @Translation.EMAIL
+            </th>
+            <th>
+                @Translation.ROLE
+            </th>
+            <th>@Translation.ACTION</th>
+        </tr>
+
+        @foreach (UserViewModel item in ViewBag.Users)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @item.RoleName
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Translation.EDIT</a> |
+                    @if (item.Suspended)
+                    {
+                        <a asp-action="Activate" asp-route-id="@item.Id">@Translation.ACTIVATE</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Suspend" asp-route-id="@item.Id">@Translation.SUSPEND</a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    @Component.Invoke("PagingComponent", "Admin", "ManageUsers", ViewBag.CurrentPage, ViewBag.PageSize, ViewBag.TotalRecords, pagingRouteValues)
+</div>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

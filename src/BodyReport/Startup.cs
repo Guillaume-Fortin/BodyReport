@@ -103,7 +103,7 @@ namespace BodyReport
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Site/Home/Error");
 
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
                 try
@@ -136,9 +136,14 @@ namespace BodyReport
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
+                // add the new route here.
+                routes.MapRoute(name: "Area",
+                    template: "{area:exists}/{controller}/{action}",
+                    defaults: new { area="Site", controller = "Home", action = "Index" });
+                
+                /*routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Site/Home}/{action=Index}/{id?}");*/
             });
 
             PopulateDataBase();

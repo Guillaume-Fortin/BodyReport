@@ -1,0 +1,29 @@
+﻿@model IEnumerable<BodyExerciseViewModel>
+@{
+}
+
+<h2>@Translation.ADMIN.</h2>
+
+<div>
+    <h4>@Translation.MANAGE</h4>
+    <ul>
+        <li>
+            <a asp-controller="User" asp-action="Index">@Translation.USERS</a>
+        </li>
+        <li>
+            <a asp-controller="MuscularGroup" asp-action="Index">@Translation.MUSCULAR_GROUP</a>
+        </li>
+        <li>
+            <a asp-controller="Muscle" asp-action="Index">@Translation.MUSCLES</a>
+        </li>
+        <li>
+            <a asp-controller="BodyExercise" asp-action="Index">@Translation.BODY_EXERCISES</a>
+        </li>
+        <li>
+            <a asp-controller="Role" asp-action="Index">@Translation.ROLE</a>
+        </li>
+    </ul>
+</div>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

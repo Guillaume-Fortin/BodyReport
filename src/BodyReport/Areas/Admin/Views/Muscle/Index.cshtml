@@ -1,0 +1,45 @@
+﻿@using System.Security.Claims
+
+<h2>@Translation.ADMIN : @Translation.MUSCLES.</h2>
+
+<div>
+    <p>
+        <a asp-action="Create">@Translation.CREATE_NEW</a>
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+               @Translation.ID
+            </th>
+            <th>
+                @Translation.NAME
+            </th>
+            <th>
+                @Translation.MUSCULAR_GROUP
+            </th>
+            <th>@Translation.ACTION</th>
+        </tr>
+
+        @foreach (MuscleViewModel item in ViewBag.Muscles)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.MuscularGroupName
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@Translation.EDIT</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@Translation.DELETE</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
