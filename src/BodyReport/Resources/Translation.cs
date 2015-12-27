@@ -202,6 +202,17 @@ namespace BodyReport.Resources
         public static string UNKNOWN { get { return Get(TRS.UNKNOWN); } }
         public static string NOT_SPECIFIED { get { return Get(TRS.NOT_SPECIFIED); } }
         public static string INVALID_INPUT_2P { get { return Get(TRS.INVALID_INPUT_2P); } }
+        public static string TRAINING_JOURNAL { get { return Get(TRS.TRAINING_JOURNAL); } }
+        public static string WEEK_NUMBER { get { return Get(TRS.WEEK_NUMBER); } }
+        public static string YEAR { get { return Get(TRS.YEAR); } }
+        public static string FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3{ get { return Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3); } }
+        public static string MONDAY { get { return Get(TRS.MONDAY); } }
+        public static string TUESDAY { get { return Get(TRS.TUESDAY); } }
+        public static string WEDNESDAY { get { return Get(TRS.WEDNESDAY); } }
+        public static string THURSDAY { get { return Get(TRS.THURSDAY); } }
+        public static string FRIDAY { get { return Get(TRS.FRIDAY); } }
+        public static string SATURDAY { get { return Get(TRS.SATURDAY); } }
+        public static string SUNDAY { get { return Get(TRS.SUNDAY); } }
     }
 
     /// <summary>
@@ -539,6 +550,122 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Invalid input :")]
         public const string INVALID_INPUT_2P = "INVALID_INPUT_2P";
-        
+        // <summary>
+        /// Training journal
+        /// </summary>
+        [Translation("Training journal")]
+        public const string TRAINING_JOURNAL = "TRAINING_JOURNAL";
+        // <summary>
+        /// Sunday
+        /// </summary>
+        [Translation("Sunday")]
+        public const string SUNDAY = "SUNDAY";
+        // <summary>
+        /// Monday
+        /// </summary>
+        [Translation("Monday")]
+        public const string MONDAY = "MONDAY";
+        // <summary>
+        /// Tuesday
+        /// </summary>
+        [Translation("Tuesday")]
+        public const string TUESDAY = "TUESDAY";
+        // <summary>
+        /// Wednesday
+        /// </summary>
+        [Translation("Wednesday")]
+        public const string WEDNESDAY = "WEDNESDAY";
+        // <summary>
+        /// Thursday
+        /// </summary>
+        [Translation("Thursday")]
+        public const string THURSDAY = "THURSDAY";
+        // <summary>
+        /// Friday
+        /// </summary>
+        [Translation("Friday")]
+        public const string FRIDAY = "FRIDAY";
+        // <summary>
+        /// Saturday
+        /// </summary>
+        [Translation("Saturday")]
+        public const string SATURDAY = "SATURDAY";
+        // <summary>
+        /// Week number
+        /// </summary>
+        [Translation("Week number")]
+        public const string WEEK_NUMBER = "WEEK_NUMBER";
+        // <summary>
+        /// Year
+        /// </summary>
+        [Translation("Year")]
+        public const string YEAR = "YEAR";
+        // <summary>
+        /// From the {0}th to the {1}th of {2} {3}
+        /// Example : From the 19th to the 26th of July 2005
+        /// </summary>
+        [Translation("From the {0}th to the {1}th of {2} {3}")]
+        public const string FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3 = "FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3";
+        // <summary>
+        /// January
+        /// </summary>
+        [Translation("January")]
+        public const string JANUARY = "JANUARY";
+        // <summary>
+        /// February
+        /// </summary>
+        [Translation("February")]
+        public const string FEBRUARY = "FEBRUARY";
+        // <summary>
+        /// March
+        /// </summary>
+        [Translation("March")]
+        public const string MARCH = "MARCH";
+        // <summary>
+        /// April
+        /// </summary>
+        [Translation("April")]
+        public const string APRIL = "APRIL";
+        // <summary>
+        /// May
+        /// </summary>
+        [Translation("May")]
+        public const string MAY = "MAY";
+        // <summary>
+        /// June
+        /// </summary>
+        [Translation("June")]
+        public const string JUNE = "JUNE";
+        // <summary>
+        /// July
+        /// </summary>
+        [Translation("July")]
+        public const string JULY = "JULY";
+        // <summary>
+        /// August
+        /// </summary>
+        [Translation("August")]
+        public const string AUGUST = "AUGUST";
+        // <summary>
+        /// September
+        /// </summary>
+        [Translation("September")]
+        public const string SEPTEMBER = "SEPTEMBER";
+        // <summary>
+        /// October
+        /// </summary>
+        [Translation("October")]
+        public const string OCTOBER = "OCTOBER";
+        // <summary>
+        /// November
+        /// </summary>
+        [Translation("November")]
+        public const string NOVEMBER = "NOVEMBER";
+        // <summary>
+        /// December
+        /// </summary>
+        [Translation("December")]
+        public const string DECEMBER = "DECEMBER";
     }
 }
+ 

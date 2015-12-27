@@ -1,0 +1,81 @@
+﻿@model TrainingJournalViewModel
+@using Framework
+
+@{
+    int boostrapCol = 0; // bosstrap max grid column = 12
+    if(Model.TrainingJournalDays != null && Model.TrainingJournalDays.Count > 0)
+    {
+        boostrapCol = 12 / Model.TrainingJournalDays.Count;
+    }
+    
+    List<DayOfWeek> dayOfWeekList = new List<DayOfWeek>()
+    {
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday,
+        DayOfWeek.Sunday
+    };
+
+    DateTime dateTime = Utils.YearWeekToPlanningDateTime(Model.Year, Model.WeekOfYear);
+    string date = string.Format(Translation.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3, dateTime.Day, dateTime.AddDays(6).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year);
+}
+
+<h2>@Translation.TRAINING_JOURNAL. </h2>
+
+<p></p>
+<p>
+    @Translation.WEEK_NUMBER @Model.WeekOfYear : @date
+</p>
+
+<p>
+    <div class="btn-group">
+        @foreach (var dayOfWeek in dayOfWeekList)
+        {
+            string classValue = "";
+            string disabled = "disabled";
+            if (Model != null && Model.TrainingJournalDays != null)
+            {
+                var trainingJournalDay = Model.TrainingJournalDays.Where(t => t.DayOfWeek == (int)dayOfWeek).FirstOrDefault();
+
+                if (trainingJournalDay == null)
+                {
+                    classValue = "btn-default disabled";
+                }
+                else
+                {
+                    classValue = "btn-success " + (ViewBag.CurrentDayOfWeek == dayOfWeek ? "active" : "");
+                    disabled = "";
+                }
+            }
+            else
+            {
+                classValue = "btn-default disabled";
+            }
+            <button type="button" value="Create" @disabled onclick="location.href='@Url.Action("Index", "TrainingJournal", new { Area = "User", dayOfWeekSelected = (int)dayOfWeek })'" class="btn @classValue">@Translation.Get(((DayOfWeek)dayOfWeek).ToString().ToUpper())</button>
+        }
+        </div>
+</p>
+
+@if (Model.TrainingJournalDays != null && Model.TrainingJournalDays.Count > 0)
+{
+    <div class="container">
+        @foreach (var trainingJournalDay in Model.TrainingJournalDays)
+        {
+            if (trainingJournalDay.DayOfWeek == (int)ViewBag.CurrentDayOfWeek)
+            {
+            <div class="panel-group col-sm-6">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">@Translation.Get(((DayOfWeek)trainingJournalDay.DayOfWeek).ToString().ToUpper())</div>
+                    <div class="panel-body">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+            }
+        }
+     </div>
+}

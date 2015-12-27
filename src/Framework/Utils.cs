@@ -41,5 +41,22 @@ namespace Framework
             }
             return result;
         }
+
+        public static DateTime YearWeekToPlanningDateTime(int year, int week)
+        {
+            DateTime startOfYear = new DateTime(year, 1, 1);
+            int daysToRetreiveLasteMondayDay = DayOfWeek.Monday - startOfYear.DayOfWeek;
+            //If daysToRetreiveLasteMondayDay == 0, it's first day new planningCalendar
+            if (daysToRetreiveLasteMondayDay < 0) //Difference in day (Tuesday to Saturday)
+            {
+                startOfYear = startOfYear.AddDays(7 + daysToRetreiveLasteMondayDay);
+            }
+            else if (daysToRetreiveLasteMondayDay == 1) //Sunday
+            {
+                startOfYear = startOfYear.AddDays(1);
+            }
+
+            return startOfYear.AddDays(7 *(week -1));
+        }
     }
 }

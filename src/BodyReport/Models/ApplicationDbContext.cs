@@ -72,6 +72,28 @@ namespace BodyReport.Models
             countryTable.Property(p => p.Name).HasMaxLength(400);
             countryTable.Property(p => p.ShortName).HasMaxLength(10);
             countryTable.HasKey(c => new { c.Id });
+
+            var trainingJournalTable = builder.Entity<TrainingJournalRow>().ToTable("TrainingJournal");
+            trainingJournalTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
+            trainingJournalTable.Property(p => p.Year).ValueGeneratedNever();
+            trainingJournalTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
+            trainingJournalTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear });
+
+            var trainingJournalDayTable = builder.Entity<TrainingJournalDayRow>().ToTable("TrainingJournalDay");
+            trainingJournalDayTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
+            trainingJournalDayTable.Property(p => p.Year).ValueGeneratedNever();
+            trainingJournalDayTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
+            trainingJournalDayTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
+            trainingJournalDayTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
+            trainingJournalDayTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId });
+
+            var trainingJournalDayExerciseTable = builder.Entity<TrainingJournalDayExerciseRow>().ToTable("TrainingJournalDayExercise");
+            trainingJournalDayExerciseTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
+            trainingJournalDayExerciseTable.Property(p => p.Year).ValueGeneratedNever();
+            trainingJournalDayExerciseTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
+            trainingJournalDayExerciseTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
+            trainingJournalDayExerciseTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
+            trainingJournalDayExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -87,5 +109,8 @@ namespace BodyReport.Models
         public DbSet<UserInfoRow> UserInfos { get; set; }
         public DbSet<CityRow> Cities { get; set; }
         public DbSet<CountryRow> Countries { get; set; }
+        public DbSet<TrainingJournalRow> TrainingJournals { get; set; }
+        public DbSet<TrainingJournalDayRow> TrainingJournalDays { get; set; }
+        public DbSet<TrainingJournalDayExerciseRow> TrainingJournalDayExercises { get; set; }
     }
 }
