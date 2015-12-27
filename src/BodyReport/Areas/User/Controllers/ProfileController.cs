@@ -17,6 +17,7 @@ using BodyReport.Resources;
 using Microsoft.AspNet.Http;
 using System.IO;
 using BodyReport.Areas.User.ViewModels;
+using System.Net.Http;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -92,6 +93,7 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
 
+            ViewBag.IsMobileBrowser = Request.IsMobileBrowser();
             return View(viewModel);
         }
         
