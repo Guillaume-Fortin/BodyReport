@@ -22,6 +22,8 @@ using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.StaticFiles;
 using Microsoft.AspNet.Http;
 using BodyReport.Models.Initializer;
+using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Identity;
 
 namespace BodyReport
 {
@@ -71,7 +73,20 @@ namespace BodyReport
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Cookies.ApplicationCookie.LoginPath = new Microsoft.AspNet.Http.PathString("/Site/Account/Login");
+            });
+
+            services.Configure<CookieAuthenticationOptions>(opt =>
+            {
+                opt.AccessDeniedPath = "/Site/Home/Index";
+                opt.LogoutPath = "/Site/Account/Login";
+                opt.LoginPath = "/Site/Account/Login";
+            });
+
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
+
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -131,6 +146,7 @@ namespace BodyReport
             });
 
             app.UseIdentity();
+            app.UseCookieAuthentication();
 
             // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 
