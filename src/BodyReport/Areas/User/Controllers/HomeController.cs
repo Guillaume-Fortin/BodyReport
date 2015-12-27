@@ -20,7 +20,7 @@ namespace BodyReport.Areas.User.Controllers
         /// </summary>
         ApplicationDbContext _dbContext = null;
 
-        public HomeController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public HomeController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
