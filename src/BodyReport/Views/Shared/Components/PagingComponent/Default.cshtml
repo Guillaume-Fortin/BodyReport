@@ -26,7 +26,7 @@
     @for (int i = minPage; i <= maxPage; i++)
     {
         <li class="@(Model.CurrentPage == i ? "active" : "")">
-            <a asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-all-route-data="Model.RouteValues" asp-route-currentPage="@i" >@i</a>
+            <a asp-route-area="@Model.AreaName" asp-controller="@Model.ControlerName" asp-action="@Model.ActionName" asp-all-route-data="Model.RouteValues" asp-route-currentPage="@i" >@i</a>
         </li>
     }
 

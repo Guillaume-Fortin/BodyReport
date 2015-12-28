@@ -13,12 +13,13 @@ namespace BodyReport.Framework.ViewComponents
         {
         }
 
-        public IViewComponentResult Invoke(string controlerName, string actionName, int currentPage, int pageSize, int totalRecords, Dictionary<string, string> routeValues)
+        public IViewComponentResult Invoke(string areaName, string controlerName, string actionName, int currentPage, int pageSize, int totalRecords, Dictionary<string, string> routeValues)
         {
             PagingViewModel pagin = new PagingViewModel();
             pagin.CurrentPage = currentPage;
             pagin.PageSize = pageSize;
             pagin.TotalRecords = totalRecords;
+            pagin.AreaName = areaName;
             pagin.ControlerName = controlerName;
             pagin.ActionName = actionName;
             pagin.RouteValues = routeValues;

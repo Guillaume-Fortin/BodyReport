@@ -13,7 +13,7 @@
 <h2>@Translation.ADMIN : @Translation.USERS.</h2>
 
 <div>
-    <form asp-controller="Admin" asp-action="ManageUsers" method="get" class="form-horizontal" role="form">
+    <form asp-route-area="Admin" asp-controller="User" asp-action="Index" method="get" class="form-horizontal" role="form">
         <h4>@Translation.LIST_OF_USERS.</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
@@ -79,7 +79,7 @@
             </tr>
         }
     </table>
-    @Component.Invoke("PagingComponent", "Admin", "ManageUsers", ViewBag.CurrentPage, ViewBag.PageSize, ViewBag.TotalRecords, pagingRouteValues)
+    @Component.Invoke("PagingComponent", "Admin", "User", "Index", ViewBag.CurrentPage, ViewBag.PageSize, ViewBag.TotalRecords, pagingRouteValues)
 </div>
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
