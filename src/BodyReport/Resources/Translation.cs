@@ -203,6 +203,8 @@ namespace BodyReport.Resources
         public static string NOT_SPECIFIED { get { return Get(TRS.NOT_SPECIFIED); } }
         public static string INVALID_INPUT_2P { get { return Get(TRS.INVALID_INPUT_2P); } }
         public static string TRAINING_JOURNAL { get { return Get(TRS.TRAINING_JOURNAL); } }
+        public static string TRAINING_WEEK { get { return Get(TRS.TRAINING_WEEK); } }
+        public static string TRAINING_DAY { get { return Get(TRS.TRAINING_DAY); } }
         public static string WEEK_NUMBER { get { return Get(TRS.WEEK_NUMBER); } }
         public static string YEAR { get { return Get(TRS.YEAR); } }
         public static string FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3{ get { return Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3); } }
@@ -213,6 +215,14 @@ namespace BodyReport.Resources
         public static string FRIDAY { get { return Get(TRS.FRIDAY); } }
         public static string SATURDAY { get { return Get(TRS.SATURDAY); } }
         public static string SUNDAY { get { return Get(TRS.SUNDAY); } }
+        public static string IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL { get { return Get(TRS.IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL); } }
+        public static string DATE { get { return Get(TRS.DATE); } }
+        public static string P0_ALREADY_EXIST { get { return Get(TRS.P0_ALREADY_EXIST); } }
+        public static string VIEW { get { return Get(TRS.VIEW); } }
+        public static string CREATE_IT_PE { get { return Get(TRS.CREATE_IT_PE); } }
+        public static string YOU_HAVENT_CREATE_THIS_TRAINING_DAY { get { return Get(TRS.YOU_HAVENT_CREATE_THIS_TRAINING_DAY); } }
+        public static string BEGIN_HOUR { get { return Get(TRS.BEGIN_HOUR); } }
+        public static string END_HOUR { get { return Get(TRS.END_HOUR); } }
     }
 
     /// <summary>
@@ -556,6 +566,16 @@ namespace BodyReport.Resources
         [Translation("Training journal")]
         public const string TRAINING_JOURNAL = "TRAINING_JOURNAL";
         // <summary>
+        /// Training week
+        /// </summary>
+        [Translation("Training week")]
+        public const string TRAINING_WEEK = "TRAINING_WEEK";
+        // <summary>
+        /// Training day
+        /// </summary>
+        [Translation("Training day")]
+        public const string TRAINING_DAY = "TRAINING_DAY";
+        // <summary>
         /// Sunday
         /// </summary>
         [Translation("Sunday")]
@@ -666,6 +686,46 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("December")]
         public const string DECEMBER = "DECEMBER";
+        // <summary>
+        /// Impossible to create new training journal
+        /// </summary>
+        [Translation("Impossible to create new training journal")]
+        public const string IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL = "IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL";
+        // <summary>
+        /// Date
+        /// </summary>
+        [Translation("Date")]
+        public const string DATE = "DATE";
+        // <summary>
+        /// {0} already exist
+        /// </summary>
+        [Translation("{0} already exist")]
+        public const string P0_ALREADY_EXIST = "P0_ALREADY_EXIST";
+        // <summary>
+        /// View
+        /// </summary>
+        [Translation("View")]
+        public const string VIEW = "VIEW";
+        // <summary>
+        /// Create it!
+        /// </summary>
+        [Translation("Create it!")]
+        public const string CREATE_IT_PE = "CREATE_IT_PE";
+        // <summary>
+        /// You haven't create this training day
+        /// </summary>
+        [Translation("You haven't create this training day")]
+        public const string YOU_HAVENT_CREATE_THIS_TRAINING_DAY = "YOU_HAVENT_CREATE_THIS_TRAINING_DAY";
+        // <summary>
+        /// Begin hour
+        /// </summary>
+        [Translation("Begin hour")]
+        public const string BEGIN_HOUR = "BEGIN_HOUR";
+        // <summary>
+        /// End hour
+        /// </summary>
+        [Translation("End hour")]
+        public const string END_HOUR = "END_HOUR";
     }
 }
  

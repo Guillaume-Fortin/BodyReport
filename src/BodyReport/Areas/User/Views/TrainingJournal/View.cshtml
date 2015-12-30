@@ -1,0 +1,140 @@
+﻿@model Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>>
+@using Framework
+@using System.Linq
+
+@{
+    string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
+
+    if (ViewBag.UserUnit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
+
+    /*
+    int boostrapCol = 0; // bosstrap max grid column = 12
+    if(Model.Item2 != null)
+    {
+        boostrapCol = 12 / 7;
+    }
+    */
+
+    List<TrainingDayViewModel> currentTrainingDayList = new List<TrainingDayViewModel>();
+    if (Model.Item2 != null)
+    {
+        foreach (var trainingDay in Model.Item2)
+        {
+            if (trainingDay.DayOfWeek == ViewBag.CurrentDayOfWeek)
+            {
+                currentTrainingDayList.Add(trainingDay);
+            }
+        }
+    }
+
+    currentTrainingDayList = currentTrainingDayList.OrderBy(c => c.BeginHour).ToList();
+
+    List<DayOfWeek> dayOfWeekList = new List<DayOfWeek>()
+    {
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday,
+        DayOfWeek.Sunday
+    };
+
+    string date = "";
+    try
+    {
+        DateTime dateTime = Utils.YearWeekToPlanningDateTime(Model.Item1.Year, Model.Item1.WeekOfYear);
+        date = string.Format(Translation.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3, dateTime.Day, dateTime.AddDays(6).Day, Translation.Get(((TMonthType)dateTime.Month).ToString().ToUpper()), dateTime.Year);
+    }
+    catch
+    {
+    }
+}
+
+
+<h2>@Translation.TRAINING_WEEK.</h2>
+
+<p>@date</p>
+<div class="panel panel-info">
+    <div class="panel-heading">@Translation.USER : @Model.Item1.UserName <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit">[@Translation.EDIT]</a></div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>@Translation.WEEK_NUMBER :</dt>
+            <dd>
+                @Model.Item1.WeekOfYear
+            </dd>
+            <dt>@Translation.HEIGHT (@lengthUnit):</dt>
+            <dd>
+                @Model.Item1.UserHeight
+            </dd>
+            <dt>@Translation.WEIGHT (@weightUnit):</dt>
+            <dd>
+                @Model.Item1.UserWeight
+            </dd>
+         </dl>
+    </div>
+</div>
+<p>
+    <div class="btn-group">
+        @foreach (var dayOfWeek in dayOfWeekList)
+        {
+            string classValue = "btn-default";
+
+
+            if (Model != null && Model.Item2 != null)
+            {
+                foreach (var trainingDay in Model.Item2)
+                {
+                    if (trainingDay.DayOfWeek == (int)dayOfWeek)
+                    {
+                        classValue = "btn-info";
+                    }
+                }
+            }
+
+            if (ViewBag.CurrentDayOfWeek == dayOfWeek)
+            {
+                classValue += " active";
+            }
+
+            <button type="button" onclick="location.href='@Url.Action("View", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeekSelected = (int)dayOfWeek })'" class="btn @classValue">@Translation.Get(((DayOfWeek)dayOfWeek).ToString().ToUpper())</button>
+        }
+        </div>
+</p>
+
+<div class="container">
+    @if (currentTrainingDayList.Count == 0)
+    {
+        <p>
+            @Translation.YOU_HAVENT_CREATE_THIS_TRAINING_DAY.
+            <a asp-action="CreateTrainingDay">@Translation.CREATE_IT_PE</a>
+        </p>
+    }
+    else
+    {
+        @foreach(TrainingDayViewModel trainingDay in currentTrainingDayList)
+        {
+            <div class="panel panel-info">
+                <div class="panel-heading"></div>
+                @Translation.TRAINING_DAY
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>@Translation.BEGIN_HOUR :</dt>
+                        <dd>
+                            @trainingDay.BeginHour
+                        </dd>
+                        <dt>@Translation.END_HOUR :</dt>
+                        <dd>
+                            @trainingDay.EndHour
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        }
+    }
+</div>

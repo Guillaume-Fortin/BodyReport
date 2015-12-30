@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Message
 {
-    public class TrainingJournalKey
+    public class TrainingDayKey
     {
         /// <summary>
         /// UserId
@@ -19,29 +19,33 @@ namespace Message
         /// Week of year
         /// </summary>
         public int WeekOfYear { get; set; }
+        /// <summary>
+        /// Day of week
+        /// </summary>
+        public int DayOfWeek { get; set; }
+        /// <summary>
+        /// Training Day Id
+        /// </summary>
+        public int TrainingDayId { get; set; }
     }
 
-    public class TrainingJournal : TrainingJournalKey
+    public class TrainingDay : TrainingDayKey
     {
         /// <summary>
-        /// User Height
+        /// Heure de début
         /// </summary>
-        public double UserHeight { get; set; }
+        public DateTime BeginHour { get; set; }
         /// <summary>
-        /// User Weight
+        /// Heure de fin
         /// </summary>
-        public double UserWeight { get; set; }
+        public DateTime EndHour { get; set; }
         /// <summary>
-        /// User Weight
+        /// Training journal day exercises
         /// </summary>
-        public TUnitType UserUnit { get; set; }
-        /// <summary>
-        /// User Weight
-        /// </summary>
-        public List<TrainingJournalDay> TrainingJournalDays { get; set; }
+        public List<TrainingExercise> TrainingExercises { get; set; }
     }
 
-    public class TrainingJournalCriteria : CriteriaField
+    public class TrainingDayCriteria : CriteriaField
     {
         /// <summary>
         /// User Id
@@ -57,5 +61,15 @@ namespace Message
         /// Week Of Year
         /// </summary>
         public IntegerCriteria WeekOfYear { get; set; }
+
+        /// <summary>
+        /// Day Of Year
+        /// </summary>
+        public IntegerCriteria DayOfWeek { get; set; }
+
+        /// <summary>
+        /// Day Of Year
+        /// </summary>
+        public IntegerCriteria TrainingDayId { get; set; }
     }
 }

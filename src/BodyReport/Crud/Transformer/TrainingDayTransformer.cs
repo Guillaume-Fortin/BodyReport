@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Transformer
 {
-    public class TrainingJournalDayTransformer
+    public class TrainingDayTransformer
     {
-        public static void ToRow(TrainingJournalDay bean, TrainingJournalDayRow row)
+        public static void ToRow(TrainingDay bean, TrainingDayRow row)
         {
             if (bean == null)
                 return;
@@ -23,12 +23,12 @@ namespace BodyReport.Crud.Transformer
             row.EndHour = bean.EndHour;
         }
 
-        internal static TrainingJournalDay ToBean(TrainingJournalDayRow row)
+        internal static TrainingDay ToBean(TrainingDayRow row)
         {
             if (row == null)
                 return null;
 
-            var bean = new TrainingJournalDay();
+            var bean = new TrainingDay();
             bean.UserId = row.UserId;
             bean.Year = row.Year;
             bean.WeekOfYear = row.WeekOfYear;

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace BodyReport.Models
 {
     /// <summary>
-    /// Database table TrainingJournalDay
+    /// Database table TrainginWeek
     /// </summary>
-    public class TrainingJournalDayRow
+    public class TrainingWeekRow
     {
         /// <summary>
         /// UserId
@@ -23,21 +23,12 @@ namespace BodyReport.Models
         /// </summary>
         public int WeekOfYear { get; set; }
         /// <summary>
-        /// Day of week
+        /// User Height
         /// </summary>
-        public int DayOfWeek { get; set; }
+        public double UserHeight { get; set; }
         /// <summary>
-        /// Training day id
+        /// User Weight
         /// </summary>
-        public int TrainingDayId { get; set; }
-        /// <summary>
-        /// Begin hour
-        /// </summary>
-        public DateTime BeginHour { get; set; }
-        /// <summary>
-        /// End hour
-        /// </summary>
-        public DateTime EndHour { get; set; }
-        
+        public double UserWeight { get; set; }
     }
 }

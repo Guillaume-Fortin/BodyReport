@@ -54,8 +54,10 @@
             </footer>
         </div>
 
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
         <environment names="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/jquery-ui/jquery-ui.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
         </environment>
@@ -69,6 +71,7 @@
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
+            <script src="~/lib/jquery-ui/jquery-ui.js"></script>
         </environment>
 
         @RenderSection("scripts", required: false)

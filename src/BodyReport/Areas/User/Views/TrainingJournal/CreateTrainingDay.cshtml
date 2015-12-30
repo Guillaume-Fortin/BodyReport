@@ -1,0 +1,57 @@
+﻿@model TrainingDayViewModel
+
+@{
+}
+
+<h2>@Translation.TRAINING_DAY. </h2>
+
+<form asp-action="CreateTrainingDay" method="post" class="form-horizontal" role="form">
+    <h4>@Translation.CREATE.</h4>
+    <hr />
+
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <input asp-for="UserId" hidden="hidden" />
+    <input asp-for="TrainingDayId" hidden="hidden" />
+    <div class="form-group">
+        <label asp-for="Year" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Year" class="form-control" readonly="readonly" type="text" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="WeekOfYear" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="WeekOfYear" class="form-control" type="number" min="1" max="52" />
+            <span asp-validation-for="WeekOfYear" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="DayOfWeek" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="DayOfWeek" class="form-control" type="text" />
+            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="BeginHour" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="BeginHour" class="form-control" type="time" asp-format="{0:HH:mm}" />
+            <span asp-validation-for="BeginHour" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndHour" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="EndHour" class="form-control" type="time"/>
+            <span asp-validation-for="EndHour" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">@Translation.CREATE</button>
+        </div>
+    </div>
+</form>

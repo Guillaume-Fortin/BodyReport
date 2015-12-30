@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Areas.User.ViewModels
 {
-    public class TrainingJournalDayExerciseViewModel
+    public class TrainingExerciseViewModel
     {
         public string UserId { get; set; }
         public int Year { get; set; }

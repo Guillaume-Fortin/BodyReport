@@ -4,7 +4,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace BodyReport.Migrations
 {
-    public partial class _AddTrainingJournalTables : Migration
+    public partial class Add_TrainingJournal_Tables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,23 @@ namespace BodyReport.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_IdentityRole_RoleId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
             migrationBuilder.CreateTable(
-                name: "TrainingJournalDayExercise",
+                name: "TrainingDay",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    Year = table.Column<int>(nullable: false),
+                    WeekOfYear = table.Column<int>(nullable: false),
+                    DayOfWeek = table.Column<int>(nullable: false),
+                    TrainingDayId = table.Column<int>(nullable: false),
+                    BeginHour = table.Column<DateTime>(nullable: false),
+                    EndHour = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainingDayRow", x => new { x.UserId, x.Year, x.WeekOfYear, x.DayOfWeek, x.TrainingDayId });
+                });
+            migrationBuilder.CreateTable(
+                name: "TrainingExercise",
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
@@ -28,26 +44,10 @@ namespace BodyReport.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TrainingJournalDayExerciseRow", x => new { x.UserId, x.Year, x.WeekOfYear, x.DayOfWeek, x.TrainingDayId });
+                    table.PrimaryKey("PK_TrainingExerciseRow", x => new { x.UserId, x.Year, x.WeekOfYear, x.DayOfWeek, x.TrainingDayId, x.BodyExerciseId });
                 });
             migrationBuilder.CreateTable(
-                name: "TrainingJournalDay",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(nullable: false),
-                    Year = table.Column<int>(nullable: false),
-                    WeekOfYear = table.Column<int>(nullable: false),
-                    DayOfWeek = table.Column<int>(nullable: false),
-                    TrainingDayId = table.Column<int>(nullable: false),
-                    BeginHour = table.Column<DateTime>(nullable: false),
-                    EndHour = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrainingJournalDayRow", x => new { x.UserId, x.Year, x.WeekOfYear, x.DayOfWeek, x.TrainingDayId });
-                });
-            migrationBuilder.CreateTable(
-                name: "TrainingJournal",
+                name: "TrainingWeek",
                 columns: table => new
                 {
                     UserId = table.Column<string>(nullable: false),
@@ -58,7 +58,7 @@ namespace BodyReport.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TrainingJournalRow", x => new { x.UserId, x.Year, x.WeekOfYear });
+                    table.PrimaryKey("PK_TrainingWeekRow", x => new { x.UserId, x.Year, x.WeekOfYear });
                 });
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
@@ -104,9 +104,9 @@ namespace BodyReport.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserLogin<string>_ApplicationUser_UserId", table: "AspNetUserLogins");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_IdentityRole_RoleId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
-            migrationBuilder.DropTable("TrainingJournalDayExercise");
-            migrationBuilder.DropTable("TrainingJournalDay");
-            migrationBuilder.DropTable("TrainingJournal");
+            migrationBuilder.DropTable("TrainingDay");
+            migrationBuilder.DropTable("TrainingExercise");
+            migrationBuilder.DropTable("TrainingWeek");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",

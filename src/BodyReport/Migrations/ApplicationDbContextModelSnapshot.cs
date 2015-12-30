@@ -143,31 +143,7 @@ namespace BodyReport.Migrations
                     b.HasAnnotation("Relational:TableName", "Sequencer");
                 });
 
-            modelBuilder.Entity("BodyReport.Models.TrainingJournalDayExerciseRow", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasAnnotation("MaxLength", 450);
-
-                    b.Property<int>("Year");
-
-                    b.Property<int>("WeekOfYear");
-
-                    b.Property<int>("DayOfWeek");
-
-                    b.Property<int>("TrainingDayId");
-
-                    b.Property<int>("BodyExerciseId");
-
-                    b.Property<int>("NumberOfReps");
-
-                    b.Property<int>("NumberOfSets");
-
-                    b.HasKey("UserId", "Year", "WeekOfYear", "DayOfWeek", "TrainingDayId");
-
-                    b.HasAnnotation("Relational:TableName", "TrainingJournalDayExercise");
-                });
-
-            modelBuilder.Entity("BodyReport.Models.TrainingJournalDayRow", b =>
+            modelBuilder.Entity("BodyReport.Models.TrainingDayRow", b =>
                 {
                     b.Property<string>("UserId")
                         .HasAnnotation("MaxLength", 450);
@@ -186,10 +162,34 @@ namespace BodyReport.Migrations
 
                     b.HasKey("UserId", "Year", "WeekOfYear", "DayOfWeek", "TrainingDayId");
 
-                    b.HasAnnotation("Relational:TableName", "TrainingJournalDay");
+                    b.HasAnnotation("Relational:TableName", "TrainingDay");
                 });
 
-            modelBuilder.Entity("BodyReport.Models.TrainingJournalRow", b =>
+            modelBuilder.Entity("BodyReport.Models.TrainingExerciseRow", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasAnnotation("MaxLength", 450);
+
+                    b.Property<int>("Year");
+
+                    b.Property<int>("WeekOfYear");
+
+                    b.Property<int>("DayOfWeek");
+
+                    b.Property<int>("TrainingDayId");
+
+                    b.Property<int>("BodyExerciseId");
+
+                    b.Property<int>("NumberOfReps");
+
+                    b.Property<int>("NumberOfSets");
+
+                    b.HasKey("UserId", "Year", "WeekOfYear", "DayOfWeek", "TrainingDayId", "BodyExerciseId");
+
+                    b.HasAnnotation("Relational:TableName", "TrainingExercise");
+                });
+
+            modelBuilder.Entity("BodyReport.Models.TrainingWeekRow", b =>
                 {
                     b.Property<string>("UserId")
                         .HasAnnotation("MaxLength", 450);
@@ -204,7 +204,7 @@ namespace BodyReport.Migrations
 
                     b.HasKey("UserId", "Year", "WeekOfYear");
 
-                    b.HasAnnotation("Relational:TableName", "TrainingJournal");
+                    b.HasAnnotation("Relational:TableName", "TrainingWeek");
                 });
 
             modelBuilder.Entity("BodyReport.Models.TranslationRow", b =>

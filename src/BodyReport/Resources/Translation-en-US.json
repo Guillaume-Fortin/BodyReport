@@ -88,5 +88,16 @@
   "SEPTEMBER": "September",
   "OCTOBER": "October",
   "NOVEMBER": "November",
-  "DECEMBER": "December"
+  "DECEMBER": "December",
+  "IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL": "Impossible to create new training journal",
+  "DATE": "Date",
+  "TRAINING_JOURNAL_WEEK": "Training week",
+  "P0_ALREADY_EXIST": "{0} already exist",
+  "VIEW": "View",
+  "TRAINING_WEEK": "Training week",
+  "CREATE_IT_PE": "Create it!",
+  "YOU_HAVENT_CREATE_THIS_TRAINING_DAY": "You haven't create this training day",
+  "TRAINING_DAY": "Training day",
+  "BEGIN_HOUR": "Begin hour",
+  "END_HOUR": "End hour"
 }

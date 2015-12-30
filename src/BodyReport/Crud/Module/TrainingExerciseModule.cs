@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Module
 {
-    public class TrainingJournalDayExerciseModule : Crud
+    public class TrainingExerciseModule : Crud
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext">database context</param>
-        public TrainingJournalDayExerciseModule(ApplicationDbContext dbContext) : base(dbContext)
+        public TrainingExerciseModule(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -23,18 +23,18 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="trainingJournalDayExercise">Data</param>
         /// <returns>insert data</returns>
-        public TrainingJournalDayExercise Create(TrainingJournalDayExercise trainingJournalDayExercise)
+        public TrainingExercise Create(TrainingExercise trainingJournalDayExercise)
         {
             if (trainingJournalDayExercise == null || string.IsNullOrWhiteSpace(trainingJournalDayExercise.UserId) ||
                 trainingJournalDayExercise.Year == 0 || trainingJournalDayExercise.WeekOfYear == 0||
                 trainingJournalDayExercise.DayOfWeek == 0 || trainingJournalDayExercise.TrainingDayId == 0)
                 return null;
 
-            var row = new TrainingJournalDayExerciseRow();
-            TrainingJournalDayExerciseTransformer.ToRow(trainingJournalDayExercise, row);
-            _dbContext.TrainingJournalDayExercises.Add(row);
+            var row = new TrainingExerciseRow();
+            TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
+            _dbContext.TrainingExercises.Add(row);
             _dbContext.SaveChanges();
-            return TrainingJournalDayExerciseTransformer.ToBean(row);
+            return TrainingExerciseTransformer.ToBean(row);
         }
 
         /// <summary>
@@ -42,18 +42,18 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="key">Primary Key</param>
         /// <returns>read data</returns>
-        public TrainingJournalDayExercise Get(TrainingJournalDayExerciseKey key)
+        public TrainingExercise Get(TrainingExerciseKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
                 key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0)
                 return null;
 
-            var row = _dbContext.TrainingJournalDayExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek ||
                                                                 t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
             if (row != null)
             {
-                return TrainingJournalDayExerciseTransformer.ToBean(row);
+                return TrainingExerciseTransformer.ToBean(row);
             }
             return null;
         }
@@ -62,19 +62,19 @@ namespace BodyReport.Crud.Module
         /// Find datas
         /// </summary>
         /// <returns></returns>
-        public List<TrainingJournalDayExercise> Find(CriteriaField criteriaField = null)
+        public List<TrainingExercise> Find(CriteriaField criteriaField = null)
         {
-            List<TrainingJournalDayExercise> resultList = null;
-            IQueryable<TrainingJournalDayExerciseRow> rowList = _dbContext.TrainingJournalDayExercises;
+            List<TrainingExercise> resultList = null;
+            IQueryable<TrainingExerciseRow> rowList = _dbContext.TrainingExercises;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
-            rowList.OrderBy(t => t.DayOfWeek);
+            rowList = rowList.OrderBy(t => t.DayOfWeek);
 
             if (rowList != null && rowList.Count() > 0)
             {
-                resultList = new List<TrainingJournalDayExercise>();
+                resultList = new List<TrainingExercise>();
                 foreach (var row in rowList)
                 {
-                    resultList.Add(TrainingJournalDayExerciseTransformer.ToBean(row));
+                    resultList.Add(TrainingExerciseTransformer.ToBean(row));
                 }
             }
             return resultList;
@@ -85,14 +85,14 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="trainingJournalDayExercise">data</param>
         /// <returns>updated data</returns>
-        public TrainingJournalDayExercise Update(TrainingJournalDayExercise trainingJournalDayExercise)
+        public TrainingExercise Update(TrainingExercise trainingJournalDayExercise)
         {
             if (trainingJournalDayExercise == null || string.IsNullOrWhiteSpace(trainingJournalDayExercise.UserId) ||
                 trainingJournalDayExercise.Year == 0 || trainingJournalDayExercise.WeekOfYear == 0 ||
                 trainingJournalDayExercise.DayOfWeek == 0 || trainingJournalDayExercise.TrainingDayId == 0)
                 return null;
 
-            var row = _dbContext.TrainingJournalDayExercises.Where(t => t.UserId == trainingJournalDayExercise.UserId &&
+            var row = _dbContext.TrainingExercises.Where(t => t.UserId == trainingJournalDayExercise.UserId &&
                                                                         t.Year == trainingJournalDayExercise.Year &&
                                                                         t.WeekOfYear == trainingJournalDayExercise.WeekOfYear &&
                                                                         t.DayOfWeek == trainingJournalDayExercise.DayOfWeek &&
@@ -103,9 +103,9 @@ namespace BodyReport.Crud.Module
             }
             else
             { //Modify Data in database
-                TrainingJournalDayExerciseTransformer.ToRow(trainingJournalDayExercise, row);
+                TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
                 _dbContext.SaveChanges();
-                return TrainingJournalDayExerciseTransformer.ToBean(row);
+                return TrainingExerciseTransformer.ToBean(row);
             }
         }
 
@@ -113,17 +113,17 @@ namespace BodyReport.Crud.Module
         /// Delete data in database
         /// </summary>
         /// <param name="key">Primary Key</param>
-        public void Delete(TrainingJournalDayExerciseKey key)
+        public void Delete(TrainingExerciseKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0)
                 return;
 
-            var row = _dbContext.TrainingJournalDayExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                         t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
                                                                         t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.TrainingJournalDayExercises.Remove(row);
+                _dbContext.TrainingExercises.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

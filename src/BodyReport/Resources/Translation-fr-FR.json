@@ -87,5 +87,15 @@
   "SEPTEMBER": "Septembre",
   "OCTOBER": "Octobre",
   "NOVEMBER": "Novembre",
-  "DECEMBER": "Décembre"
+  "DECEMBER": "Décembre",
+  "IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL": "",
+  "DATE": "Date",
+  "TRAINING_WEEK": "Semaine d'entrainement",
+  "P0_ALREADY_EXIST": "{0} existe déjà",
+  "VIEW": "Visualiser",
+  "CREATE_IT_PE": "Creer le !",
+  "YOU_HAVENT_CREATE_THIS_TRAINING_DAY": "Vous n'avez pas rensigné ce jour d'entrainement",
+  "TRAINING_DAY": "Jour d'entrainement",
+  "BEGIN_HOUR": "Heure de début",
+  "END_HOUR": "Heure de fin"
 }

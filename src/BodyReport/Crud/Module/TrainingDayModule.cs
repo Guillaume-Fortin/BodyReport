@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Module
 {
-    public class TrainingJournalDayModule : Crud
+    public class TrainingDayModule : Crud
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="dbContext">database context</param>
-        public TrainingJournalDayModule(ApplicationDbContext dbContext) : base(dbContext)
+        public TrainingDayModule(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 
@@ -23,18 +23,18 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="trainingJournalDay">Data</param>
         /// <returns>insert data</returns>
-        public TrainingJournalDay Create(TrainingJournalDay trainingJournalDay)
+        public TrainingDay Create(TrainingDay trainingJournalDay)
         {
             if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
                 trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
                 trainingJournalDay.DayOfWeek == 0 || trainingJournalDay.TrainingDayId == 0)
                 return null;
 
-            var row = new TrainingJournalDayRow();
-            TrainingJournalDayTransformer.ToRow(trainingJournalDay, row);
-            _dbContext.TrainingJournalDays.Add(row);
+            var row = new TrainingDayRow();
+            TrainingDayTransformer.ToRow(trainingJournalDay, row);
+            _dbContext.TrainingDays.Add(row);
             _dbContext.SaveChanges();
-            return TrainingJournalDayTransformer.ToBean(row);
+            return TrainingDayTransformer.ToBean(row);
         }
 
         /// <summary>
@@ -42,20 +42,20 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="key">Primary Key</param>
         /// <returns>read data</returns>
-        public TrainingJournalDay Get(TrainingJournalDayKey key)
+        public TrainingDay Get(TrainingDayKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
                 key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.TrainingDayId == 0)
                 return null;
 
-            var row = _dbContext.TrainingJournalDays.Where(t => t.UserId == key.UserId &&
+            var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId &&
                                                                 t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear &&
                                                                 t.DayOfWeek == key.DayOfWeek &&
                                                                 t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
             if (row != null)
             {
-                return TrainingJournalDayTransformer.ToBean(row);
+                return TrainingDayTransformer.ToBean(row);
             }
             return null;
         }
@@ -64,19 +64,19 @@ namespace BodyReport.Crud.Module
         /// Find datas
         /// </summary>
         /// <returns></returns>
-        public List<TrainingJournalDay> Find(CriteriaField criteriaField = null)
+        public List<TrainingDay> Find(CriteriaField criteriaField = null)
         {
-            List<TrainingJournalDay> resultList = null;
-            IQueryable<TrainingJournalDayRow> rowList = _dbContext.TrainingJournalDays;
+            List<TrainingDay> resultList = null;
+            IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDays;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
-            rowList.OrderBy(t => t.DayOfWeek);
+            rowList = rowList.OrderBy(t => t.DayOfWeek);
 
             if (rowList != null && rowList.Count() > 0)
             {
-                resultList = new List<TrainingJournalDay>();
+                resultList = new List<TrainingDay>();
                 foreach (var trainingJournalDayRow in rowList)
                 {
-                    resultList.Add(TrainingJournalDayTransformer.ToBean(trainingJournalDayRow));
+                    resultList.Add(TrainingDayTransformer.ToBean(trainingJournalDayRow));
                 }
             }
             return resultList;
@@ -87,14 +87,14 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="trainingJournalDay">data</param>
         /// <returns>updated data</returns>
-        public TrainingJournalDay Update(TrainingJournalDay trainingJournalDay)
+        public TrainingDay Update(TrainingDay trainingJournalDay)
         {
             if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
                 trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
                 trainingJournalDay.DayOfWeek == 0 || trainingJournalDay.TrainingDayId == 0)
                 return null;
 
-            var trainingJournalRow = _dbContext.TrainingJournalDays.Where(t=>t.UserId == trainingJournalDay.UserId &&
+            var trainingJournalRow = _dbContext.TrainingDays.Where(t=>t.UserId == trainingJournalDay.UserId &&
                                                                              t.Year == trainingJournalDay.Year &&
                                                                              t.WeekOfYear == trainingJournalDay.WeekOfYear &&
                                                                              t.DayOfWeek == trainingJournalDay.DayOfWeek &&
@@ -105,9 +105,9 @@ namespace BodyReport.Crud.Module
             }
             else
             { //Modify Data in database
-                TrainingJournalDayTransformer.ToRow(trainingJournalDay, trainingJournalRow);
+                TrainingDayTransformer.ToRow(trainingJournalDay, trainingJournalRow);
                 _dbContext.SaveChanges();
-                return TrainingJournalDayTransformer.ToBean(trainingJournalRow);
+                return TrainingDayTransformer.ToBean(trainingJournalRow);
             }
         }
 
@@ -115,18 +115,18 @@ namespace BodyReport.Crud.Module
         /// Delete data in database
         /// </summary>
         /// <param name="key">Primary Key</param>
-        public void Delete(TrainingJournalDayKey key)
+        public void Delete(TrainingDayKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || 
                 key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.TrainingDayId == 0)
                 return;
 
-            var row = _dbContext.TrainingJournalDays.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
                                                                 t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.TrainingJournalDays.Remove(row);
+                _dbContext.TrainingDays.Remove(row);
                 _dbContext.SaveChanges();
             }
         }
