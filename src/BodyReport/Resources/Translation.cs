@@ -218,6 +218,9 @@ namespace BodyReport.Resources
         public static string IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL { get { return Get(TRS.IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL); } }
         public static string DATE { get { return Get(TRS.DATE); } }
         public static string P0_ALREADY_EXIST { get { return Get(TRS.P0_ALREADY_EXIST); } }
+        public static string IMPOSSIBLE_TO_CREATE_P0 { get { return Get(TRS.IMPOSSIBLE_TO_CREATE_P0); } }
+        public static string IMPOSSIBLE_TO_UPDATE_P0 { get { return Get(TRS.IMPOSSIBLE_TO_UPDATE_P0); } }
+        public static string P0_NOT_EXIST { get { return Get(TRS.P0_NOT_EXIST); } }
         public static string VIEW { get { return Get(TRS.VIEW); } }
         public static string CREATE_IT_PE { get { return Get(TRS.CREATE_IT_PE); } }
         public static string YOU_HAVENT_CREATE_THIS_TRAINING_DAY { get { return Get(TRS.YOU_HAVENT_CREATE_THIS_TRAINING_DAY); } }
@@ -701,6 +704,21 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("{0} already exist")]
         public const string P0_ALREADY_EXIST = "P0_ALREADY_EXIST";
+        // <summary>
+        /// {0} doesn't exist
+        /// </summary>
+        [Translation("{0} doesn't exist")]
+        public const string P0_NOT_EXIST = "P0_NOT_EXIST";
+        // <summary>
+        /// Impossible to update {0}
+        /// </summary>
+        [Translation("Impossible to update {0}")]
+        public const string IMPOSSIBLE_TO_UPDATE_P0 = "IMPOSSIBLE_TO_UPDATE_P0";
+        // <summary>
+        /// Impossible to create {0}
+        /// </summary>
+        [Translation("Impossible to create {0}")]
+        public const string IMPOSSIBLE_TO_CREATE_P0 = "IMPOSSIBLE_TO_CREATE_P0";
         // <summary>
         /// View
         /// </summary>

@@ -101,7 +101,7 @@ namespace BodyReport.Areas.User.Controllers
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || User.GetUserId() != viewModel.UserId)
                     return View(viewModel);
 
-                //Verify valide wekk of year
+                //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
                     var trainingWeekManager = new TrainingWeekManager(_dbContext);
@@ -153,6 +153,47 @@ namespace BodyReport.Areas.User.Controllers
                 return RedirectToAction("Index");
 
             return View(TransformTrainingWeekToViewModel(trainingJournal));
+        }
+
+        // Edit a training journal week
+        // GET: /User/TrainingJournal/Create
+        [HttpPost]
+        public IActionResult Edit(TrainingWeekViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || User.GetUserId() != viewModel.UserId)
+                    return View(viewModel);
+
+                //Verify valide week of year
+                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
+                {
+                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                    var trainingWeek = TransformViewModelToTrainingJournal(viewModel);
+
+                    var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
+                    var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
+                    
+                    if (existTrainingWeek == null)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
+                        return View(viewModel);
+                    }
+
+                    //Create data in database
+                    trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+
+                    if (trainingWeek == null)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.IMPOSSIBLE_TO_UPDATE_P0, Translation.TRAINING_JOURNAL));
+                        return View(viewModel);
+                    }
+
+                    return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
+                }
+            }
+
+            return View(viewModel);
         }
 
         //

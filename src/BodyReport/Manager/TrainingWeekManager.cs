@@ -31,6 +31,11 @@ namespace BodyReport.Manager
             return _trainingWeekModule.Create(trainingJournal);
         }
 
+        internal TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek)
+        {
+            return _trainingWeekModule.Update(trainingWeek);
+        }
+
         internal TrainingWeek GetTrainingWeek(TrainingWeekKey key, bool manageTrainingDay)
         {
             var trainingWeek = _trainingWeekModule.Get(key);
@@ -90,5 +95,7 @@ namespace BodyReport.Manager
 
             return trainingWeeks;
         }
+
+        
     }
 }

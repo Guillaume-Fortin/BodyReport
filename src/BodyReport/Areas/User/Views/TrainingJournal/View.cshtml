@@ -61,7 +61,7 @@
 
 <p>@date</p>
 <div class="panel panel-info">
-    <div class="panel-heading">@Translation.USER : @Model.Item1.UserName <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit">[@Translation.EDIT]</a></div>
+    <div class="panel-heading">@Translation.USER : @Model.Item1.UserName <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear">[@Translation.EDIT]</a></div>
     <div class="panel-body">
         <dl class="dl-horizontal">
             <dt>@Translation.WEEK_NUMBER :</dt>
@@ -112,7 +112,7 @@
     {
         <p>
             @Translation.YOU_HAVENT_CREATE_THIS_TRAINING_DAY.
-            <a asp-action="CreateTrainingDay">@Translation.CREATE_IT_PE</a>
+            <a asp-action="CreateTrainingDay" asp->@Translation.CREATE_IT_PE</a>
         </p>
     }
     else

@@ -1,14 +1,21 @@
 ﻿@model TrainingWeekViewModel
 
 @{
-    
+    string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
+
+    if (ViewBag.UserUnit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
 }
 
 <h2>@Translation.TRAINING_JOURNAL. </h2>
 
 <p></p>
 <p>
-    @Translation.WEEK_NUMBER @Model.WeekOfYear : @date <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit">[@Translation.EDIT]</a>
+    @Translation.WEEK_NUMBER @Model.WeekOfYear :  <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit">[@Translation.EDIT]</a>
 </p>
 
 
@@ -18,6 +25,34 @@
 
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
     <input asp-for="UserId" hidden="hidden" />
+    <div class="form-group">
+        <label asp-for="Year" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Year" class="form-control" readonly="readonly" type="text" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="WeekOfYear" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="WeekOfYear" class="form-control" readonly="readonly" type="number" min="1" max="52" />
+            <span asp-validation-for="WeekOfYear" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserHeight" class="col-md-2 control-label">@Translation.HEIGHT (@lengthUnit)</label>
+        <div class="col-md-10">
+            <input asp-for="UserHeight" class="form-control" type="text" />
+            <span asp-validation-for="UserHeight" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="UserWeight" class="col-md-2 control-label">@Translation.WEIGHT (@weightUnit)</label>
+        <div class="col-md-10">
+            <input asp-for="UserWeight" class="form-control" type="text" />
+            <span asp-validation-for="UserWeight" class="text-danger"></span>
+        </div>
+    </div>
    
 
     <div class="form-group">

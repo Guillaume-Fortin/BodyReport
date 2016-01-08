@@ -99,5 +99,8 @@
   "YOU_HAVENT_CREATE_THIS_TRAINING_DAY": "You haven't create this training day",
   "TRAINING_DAY": "Training day",
   "BEGIN_HOUR": "Begin hour",
-  "END_HOUR": "End hour"
+  "END_HOUR": "End hour",
+  "P0_NOT_EXIST": "{0} doesn't exist",
+  "IMPOSSIBLE_TO_UPDATE_P0": "Impossible to update {0}",
+  "IMPOSSIBLE_TO_CREATE_P0": "Impossible to create {0}"
 }

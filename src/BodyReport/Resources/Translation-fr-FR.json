@@ -94,8 +94,11 @@
   "P0_ALREADY_EXIST": "{0} existe déjà",
   "VIEW": "Visualiser",
   "CREATE_IT_PE": "Creer le !",
-  "YOU_HAVENT_CREATE_THIS_TRAINING_DAY": "Vous n'avez pas rensigné ce jour d'entrainement",
+  "YOU_HAVENT_CREATE_THIS_TRAINING_DAY": "Vous n'avez pas renseigné ce jour d'entrainement",
   "TRAINING_DAY": "Jour d'entrainement",
   "BEGIN_HOUR": "Heure de début",
-  "END_HOUR": "Heure de fin"
+  "END_HOUR": "Heure de fin",
+  "P0_NOT_EXIST": "{0} n'existe pas",
+  "IMPOSSIBLE_TO_UPDATE_P0": "Impossible de mettre à jour {0}",
+  "IMPOSSIBLE_TO_CREATE_P0": "Impossible de créer {0}"
 }
