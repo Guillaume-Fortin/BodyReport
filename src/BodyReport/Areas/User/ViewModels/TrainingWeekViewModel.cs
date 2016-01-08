@@ -19,9 +19,9 @@ namespace BodyReport.Areas.User.ViewModels
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.YEAR, ResourceType = typeof(Translation))]
         public int Year { get; set; }
-
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.WEEK_NUMBER, ResourceType = typeof(Translation))]
+        [Range(1, 52, ErrorMessageResourceName = TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1, ErrorMessageResourceType = typeof(Translation))]
         public int WeekOfYear { get; set; }
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]

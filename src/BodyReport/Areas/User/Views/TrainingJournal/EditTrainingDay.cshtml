@@ -5,8 +5,8 @@
 
 <h2>@Translation.TRAINING_DAY. </h2>
 
-<form asp-action="CreateTrainingDay" method="post" class="form-horizontal" role="form">
-    <h4>@Translation.CREATE.</h4>
+<form asp-action="EditTrainingDay" method="post" class="form-horizontal" role="form">
+    <h4>@Translation.MODIFY.</h4>
     <hr />
 
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
@@ -15,7 +15,7 @@
     <div class="form-group">
         <label asp-for="Year" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Year" class="form-control" readonly="readonly" type="text" />
+            <input asp-for="Year" class="form-control" type="text" readonly="readonly"/>
             <span asp-validation-for="Year" class="text-danger"></span>
         </div>
     </div>
@@ -51,7 +51,7 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">@Translation.CREATE</button>
+            <button type="submit" class="btn btn-default">@Translation.MODIFY</button>
         </div>
     </div>
 </form>

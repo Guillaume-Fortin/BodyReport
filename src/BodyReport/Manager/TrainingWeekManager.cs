@@ -60,7 +60,7 @@ namespace BodyReport.Manager
                 {
                     UserId = new StringCriteria() { EqualList = new List<string>() { trainingWeek.UserId } },
                     Year = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.Year } },
-                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.Year } },
+                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.WeekOfYear } },
                 };
                 trainingWeek.TrainingDays = _trainingDayModule.Find(trainingDayCriteria);
                 if (trainingWeek.TrainingDays != null)

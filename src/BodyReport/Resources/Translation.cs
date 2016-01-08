@@ -226,6 +226,7 @@ namespace BodyReport.Resources
         public static string YOU_HAVENT_CREATE_THIS_TRAINING_DAY { get { return Get(TRS.YOU_HAVENT_CREATE_THIS_TRAINING_DAY); } }
         public static string BEGIN_HOUR { get { return Get(TRS.BEGIN_HOUR); } }
         public static string END_HOUR { get { return Get(TRS.END_HOUR); } }
+        public static string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 { get { return Get(TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1); } }
     }
 
     /// <summary>
@@ -744,6 +745,11 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("End hour")]
         public const string END_HOUR = "END_HOUR";
+        // <summary>
+        /// The field should be a number between {0} and {1}
+        /// </summary>
+        [Translation("The field should be a number between {0} and {1}")]
+        public const string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 = "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1";
     }
 }
  

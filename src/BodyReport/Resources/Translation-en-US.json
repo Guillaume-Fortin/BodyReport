@@ -102,5 +102,6 @@
   "END_HOUR": "End hour",
   "P0_NOT_EXIST": "{0} doesn't exist",
   "IMPOSSIBLE_TO_UPDATE_P0": "Impossible to update {0}",
-  "IMPOSSIBLE_TO_CREATE_P0": "Impossible to create {0}"
+  "IMPOSSIBLE_TO_CREATE_P0": "Impossible to create {0}",
+  "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1": "The field should be a number between {0} and {1}"
 }

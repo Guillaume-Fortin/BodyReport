@@ -162,7 +162,7 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || User.GetUserId() != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || User.GetUserId() != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
@@ -218,6 +218,14 @@ namespace BodyReport.Areas.User.Controllers
 
             var trainingWeekViewModel = TransformTrainingWeekToViewModel(trainingWeek);
             List<TrainingDayViewModel> trainingDayViewModels = null;
+            if(trainingWeek != null && trainingWeek.TrainingDays != null && trainingWeek.TrainingDays.Count > 0)
+            {
+                trainingDayViewModels = new List<TrainingDayViewModel>();
+                foreach(var trainingDay in trainingWeek.TrainingDays)
+                {
+                    trainingDayViewModels.Add(TransformTrainingDayToViewModel(trainingDay));
+                }
+            }
 
             ViewBag.CurrentDayOfWeek = currentDayOfWeek;
             return View(new Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>>(trainingWeekViewModel, trainingDayViewModels));
@@ -236,29 +244,20 @@ namespace BodyReport.Areas.User.Controllers
             return trainingJournal;
         }
 
-        private TrainingWeekViewModel TransformTrainingWeekToViewModel(TrainingWeek trainingJournal)
+        private TrainingWeekViewModel TransformTrainingWeekToViewModel(TrainingWeek trainingWeek)
         {
             TrainingWeekViewModel trainingJournalVM = new TrainingWeekViewModel();
 
-            trainingJournalVM.UserId = trainingJournal.UserId;
-            trainingJournalVM.Year = trainingJournal.Year;
-            trainingJournalVM.WeekOfYear = trainingJournal.WeekOfYear;
-            trainingJournalVM.UserHeight = trainingJournal.UserHeight;
-            trainingJournalVM.UserWeight = trainingJournal.UserWeight;
+            trainingJournalVM.UserId = trainingWeek.UserId;
+            trainingJournalVM.Year = trainingWeek.Year;
+            trainingJournalVM.WeekOfYear = trainingWeek.WeekOfYear;
+            trainingJournalVM.UserHeight = trainingWeek.UserHeight;
+            trainingJournalVM.UserWeight = trainingWeek.UserWeight;
 
             var userManager = new UserManager(_dbContext);
-            var user = userManager.GetUser(new UserKey() { Id = trainingJournal.UserId });
+            var user = userManager.GetUser(new UserKey() { Id = trainingWeek.UserId });
             if (user != null)
                 trainingJournalVM.UserName = user.Name;
-            /*
-            trainingJournalVM.TrainingJournalDays = new List<TrainingJournalDayViewModel>();
-            if(trainingJournal != null)
-            {
-                foreach(var trainingJournalDay in trainingJournal.TrainingJournalDays)
-                {
-                    trainingJournalVM.
-                }
-            }*/
 
             return trainingJournalVM;
         }
@@ -284,6 +283,9 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult CreateTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek)
         {
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek == 0 || User.GetUserId() != userId)
+                return RedirectToAction("Index");
+
             var userInfoManager = new UserInfoManager(_dbContext);
             var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
             if (userInfo == null)
@@ -315,43 +317,145 @@ namespace BodyReport.Areas.User.Controllers
             return View(TransformTrainingDayToViewModel(trainingDay));
         }
 
+        private TrainingDay TransformViewModelToTrainingDay(TrainingDayViewModel viewModel)
+        {
+            TrainingDay trainingDay = new TrainingDay();
+
+            trainingDay.UserId = viewModel.UserId;
+            trainingDay.Year = viewModel.Year;
+            trainingDay.WeekOfYear = viewModel.WeekOfYear;
+            trainingDay.DayOfWeek = viewModel.DayOfWeek;
+            trainingDay.TrainingDayId = viewModel.TrainingDayId;
+            trainingDay.BeginHour = viewModel.BeginHour;
+            trainingDay.EndHour = viewModel.EndHour;
+
+            return trainingDay;
+        }
+
         // Create a training day
         // GET: /User/TrainingJournal/CreateTrainingDay
         [HttpPost]
         public IActionResult CreateTrainingDay(TrainingDayViewModel viewModel)
         {
-           /* if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || User.GetUserId() != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || viewModel.DayOfWeek == 0 || User.GetUserId() != viewModel.UserId)
                     return View(viewModel);
 
-                //Verify valide wekk of year
+                //Verify trainingWeek exist
+                var trainingWeekManager = new TrainingWeekManager(_dbContext);
+
+                var trainingWeekKey = new TrainingWeekKey()
+                {
+                    UserId = viewModel.UserId,
+                    Year = viewModel.Year,
+                    WeekOfYear = viewModel.WeekOfYear
+                };
+                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+
+                if (trainingWeek == null)
+                {
+                    ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
+                    return View(viewModel);
+                }
+
+                //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
-                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
-                    var trainingWeek = TransformViewModelToTrainingJournal(viewModel);
+                    var trainingDayManager = new TrainingDayManager(_dbContext);
+                    var trainingDay = TransformViewModelToTrainingDay(viewModel);
 
-                    var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
-                    var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
-
-                    if (existTrainingWeek != null)
+                    var trainingDayCriteria = new TrainingDayCriteria()
                     {
-                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_ALREADY_EXIST, Translation.TRAINING_WEEK));
-                        return View(viewModel);
+                        UserId = new StringCriteria() { EqualList = new List<string>() { viewModel.UserId } },
+                        Year = new IntegerCriteria() { EqualList = new List<int>() { viewModel.Year } },
+                        WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { viewModel.WeekOfYear } },
+                        DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { viewModel.DayOfWeek } },
+                    };
+
+                    var trainingDayList = trainingDayManager.FindTrainingDay(trainingDayCriteria, false);
+                    int trainingDayId = 1;
+                    if (trainingDayList != null && trainingDayList.Count > 0)
+                    {
+                        trainingDayId = trainingDayList.Max(td => td.TrainingDayId) + 1;
                     }
 
-                    //Create data in database
-                    trainingWeek = trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                    trainingDay.TrainingDayId = trainingDayId;
 
-                    if (trainingWeek == null)
+                    trainingDay = trainingDayManager.CreateTrainingDay(trainingDay);
+                    if (trainingDay != null)
                     {
-                        ModelState.AddModelError(string.Empty, Translation.IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL);
-                        return View(viewModel);
+                        return RedirectToAction("View", new { userId = trainingDay.UserId, year = trainingDay.Year, weekOfYear = trainingDay.WeekOfYear, dayOfWeekSelected = trainingDay.DayOfWeek });
                     }
-
-                    return RedirectToAction("Index");
                 }
-            }*/
+            }
+
+            return View(viewModel);
+        }
+
+        // Edit a training day
+        // GET: /User/TrainingJournal/EditTrainingDay
+        [HttpGet]
+        public IActionResult EditTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek  == 0 || trainingDayId == 0 || User.GetUserId() != userId)
+                return RedirectToAction("Index");
+
+            var trainingDayManager = new TrainingDayManager(_dbContext);
+            var key = new TrainingDayKey()
+            {
+                UserId = userId,
+                Year = year,
+                WeekOfYear = weekOfYear,
+                DayOfWeek = dayOfWeek,
+                TrainingDayId = trainingDayId
+            };
+            var trainingDay = trainingDayManager.GetTrainingDay(key, true);
+            if (trainingDay == null) // no data found
+                return RedirectToAction("View", new { userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek });
+
+            return View(TransformTrainingDayToViewModel(trainingDay));
+        }
+
+        // Edit a training day
+        // GET: /User/TrainingJournal/EditTrainingDay
+        [HttpPost]
+        public IActionResult EditTrainingDay(TrainingDayViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || 
+                    viewModel.DayOfWeek == 0 || viewModel.TrainingDayId == 0 || User.GetUserId() != viewModel.UserId)
+                    return View(viewModel);
+
+                //Verify valide week of year
+                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
+                {
+                    var trainingDay = TransformViewModelToTrainingDay(viewModel);
+
+                    var trainingDayManager = new TrainingDayManager(_dbContext);
+                    var key = new TrainingDayKey()
+                    {
+                        UserId = trainingDay.UserId,
+                        Year = trainingDay.Year,
+                        WeekOfYear = trainingDay.WeekOfYear,
+                        DayOfWeek = trainingDay.DayOfWeek,
+                        TrainingDayId = trainingDay.TrainingDayId
+                    };
+                    var foundTrainingDay = trainingDayManager.GetTrainingDay(key, true);
+                    if (foundTrainingDay == null) // no data found
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_DAY));
+                        return View(viewModel);
+                    }
+
+                    trainingDay = trainingDayManager.UpdateTrainingDay(trainingDay, true);
+                    if (trainingDay != null)
+                    {
+                        return RedirectToAction("View", new { userId = trainingDay.UserId, year = trainingDay.Year, weekOfYear = trainingDay.WeekOfYear, dayOfWeekSelected = trainingDay.DayOfWeek });
+                    }
+                }
+            }
 
             return View(viewModel);
         }

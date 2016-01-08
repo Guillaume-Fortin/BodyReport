@@ -47,5 +47,18 @@ namespace BodyReport.Manager
 
             return trainingDays;
         }
+
+        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay, bool manageExercise)
+        {
+            trainingDay = _trainingDayModule.Update(trainingDay);
+
+            //TODO manage exercices
+            /* if (manageExercise)
+             {
+                ...
+             }*/
+
+            return trainingDay;
+        }
     }
 }
