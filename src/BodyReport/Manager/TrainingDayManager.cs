@@ -1,6 +1,8 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Models;
 using Message;
+using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,27 +13,71 @@ namespace BodyReport.Manager
     public class TrainingDayManager : ServiceManager
     {
         TrainingDayModule _trainingDayModule = null;
-        TrainingExerciseModule _trainingDayExerciseModule = null;
 
         public TrainingDayManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _trainingDayModule = new TrainingDayModule(_dbContext);
-            _trainingDayExerciseModule = new TrainingExerciseModule(_dbContext);
         }
 
-        internal TrainingDay CreateTrainingDay(TrainingDay trainingJournal)
+        internal TrainingDay CreateTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
         {
-            return _trainingDayModule.Create(trainingJournal);
+            TrainingDay trainingDayResult = null;
+            IRelationalTransaction transaction = null;
+            if (manageTransaction)
+                transaction = _dbContext.Database.BeginTransaction();
+            
+            try
+            {
+                trainingDayResult = _trainingDayModule.Create(trainingDay);
+
+                if (trainingDayResult.TrainingExercises != null)
+                {
+                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    foreach (var trainingExercise in trainingDayResult.TrainingExercises)
+                    {
+                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
+                    }
+                }
+                _dbContext.Database.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _dbContext.Database.RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                if (manageTransaction)
+                    transaction.Dispose();
+            }
+            return trainingDayResult;
+        }
+
+        private void CompleteTrainingDayWithExercise(TrainingDay trainingJournalDay)
+        {
+            if (trainingJournalDay != null)
+            {
+                var trainingExerciseCriteria = new TrainingDayExerciseCriteria()
+                {
+                    UserId = new StringCriteria() { EqualList = new List<string>() { trainingJournalDay.UserId } },
+                    Year = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
+                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
+                    DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.DayOfWeek } },
+                    TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.TrainingDayId } }
+                };
+                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                trainingJournalDay.TrainingExercises = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+            }
         }
 
         internal TrainingDay GetTrainingDay(TrainingDayKey key, bool manageExercise)
         {
             var trainingDay = _trainingDayModule.Get(key);
 
-            /* if (manageExercise)
-             {
-                 CompleteTrainingDay(trainingDay);
-             }*/
+            if (manageExercise && trainingDay != null)
+            {
+                CompleteTrainingDayWithExercise(trainingDay);
+            }
 
             return trainingDay;
         }
@@ -40,25 +86,49 @@ namespace BodyReport.Manager
         {
             var trainingDays = _trainingDayModule.Find(criteriaField);
 
-            /* if (manageExercise)
-             {
-                 CompleteTrainingDay(trainingDay);
-             }*/
+            if (manageExercise && trainingDays != null)
+            {
+                foreach (var trainingDay in trainingDays)
+                {
+                    CompleteTrainingDayWithExercise(trainingDay);
+                }
+            }
 
             return trainingDays;
         }
 
-        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay, bool manageExercise)
+        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
         {
-            trainingDay = _trainingDayModule.Update(trainingDay);
+            TrainingDay trainingDayResult = null;
+            IRelationalTransaction transaction = null;
+            if (manageTransaction)
+                transaction = _dbContext.Database.BeginTransaction();
 
-            //TODO manage exercices
-            /* if (manageExercise)
-             {
-                ...
-             }*/
+            try
+            {
+                trainingDayResult = _trainingDayModule.Update(trainingDay);
 
-            return trainingDay;
+                if (trainingDayResult.TrainingExercises != null)
+                {
+                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    foreach (var trainingExercise in trainingDayResult.TrainingExercises)
+                    {
+                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise));
+                    }
+                }
+                _dbContext.Database.CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _dbContext.Database.RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                if (manageTransaction)
+                    transaction.Dispose();
+            }
+            return trainingDayResult;
         }
     }
 }
