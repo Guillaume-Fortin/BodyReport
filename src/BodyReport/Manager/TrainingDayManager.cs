@@ -25,7 +25,7 @@ namespace BodyReport.Manager
             IRelationalTransaction transaction = null;
             if (manageTransaction)
                 transaction = _dbContext.Database.BeginTransaction();
-            
+
             try
             {
                 trainingDayResult = _trainingDayModule.Create(trainingDay);
@@ -38,11 +38,14 @@ namespace BodyReport.Manager
                         trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
                     }
                 }
-                _dbContext.Database.CommitTransaction();
+
+                if (manageTransaction)
+                    transaction.Commit();
             }
             catch (Exception exception)
             {
-                _dbContext.Database.RollbackTransaction();
+                if (manageTransaction)
+                    transaction.Rollback();
                 throw exception;
             }
             finally
@@ -108,19 +111,22 @@ namespace BodyReport.Manager
             {
                 trainingDayResult = _trainingDayModule.Update(trainingDay);
 
-                if (trainingDayResult.TrainingExercises != null)
+                if (trainingDay.TrainingExercises != null)
                 {
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    foreach (var trainingExercise in trainingDayResult.TrainingExercises)
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
                         trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise));
                     }
                 }
-                _dbContext.Database.CommitTransaction();
+
+                if (manageTransaction)
+                    transaction.Commit();
             }
             catch (Exception exception)
             {
-                _dbContext.Database.RollbackTransaction();
+                if (manageTransaction)
+                    transaction.Rollback();
                 throw exception;
             }
             finally
@@ -129,6 +135,41 @@ namespace BodyReport.Manager
                     transaction.Dispose();
             }
             return trainingDayResult;
+        }
+
+        internal void DeleteTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
+        {
+            IRelationalTransaction transaction = null;
+            if (manageTransaction)
+                transaction = _dbContext.Database.BeginTransaction();
+            
+            try
+            {
+                _trainingDayModule.Delete(trainingDay);
+
+                if (trainingDay.TrainingExercises != null)
+                {
+                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
+                    {
+                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                    }
+                }
+
+                if (manageTransaction)
+                    transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                if (manageTransaction)
+                    transaction.Rollback();
+                throw exception;
+            }
+            finally
+            {
+                if (manageTransaction)
+                    transaction.Dispose();
+            }
         }
     }
 }

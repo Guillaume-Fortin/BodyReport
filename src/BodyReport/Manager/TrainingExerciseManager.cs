@@ -38,5 +38,10 @@ namespace BodyReport.Manager
         {
             return _trainingDayExerciseModule.Find(criteriaField);
         }
+
+        public void DeleteTrainingExercise(TrainingExerciseKey key)
+        {
+            _trainingDayExerciseModule.Delete(key);
+        }
     }
 }

@@ -218,7 +218,7 @@ namespace BodyReport.Areas.User.Controllers
                 if(trainingWeek == null)
                     return actionResult;
 
-                trainingWeekManager.DeleteTrainingWeek(trainingWeek, true);
+                trainingWeekManager.DeleteTrainingWeek(trainingWeek);
                 return actionResult;
             }
             else

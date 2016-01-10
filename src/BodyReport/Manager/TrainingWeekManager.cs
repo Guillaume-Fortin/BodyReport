@@ -26,7 +26,7 @@ namespace BodyReport.Manager
         internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
         {
             TrainingWeek trainingWeekResult = null;
-            using (_dbContext.Database.BeginTransaction())
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
                 try
                 {
@@ -40,11 +40,11 @@ namespace BodyReport.Manager
                             trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay, false));
                         }
                     }
-                    _dbContext.Database.CommitTransaction();
+                    transaction.Commit();
                 }
                 catch(Exception exception)
                 {
-                    _dbContext.Database.RollbackTransaction();
+                    transaction.Rollback();
                     throw exception;
                 }
             }
@@ -125,10 +125,35 @@ namespace BodyReport.Manager
             return trainingWeeks;
         }
 
-        internal void DeleteTrainingWeek(TrainingWeekKey key, bool manageTrainingDay)
+        internal void DeleteTrainingWeek(TrainingWeekKey key)
         {
-            _trainingWeekModule.Delete(key);
             //TODO manage training Day and TrainingExercise
+            using (_dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var trainingWeek = GetTrainingWeek(key, true);
+                    if (trainingWeek != null)
+                    {
+                        _trainingWeekModule.Delete(key);
+
+                        if (trainingWeek.TrainingDays != null)
+                        {
+                            var trainingDayManager = new TrainingDayManager(_dbContext);
+                            foreach (var trainingDay in trainingWeek.TrainingDays)
+                            {
+                                trainingDayManager.DeleteTrainingDay(trainingDay, false);
+                            }
+                        }
+                        _dbContext.Database.CommitTransaction();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _dbContext.Database.RollbackTransaction();
+                    throw exception;
+                }
+            }
         }
     }
 }
