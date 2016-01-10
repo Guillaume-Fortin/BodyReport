@@ -223,6 +223,7 @@ namespace BodyReport.Resources
         public static string P0_NOT_EXIST { get { return Get(TRS.P0_NOT_EXIST); } }
         public static string VIEW { get { return Get(TRS.VIEW); } }
         public static string CREATE_IT_PE { get { return Get(TRS.CREATE_IT_PE); } }
+        public static string CREATE_NEW_PE { get { return Get(TRS.CREATE_NEW_PE); } }
         public static string YOU_HAVENT_CREATE_THIS_TRAINING_DAY { get { return Get(TRS.YOU_HAVENT_CREATE_THIS_TRAINING_DAY); } }
         public static string BEGIN_HOUR { get { return Get(TRS.BEGIN_HOUR); } }
         public static string END_HOUR { get { return Get(TRS.END_HOUR); } }
@@ -231,6 +232,8 @@ namespace BodyReport.Resources
         public static string NO { get { return Get(TRS.NO); } }
         public static string CONFIRMATION { get { return Get(TRS.CONFIRMATION); } }
         public static string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI { get { return Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI); } }
+        public static string FROM { get { return Get(TRS.FROM); } }
+        public static string TO { get { return Get(TRS.TO); } }
     }
 
     /// <summary>
@@ -735,6 +738,11 @@ namespace BodyReport.Resources
         [Translation("Create it!")]
         public const string CREATE_IT_PE = "CREATE_IT_PE";
         // <summary>
+        /// Create new!
+        /// </summary>
+        [Translation("Create new!")]
+        public const string CREATE_NEW_PE = "CREATE_NEW_PE";
+        // <summary>
         /// You haven't create this training day
         /// </summary>
         [Translation("You haven't create this training day")]
@@ -774,6 +782,16 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Are you sure you wanna delete this element ?")]
         public const string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI = "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI";
+        // <summary>
+        /// From
+        /// </summary>
+        [Translation("From")]
+        public const string FROM = "FROM";
+        // <summary>
+        /// To
+        /// </summary>
+        [Translation("To")]
+        public const string TO = "TO";
     }
 }
  

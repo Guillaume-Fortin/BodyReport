@@ -107,5 +107,8 @@
   "YES": "Yes",
   "NO": "No",
   "CONFIRMATION": "Confirmation",
-  "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI": "Are you sure you wanna delete this element ?"
+  "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI": "Are you sure you wanna delete this element ?",
+  "CREATE_NEW_PE": "Create new!",
+  "FROM": "From",
+  "TO": "To"
 }

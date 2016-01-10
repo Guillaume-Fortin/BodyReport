@@ -434,7 +434,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult EditTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek  == 0 || trainingDayId == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || User.GetUserId() != userId)
                 return RedirectToAction("Index");
 
             var trainingDayManager = new TrainingDayManager(_dbContext);
@@ -494,6 +494,43 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             return View(viewModel);
+        }
+
+        // Delete a training journals
+        // GET: /User/TrainingJournal/DeleteTrainingDay
+        [HttpGet]
+        public IActionResult DeleteTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, bool confirmation = false)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || User.GetUserId() != userId)
+                return RedirectToAction("Index");
+
+            if (confirmation)
+            {
+                var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
+                var trainingDayManager = new TrainingDayManager(_dbContext);
+                var key = new TrainingDayKey()
+                {
+                    UserId = userId,
+                    Year = year,
+                    WeekOfYear = weekOfYear,
+                    DayOfWeek = dayOfWeek,
+                    TrainingDayId = trainingDayId
+                };
+                var trainingDay = trainingDayManager.GetTrainingDay(key, true);
+                if (trainingDay == null)
+                    return actionResult;
+
+                trainingDayManager.DeleteTrainingDay(trainingDay);
+                return actionResult;
+            }
+            else
+            {
+                string title = Translation.TRAINING_DAY;
+                string message = Translation.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI;
+                string returnUrlYes = Url.Action("DeleteTrainingDay", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek, trainingDayId = trainingDayId, confirmation = true });
+                string returnUrlNo = Url.Action("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
+                return RedirectToAction("Confirm", "Message", new { Area = "Site", title = title, message = message, returnUrlYes = returnUrlYes, returnUrlNo = returnUrlNo });
+            }
         }
     }
 }

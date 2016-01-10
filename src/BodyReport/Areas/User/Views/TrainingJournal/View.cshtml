@@ -72,6 +72,7 @@
     </div>
 </div>
 <p>
+    <h2>@Translation.TRAINING_DAY.</h2>
     <div class="btn-group">
         @foreach (var dayOfWeek in dayOfWeekList)
         {
@@ -99,6 +100,7 @@
         </div>
 </p>
 
+
 @if (currentTrainingDayList.Count == 0)
 {
     <p>
@@ -108,21 +110,19 @@
 }
 else
 {
-    @foreach(TrainingDayViewModel trainingDay in currentTrainingDayList)
+    <p>
+        <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE_NEW_PE</a>
+    </p>
+
+    @foreach (TrainingDayViewModel trainingDay in currentTrainingDayList)
     {
         <div class="panel panel-info">
-            <div class="panel-heading">@Translation.TRAINING_DAY : @Translation.Get((ViewBag.CurrentDayOfWeek).ToString().ToUpper()) <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT]</a></div>
+            <div class="panel-heading">
+                @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
+                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT</a>
+                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="DeleteTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.DELETE]</a>
+            </div>
             <div class="panel-body">
-                <dl class="dl-horizontal">
-                    <dt>@Translation.BEGIN_HOUR :</dt>
-                    <dd>
-                        @Html.DisplayFor(modelItem => trainingDay.BeginHour)
-                    </dd>
-                    <dt>@Translation.END_HOUR :</dt>
-                    <dd>
-                        @Html.DisplayFor(modelItem => trainingDay.EndHour)
-                    </dd>
-                </dl>
             </div>
         </div>
     }

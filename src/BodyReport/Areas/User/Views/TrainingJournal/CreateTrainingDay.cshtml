@@ -12,6 +12,7 @@
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
     <input asp-for="UserId" hidden="hidden" />
     <input asp-for="TrainingDayId" hidden="hidden" />
+    <input asp-for="DayOfWeek" hidden="hidden" />
     <div class="form-group">
         <label asp-for="Year" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -22,15 +23,15 @@
     <div class="form-group">
         <label asp-for="WeekOfYear" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="WeekOfYear" class="form-control" type="number" readonly="readonly"/>
+            <input asp-for="WeekOfYear" class="form-control" type="text" readonly="readonly"/>
             <span asp-validation-for="WeekOfYear" class="text-danger"></span>
         </div>
     </div>
+    
     <div class="form-group">
         <label asp-for="DayOfWeek" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="DayOfWeek" class="form-control" type="text" readonly="readonly"/>
-            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+            @((DayOfWeek)Model.DayOfWeek)
         </div>
     </div>
     <div class="form-group">

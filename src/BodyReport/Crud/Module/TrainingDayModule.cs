@@ -69,7 +69,7 @@ namespace BodyReport.Crud.Module
             List<TrainingDay> resultList = null;
             IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDays;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
-            rowList = rowList.OrderBy(t => t.DayOfWeek);
+            rowList = rowList.OrderBy(t => t.DayOfWeek).OrderBy(t => t.BeginHour);
 
             if (rowList != null && rowList.Count() > 0)
             {
