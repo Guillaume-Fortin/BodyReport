@@ -125,7 +125,7 @@ namespace BodyReport.Areas.User.Controllers
                         return View(viewModel);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
                 }
             }
 
@@ -194,6 +194,41 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             return View(viewModel);
+        }
+
+        // Delete a training journals
+        // GET: /User/TrainingJournal/Delete
+        [HttpGet]
+        public IActionResult Delete(string userId, int year, int weekOfYear, bool confirmation = false)
+        {
+            if (confirmation)
+            {
+                var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User" });
+                if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
+                    return actionResult;
+
+                var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                var key = new TrainingWeekKey()
+                {
+                    UserId = userId,
+                    Year = year,
+                    WeekOfYear = weekOfYear
+                };
+                var trainingWeek = trainingWeekManager.GetTrainingWeek(key, true);
+                if(trainingWeek == null)
+                    return actionResult;
+
+                trainingWeekManager.DeleteTrainingWeek(trainingWeek, true);
+                return actionResult;
+            }
+            else
+            {
+                string title = Translation.TRAINING_WEEK;
+                string message = Translation.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI;
+                string returnUrlYes = Url.Action("Delete", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, confirmation = true });
+                string returnUrlNo = Url.Action("View", "TrainingJournal", new { Area = "User" });
+                return RedirectToAction("Confirm", "Message", new { Area = "Site", title = title, message = message, returnUrlYes = returnUrlYes, returnUrlNo = returnUrlNo });
+            }
         }
 
         //

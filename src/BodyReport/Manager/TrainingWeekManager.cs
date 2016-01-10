@@ -125,6 +125,10 @@ namespace BodyReport.Manager
             return trainingWeeks;
         }
 
-        
+        internal void DeleteTrainingWeek(TrainingWeekKey key, bool manageTrainingDay)
+        {
+            _trainingWeekModule.Delete(key);
+            //TODO manage training Day and TrainingExercise
+        }
     }
 }

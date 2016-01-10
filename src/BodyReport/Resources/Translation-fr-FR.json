@@ -101,5 +101,9 @@
   "P0_NOT_EXIST": "{0} n'existe pas",
   "IMPOSSIBLE_TO_UPDATE_P0": "Impossible de mettre à jour {0}",
   "IMPOSSIBLE_TO_CREATE_P0": "Impossible de créer {0}",
-  "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1": "Le champ doit être compris entre {0} et {1}"
+  "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1": "Le champ doit être compris entre {0} et {1}",
+  "YES": "Oui",
+  "NO": "Non",
+  "CONFIRMATION": "Confirmation",
+  "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI": "Êtes-vous sûr de vouloir supprimer cet élément ?"
 }

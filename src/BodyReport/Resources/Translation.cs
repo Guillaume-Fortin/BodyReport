@@ -227,6 +227,10 @@ namespace BodyReport.Resources
         public static string BEGIN_HOUR { get { return Get(TRS.BEGIN_HOUR); } }
         public static string END_HOUR { get { return Get(TRS.END_HOUR); } }
         public static string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 { get { return Get(TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1); } }
+        public static string YES { get { return Get(TRS.YES); } }
+        public static string NO { get { return Get(TRS.NO); } }
+        public static string CONFIRMATION { get { return Get(TRS.CONFIRMATION); } }
+        public static string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI { get { return Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI); } }
     }
 
     /// <summary>
@@ -750,6 +754,26 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("The field should be a number between {0} and {1}")]
         public const string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 = "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1";
+        // <summary>
+        /// Yes
+        /// </summary>
+        [Translation("Yes")]
+        public const string YES = "YES";
+        // <summary>
+        /// No
+        /// </summary>
+        [Translation("No")]
+        public const string NO = "NO";
+        // <summary>
+        /// Confirmation
+        /// </summary>
+        [Translation("Confirmation")]
+        public const string CONFIRMATION = "CONFIRMATION";
+        // <summary>
+        /// Are you sure you wanna delete this element ?
+        /// </summary>
+        [Translation("Are you sure you wanna delete this element ?")]
+        public const string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI = "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI";
     }
 }
  
