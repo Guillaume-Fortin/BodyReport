@@ -30,10 +30,10 @@ namespace BodyReport.Manager
             {
                 trainingDayResult = _trainingDayModule.Create(trainingDay);
 
-                if (trainingDayResult.TrainingExercises != null)
+                if (trainingDay.TrainingExercises != null)
                 {
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    foreach (var trainingExercise in trainingDayResult.TrainingExercises)
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
                         trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
                     }

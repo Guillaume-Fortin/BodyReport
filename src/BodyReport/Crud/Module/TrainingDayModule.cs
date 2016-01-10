@@ -27,7 +27,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
                 trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
-                trainingJournalDay.DayOfWeek == 0 || trainingJournalDay.TrainingDayId == 0)
+                trainingJournalDay.DayOfWeek < 0 || trainingJournalDay.DayOfWeek > 6 || trainingJournalDay.TrainingDayId == 0)
                 return null;
 
             var row = new TrainingDayRow();
@@ -45,7 +45,7 @@ namespace BodyReport.Crud.Module
         public TrainingDay Get(TrainingDayKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
-                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.TrainingDayId == 0)
+                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
                 return null;
 
             var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId &&
@@ -91,7 +91,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingJournalDay == null || string.IsNullOrWhiteSpace(trainingJournalDay.UserId) ||
                 trainingJournalDay.Year == 0 || trainingJournalDay.WeekOfYear == 0 ||
-                trainingJournalDay.DayOfWeek == 0 || trainingJournalDay.TrainingDayId == 0)
+                trainingJournalDay.DayOfWeek < 0 || trainingJournalDay.DayOfWeek > 6 || trainingJournalDay.TrainingDayId == 0)
                 return null;
 
             var trainingJournalRow = _dbContext.TrainingDays.Where(t=>t.UserId == trainingJournalDay.UserId &&
@@ -118,7 +118,7 @@ namespace BodyReport.Crud.Module
         public void Delete(TrainingDayKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || 
-                key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.TrainingDayId == 0)
+                key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
                 return;
 
             var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
