@@ -22,10 +22,18 @@ namespace BodyReport.Framework
             return result;
         }
 
-        public static List<SelectListItem> CreateSelectMuscularGroupItemList(List<MuscularGroup> muscularGroupList, int currentId)
+        public static List<SelectListItem> CreateSelectMuscularGroupItemList(List<MuscularGroup> muscularGroupList, int currentId, bool addNotSelectedValue = false)
         {
             var result = new List<SelectListItem>();
+            if (addNotSelectedValue)
+                result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
+            
+            if (muscularGroupList == null)
+                return result;
+            
+            muscularGroupList = muscularGroupList.OrderBy(m => m.Name).ToList();
 
+            
             foreach (MuscularGroup muscularGroup in muscularGroupList)
             {
                 result.Add(new SelectListItem { Text = muscularGroup.Name, Value = muscularGroup.Id.ToString(), Selected = currentId == muscularGroup.Id });
@@ -34,13 +42,38 @@ namespace BodyReport.Framework
             return result;
         }
 
-        public static List<SelectListItem> CreateSelectMuscleItemList(List<Muscle> muscleList, int currentId)
+        public static List<SelectListItem> CreateSelectMuscleItemList(List<Muscle> muscleList, int currentId, bool addNotSelectedValue = false)
         {
             var result = new List<SelectListItem>();
 
+            if (addNotSelectedValue)
+                result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
+
+
+            if (muscleList == null)
+                return result;
+
+            muscleList = muscleList.OrderBy(m => m.Name).ToList();
+           
             foreach (Muscle muscle in muscleList)
             {
                 result.Add(new SelectListItem { Text = muscle.Name, Value = muscle.Id.ToString(), Selected = currentId == muscle.Id });
+            }
+
+            return result;
+        }
+
+        public static List<SelectListItem> CreateSelectBodyExerciseItemList(List<BodyExercise> bodyExerciseList, int currentId, bool addNotSelectedValue = false)
+        {
+            bodyExerciseList = bodyExerciseList.OrderBy(m => m.Name).ToList();
+
+            var result = new List<SelectListItem>();
+            if (addNotSelectedValue)
+                result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
+
+            foreach (BodyExercise bodyExercise in bodyExerciseList)
+            {
+                result.Add(new SelectListItem { Text = bodyExercise.Name, Value = bodyExercise.Id.ToString(), Selected = currentId == bodyExercise.Id });
             }
 
             return result;

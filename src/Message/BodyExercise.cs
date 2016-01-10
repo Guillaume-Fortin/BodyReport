@@ -30,7 +30,7 @@ namespace Message
         public int MuscleId { get; set; } = 0;
     }
 
-    public class BodyExerciceCriteria : CriteriaField
+    public class BodyExerciseCriteria : CriteriaField
     {
         /// <summary>
         /// Exercise Id
@@ -43,8 +43,8 @@ namespace Message
         public StringCriteria Name { get; set; }
 
         /// <summary>
-        /// Muscular Group Id
+        /// Muscle Id
         /// </summary>
-        public IntegerCriteria MuscularGroupId { get; set; }
+        public IntegerCriteria MuscleId { get; set; }
     }
 }

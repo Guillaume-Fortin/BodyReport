@@ -22,17 +22,12 @@ namespace BodyReport.Manager
             _bodyExerciseModule = new BodyExerciseModule(_dbContext);
         }
 
-        public List<BodyExercise> FindBodyExercises()
-        {
-            return _bodyExerciseModule.Find();
-        }
-
         public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
             return _bodyExerciseModule.Get(key);
         }
 
-        public List<BodyExercise> FindBodyExercise(CriteriaField criteriaField)
+        public List<BodyExercise> FindBodyExercises(CriteriaField criteriaField = null)
         {
             return _bodyExerciseModule.Find(criteriaField);
         }

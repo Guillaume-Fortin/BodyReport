@@ -123,6 +123,7 @@ else
                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="DeleteTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.DELETE]</a>
             </div>
             <div class="panel-body">
+                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingExercise" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.ADD_NEW_EXERCISE</a>
             </div>
         </div>
     }

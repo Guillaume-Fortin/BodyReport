@@ -18,9 +18,9 @@ namespace BodyReport.Manager
             _muscleModule = new MuscleModule(_dbContext);
         }
 
-        public List<Muscle> FindMuscles()
+        public List<Muscle> FindMuscles(MuscleCriteria criteria = null)
         {
-            return _muscleModule.Find();
+            return _muscleModule.Find(criteria);
         }
 
         internal Muscle CreateMuscle(Muscle muscle)

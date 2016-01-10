@@ -28,4 +28,17 @@ namespace Message
         /// </summary>
         public string Name { get; set; }
     }
+
+    public class MuscleCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Muscle Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+
+        /// <summary>
+        /// Muscular group Id
+        /// </summary>
+        public IntegerCriteria MuscularGroupId { get; set; }
+    }
 }

@@ -71,10 +71,12 @@ namespace BodyReport.Crud.Module
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<Muscle> Find()
+        public List<Muscle> Find(CriteriaField criteriaField = null)
         {
             List<Muscle> resultList = null;
-            var rowList = _dbContext.Muscles;
+            IQueryable<MuscleRow> rowList = _dbContext.Muscles;
+            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+
             if (rowList != null && rowList.Count() > 0)
             {
                 resultList = new List<Muscle>();

@@ -108,5 +108,7 @@
   "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI": "Êtes-vous sûr de vouloir supprimer cet élément ?",
   "CREATE_NEW_PE": "Créer nouveau !",
   "FROM": "De",
-  "TO": "à"
+  "TO": "à",
+  "ADD_NEW_EXERCISE": "Ajouter un nouvel exercice",
+  "TRAINING_EXERCISE": "Exercice d'entrainement"
 }

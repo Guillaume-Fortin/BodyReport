@@ -205,6 +205,7 @@ namespace BodyReport.Resources
         public static string TRAINING_JOURNAL { get { return Get(TRS.TRAINING_JOURNAL); } }
         public static string TRAINING_WEEK { get { return Get(TRS.TRAINING_WEEK); } }
         public static string TRAINING_DAY { get { return Get(TRS.TRAINING_DAY); } }
+        public static string TRAINING_EXERCISE { get { return Get(TRS.TRAINING_EXERCISE); } }
         public static string WEEK_NUMBER { get { return Get(TRS.WEEK_NUMBER); } }
         public static string YEAR { get { return Get(TRS.YEAR); } }
         public static string FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3{ get { return Get(TRS.FROM_THE_P0TH_TO_THE_P1TH_OF_P2_P3); } }
@@ -234,6 +235,7 @@ namespace BodyReport.Resources
         public static string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI { get { return Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI); } }
         public static string FROM { get { return Get(TRS.FROM); } }
         public static string TO { get { return Get(TRS.TO); } }
+        public static string ADD_NEW_EXERCISE { get { return Get(TRS.ADD_NEW_EXERCISE); } }
     }
 
     /// <summary>
@@ -587,6 +589,11 @@ namespace BodyReport.Resources
         [Translation("Training day")]
         public const string TRAINING_DAY = "TRAINING_DAY";
         // <summary>
+        /// Training exercise
+        /// </summary>
+        [Translation("Training exercise")]
+        public const string TRAINING_EXERCISE = "TRAINING_EXERCISE";
+        // <summary>
         /// Sunday
         /// </summary>
         [Translation("Sunday")]
@@ -792,6 +799,11 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("To")]
         public const string TO = "TO";
+        // <summary>
+        /// Add new exercise
+        /// </summary>
+        [Translation("Add new exercise")]
+        public const string ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE";
     }
 }
  

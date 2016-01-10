@@ -1,0 +1,81 @@
+﻿@model TrainingExerciseViewModel
+
+@{
+}
+
+<h2>@Translation.TRAINING_EXERCISE. </h2>
+
+<form asp-action="EditTrainingExercise" method="post" class="form-horizontal" role="form">
+    <h4>@Translation.MODIFY.</h4>
+    <hr />
+
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <input asp-for="UserId" hidden="hidden" />
+    <input asp-for="Year" hidden="hidden" />
+    <input asp-for="WeekOfYear" hidden="hidden" />
+    <input asp-for="DayOfWeek" hidden="hidden" />
+    <input asp-for="TrainingDayId" hidden="hidden" />
+
+    <div class="form-group">
+        <label asp-for="NumberOfSets" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="NumberOfSets" class="form-control" type="number" />
+            <span asp-validation-for="NumberOfSets" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="NumberOfReps" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="NumberOfReps" class="form-control" type="number" />
+            <span asp-validation-for="NumberOfReps" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups" onchange='this.form.submit()'></select>
+            <span asp-validation-for="MuscularGroupId" class="text-danger"></span>
+        </div>
+    </div>
+
+    @if (Model.MuscularGroupId > 0)
+    {
+        <div class="form-group">
+            <label asp-for="MuscleId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="MuscleId" asp-items="ViewBag.Muscles" onchange='this.form.submit()'></select>
+                <span asp-validation-for="MuscleId" class="text-danger"></span>
+            </div>
+        </div>
+        @if (Model.MuscleId > 0)
+        {
+            <div class="form-group">
+                <label asp-for="BodyExerciseId" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <select asp-for="BodyExerciseId" asp-items="ViewBag.BodyExercises" id="BodyExerciseSelectList" onchange='displayBodyExerciseImage()'></select>
+                    
+                    <span asp-validation-for="BodyExerciseId" class="text-danger"></span>
+                    <br/>
+                    <img style="height:100px; width:100px;display:none" id="previewBodyExercise" onerror='this.style.display="none"' />
+                </div>
+            </div>
+            
+        }
+        else
+        {
+            <input asp-for="BodyExerciseId" hidden="hidden" />
+        }
+    }
+    else
+    {
+        <input asp-for="MuscleId" hidden="hidden" />
+        <input asp-for="BodyExerciseId" hidden="hidden" />
+    }
+    @*
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">@Translation.MODIFY</button>
+        </div>
+    </div>*@
+</form>

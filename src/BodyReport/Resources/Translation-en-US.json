@@ -110,5 +110,7 @@
   "ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI": "Are you sure you wanna delete this element ?",
   "CREATE_NEW_PE": "Create new!",
   "FROM": "From",
-  "TO": "To"
+  "TO": "To",
+  "ADD_NEW_EXERCISE": "Add new exercise",
+  "TRAINING_EXERCISE": "Training exercise"
 }
