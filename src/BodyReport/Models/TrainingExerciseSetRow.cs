@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace BodyReport.Models
 {
     /// <summary>
-    /// Database table TrainingExercise
+    /// Database table TrainingExerciseSet
     /// </summary>
-    public class TrainingExerciseRow
+    public class TrainingExerciseSetRow
     {
         /// <summary>
         /// UserId
@@ -35,8 +35,16 @@ namespace BodyReport.Models
         /// </summary>
         public int BodyExerciseId { get; set; }
         /// <summary>
-        /// Rest time (second)
+        /// Id of set/Rep
         /// </summary>
-        public int RestTime { get; set; }
+        public int Id { get; set; }
+        /// <summary>
+        /// Number of sets
+        /// </summary>
+        public int NumberOfSets { get; set; }
+        /// <summary>
+        /// Number of reps
+        /// </summary>
+        public int NumberOfReps { get; set; }
     }
 }

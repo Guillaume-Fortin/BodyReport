@@ -101,7 +101,6 @@
   "P0_NOT_EXIST": "{0} n'existe pas",
   "IMPOSSIBLE_TO_UPDATE_P0": "Impossible de mettre à jour {0}",
   "IMPOSSIBLE_TO_CREATE_P0": "Impossible de créer {0}",
-  "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1": "Le champ doit être compris entre {0} et {1}",
   "YES": "Oui",
   "NO": "Non",
   "CONFIRMATION": "Confirmation",
@@ -110,5 +109,9 @@
   "FROM": "De",
   "TO": "à",
   "ADD_NEW_EXERCISE": "Ajouter un nouvel exercice",
-  "TRAINING_EXERCISE": "Exercice d'entrainement"
+  "TRAINING_EXERCISE": "Exercice d'entrainement",
+  "REST_TIME": "Temps de repos",
+  "REPS": "Réps",
+  "THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2": "Le champ {0} doit être compris entre {1} et {2}",
+  "ADD_REPS": "Ajout réps"
 }

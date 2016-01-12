@@ -60,7 +60,7 @@ namespace BodyReport.Manager
         {
             if (trainingJournalDay != null)
             {
-                var trainingExerciseCriteria = new TrainingDayExerciseCriteria()
+                var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
                     UserId = new StringCriteria() { EqualList = new List<string>() { trainingJournalDay.UserId } },
                     Year = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
@@ -116,7 +116,7 @@ namespace BodyReport.Manager
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
-                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise));
+                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
                     }
                 }
 

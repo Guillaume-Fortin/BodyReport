@@ -17,21 +17,6 @@
     <input asp-for="TrainingDayId" hidden="hidden" />
 
     <div class="form-group">
-        <label asp-for="NumberOfSets" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="NumberOfSets" class="form-control" type="number" />
-            <span asp-validation-for="NumberOfSets" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="NumberOfReps" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="NumberOfReps" class="form-control" type="number" />
-            <span asp-validation-for="NumberOfReps" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="form-group">
         <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
         <div class="col-md-10">
             <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups" onchange='this.form.submit()'></select>
@@ -54,13 +39,44 @@
                 <label asp-for="BodyExerciseId" class="col-md-2 control-label"></label>
                 <div class="col-md-10">
                     <select asp-for="BodyExerciseId" asp-items="ViewBag.BodyExercises" id="BodyExerciseSelectList" onchange='displayBodyExerciseImage()'></select>
-                    
+
                     <span asp-validation-for="BodyExerciseId" class="text-danger"></span>
-                    <br/>
+                    <br />
                     <img style="height:100px; width:100px;display:none" id="previewBodyExercise" onerror='this.style.display="none"' />
                 </div>
             </div>
-            
+
+
+            <div class="form-group">
+                <label asp-for="RestTime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="RestTime" class="form-control" type="number" />
+                    <span asp-validation-for="RestTime" class="text-danger"></span>
+                </div>
+            </div>
+
+            @if (Model.Reps != null)
+            {
+                <div class="form-group">
+                    <label asp-for="@Model.Reps" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        @for (int i = 0; i < Model.Reps.Count; i++)
+                        {
+                            <input asp-for="@Model.Reps[i]" class="form-control" type="number" />
+                        }
+                        @if (Model.Reps.Count < 10)
+                        {
+                            <button type="submit" name="buttonType" value="addRepBtn" class="btn btn-default">@Translation.ADD_REPS</button>
+                        }
+                        </div>
+                </div>
+            }
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" name="buttonType" value="submitBtn" class="btn btn-default">@Translation.MODIFY</button>
+                </div>
+            </div>
         }
         else
         {
@@ -72,10 +88,5 @@
         <input asp-for="MuscleId" hidden="hidden" />
         <input asp-for="BodyExerciseId" hidden="hidden" />
     }
-    @*
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default">@Translation.MODIFY</button>
-        </div>
-    </div>*@
+
 </form>

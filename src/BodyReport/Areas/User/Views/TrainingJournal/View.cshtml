@@ -1,4 +1,4 @@
-﻿@model Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>>
+﻿@model Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>, List<TrainingExerciseViewModel>>
 @using Framework
 @using System.Linq
 
@@ -124,7 +124,58 @@ else
             </div>
             <div class="panel-body">
                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingExercise" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.ADD_NEW_EXERCISE</a>
+
+                <div>
+                    <table class="table">
+                        <tr>
+                            <th>
+                                Image
+                            </th>
+                            <th>
+                               @Translation.BODY_EXERCISES
+                            </th>
+                            <th>
+                                Sets/Reps
+                            </th>
+                            <th>
+                                Temps de repos
+                            </th>
+                        </tr>
+
+                        @if (Model.Item3 != null)
+                        {
+                            @foreach (TrainingExerciseViewModel trainingExercise in Model.Item3)
+                            {
+                                @if(trainingDay.TrainingDayId == trainingExercise.TrainingDayId)
+                                {
+                                <tr>
+                                    <td>
+                                        <img src="@trainingExercise.BodyExerciseImage" style="height:100px; width:100px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+                                    </td>
+                                    <td>
+                                        @trainingExercise.BodyExerciseName
+                                    </td>
+                                    <td>
+                                        @if (trainingExercise.TupleSetReps != null)
+                                        {
+                                            @foreach (Tuple<int, int> tupleSetRep in trainingExercise.TupleSetReps)
+                                            {
+                                                @tupleSetRep.Item1 @: x @tupleSetRep.Item2<br/>
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+                                        @trainingExercise.RestTime sec
+                                    </td>
+                                </tr>
+                                }
+                            }
+                        }
+
+                    </table>
+                </div>
             </div>
         </div>
     }
+
 }

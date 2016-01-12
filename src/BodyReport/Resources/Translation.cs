@@ -228,7 +228,7 @@ namespace BodyReport.Resources
         public static string YOU_HAVENT_CREATE_THIS_TRAINING_DAY { get { return Get(TRS.YOU_HAVENT_CREATE_THIS_TRAINING_DAY); } }
         public static string BEGIN_HOUR { get { return Get(TRS.BEGIN_HOUR); } }
         public static string END_HOUR { get { return Get(TRS.END_HOUR); } }
-        public static string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 { get { return Get(TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1); } }
+        public static string THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2 { get { return Get(TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2); } }
         public static string YES { get { return Get(TRS.YES); } }
         public static string NO { get { return Get(TRS.NO); } }
         public static string CONFIRMATION { get { return Get(TRS.CONFIRMATION); } }
@@ -236,6 +236,9 @@ namespace BodyReport.Resources
         public static string FROM { get { return Get(TRS.FROM); } }
         public static string TO { get { return Get(TRS.TO); } }
         public static string ADD_NEW_EXERCISE { get { return Get(TRS.ADD_NEW_EXERCISE); } }
+        public static string REST_TIME { get { return Get(TRS.REST_TIME); } }
+        public static string REPS { get { return Get(TRS.REPS); } }
+        public static string ADD_REPS { get { return Get(TRS.ADD_REPS); } }
     }
 
     /// <summary>
@@ -765,10 +768,10 @@ namespace BodyReport.Resources
         [Translation("End hour")]
         public const string END_HOUR = "END_HOUR";
         // <summary>
-        /// The field should be a number between {0} and {1}
+        /// The field {0} should be a number between {1} and {2}
         /// </summary>
-        [Translation("The field should be a number between {0} and {1}")]
-        public const string THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1 = "THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1";
+        [Translation("The field {0} should be a number between {1} and {2}")]
+        public const string THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2 = "THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2";
         // <summary>
         /// Yes
         /// </summary>
@@ -804,6 +807,21 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Add new exercise")]
         public const string ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE";
+        // <summary>
+        /// Rest time
+        /// </summary>
+        [Translation("Rest time")]
+        public const string REST_TIME = "REST_TIME";
+        // <summary>
+        /// Reps
+        /// </summary>
+        [Translation("Reps")]
+        public const string REPS = "REPS";
+        // <summary>
+        /// Add reps
+        /// </summary>
+        [Translation("Add reps")]
+        public const string ADD_REPS = "ADD_REPS";
     }
 }
  

@@ -27,7 +27,7 @@ namespace BodyReport.Areas.User.ViewModels
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.BODY_EXERCISES, ResourceType = typeof(Translation))]
         public int BodyExerciseId { get; set; }
-
+        
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.MUSCULAR_GROUP, ResourceType = typeof(Translation))]
         public int MuscularGroupId { get; set; }
@@ -37,11 +37,15 @@ namespace BodyReport.Areas.User.ViewModels
         public int MuscleId { get; set; }
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
-        [Range(1, 10, ErrorMessageResourceName = TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1, ErrorMessageResourceType = typeof(Translation))]
-        public int NumberOfSets { get; set; } = 1;
+        [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.REST_TIME, ResourceType = typeof(Translation))]
+        public int RestTime { get; set; }
 
-        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
-        [Range(1, 500, ErrorMessageResourceName = TRS.THE_FIELD_SHOULD_BE_A_NUMBER_BETWEEN_P0_AND_P1, ErrorMessageResourceType = typeof(Translation))]
-        public int NumberOfReps { get; set; } = 1;
+        [Display(Name = TRS.REPS, ResourceType = typeof(Translation))]
+        public List<int> Reps { get; set; } = new List<int>();
+
+        public string BodyExerciseName { get; set; }
+        public string BodyExerciseImage { get; set; }
+        public List<Tuple<int, int>> TupleSetReps { get; set; }
     }
 }

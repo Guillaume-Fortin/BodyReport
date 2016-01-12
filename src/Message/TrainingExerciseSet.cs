@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Message
 {
-    public class TrainingExerciseKey
+    public class TrainingExerciseSetKey
     {
         /// <summary>
         /// UserId
@@ -24,26 +24,32 @@ namespace Message
         /// </summary>
         public int DayOfWeek { get; set; }
         /// <summary>
-        /// Training Day Id
+        /// Training day id
         /// </summary>
         public int TrainingDayId { get; set; }
         /// <summary>
         /// Id of body exercise
         /// </summary>
         public int BodyExerciseId { get; set; }
-    }
-
-    public class TrainingExercise : TrainingExerciseKey
-    {   
         /// <summary>
-        /// Rest time (second)
+        /// Id of set/Rep
         /// </summary>
-        public int RestTime { get; set; }
-
-        public List<TrainingExerciseSet> TrainingExerciseSets { get; set; }
+        public int Id { get; set; }
     }
 
-    public class TrainingExerciseCriteria : CriteriaField
+    public class TrainingExerciseSet : TrainingExerciseSetKey
+    {
+        /// <summary>
+        /// Number of sets
+        /// </summary>
+        public int NumberOfSets { get; set; }
+        /// <summary>
+        /// Number of reps
+        /// </summary>
+        public int NumberOfReps { get; set; }
+    }
+
+    public class TrainingExerciseSetCriteria : CriteriaField
     {
         /// <summary>
         /// User Id
@@ -74,5 +80,10 @@ namespace Message
         /// Body Exercise Id
         /// </summary>
         public IntegerCriteria BodyExerciseId { get; set; }
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
     }
 }
