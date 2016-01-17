@@ -65,9 +65,13 @@ namespace BodyReport.Framework
 
         public static List<SelectListItem> CreateSelectBodyExerciseItemList(List<BodyExercise> bodyExerciseList, int currentId, bool addNotSelectedValue = false)
         {
-            bodyExerciseList = bodyExerciseList.OrderBy(m => m.Name).ToList();
-
             var result = new List<SelectListItem>();
+
+            if (bodyExerciseList == null)
+                return result;
+
+            bodyExerciseList = bodyExerciseList.OrderBy(m => m.Name).ToList();
+            
             if (addNotSelectedValue)
                 result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
 
