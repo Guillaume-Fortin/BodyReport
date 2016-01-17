@@ -56,20 +56,29 @@ namespace BodyReport.Areas.Admin.Controllers
         public IActionResult Index()
         {
             var result = new List<BodyExerciseViewModel>();
+            var muscleManager = new MuscleManager(_dbContext);
+            var muscles = muscleManager.FindMuscles();
+
             var manager = new BodyExerciseManager(_dbContext);
             var bodyExercises = manager.FindBodyExercises();
-            if (bodyExercises != null)
+            if (bodyExercises != null && muscles != null)
             {
-                foreach (var bodyExercise in bodyExercises)
+                foreach (var muscle in muscles.OrderBy(t=>t.Name))
                 {
-                    result.Add(new BodyExerciseViewModel()
+                    foreach (var bodyExercise in bodyExercises)
                     {
-                        Id = bodyExercise.Id,
-                        Name = bodyExercise.Name,
-                        ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName),
-                        MuscleId = bodyExercise.MuscleId,
-                        MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId))
-                    });
+                        if (muscle.Id == bodyExercise.MuscleId)
+                        {
+                            result.Add(new BodyExerciseViewModel()
+                            {
+                                Id = bodyExercise.Id,
+                                Name = bodyExercise.Name,
+                                ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName),
+                                MuscleId = bodyExercise.MuscleId,
+                                MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId))
+                            });
+                        }
+                    }
                 }
             }
             return View(result);
