@@ -27,7 +27,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingJournalDayExercise == null || string.IsNullOrWhiteSpace(trainingJournalDayExercise.UserId) ||
                 trainingJournalDayExercise.Year == 0 || trainingJournalDayExercise.WeekOfYear == 0||
-                trainingJournalDayExercise.DayOfWeek == 0 || trainingJournalDayExercise.TrainingDayId == 0 || trainingJournalDayExercise.BodyExerciseId == 0)
+                trainingJournalDayExercise.DayOfWeek < 0 || trainingJournalDayExercise.DayOfWeek > 6 || trainingJournalDayExercise.TrainingDayId == 0 || trainingJournalDayExercise.BodyExerciseId == 0)
                 return null;
 
             var row = new TrainingExerciseRow();
@@ -45,7 +45,7 @@ namespace BodyReport.Crud.Module
         public TrainingExercise Get(TrainingExerciseKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
-                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.BodyExerciseId == 0)
+                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.BodyExerciseId == 0)
                 return null;
 
             var rowQuery = _dbContext.TrainingExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
@@ -90,7 +90,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingJournalDayExercise == null || string.IsNullOrWhiteSpace(trainingJournalDayExercise.UserId) ||
                 trainingJournalDayExercise.Year == 0 || trainingJournalDayExercise.WeekOfYear == 0 ||
-                trainingJournalDayExercise.DayOfWeek == 0 || trainingJournalDayExercise.TrainingDayId == 0 || trainingJournalDayExercise.BodyExerciseId == 0)
+                trainingJournalDayExercise.DayOfWeek < 0 || trainingJournalDayExercise.DayOfWeek > 6 || trainingJournalDayExercise.TrainingDayId == 0 || trainingJournalDayExercise.BodyExerciseId == 0)
                 return null;
 
             var row = _dbContext.TrainingExercises.Where(t => t.UserId == trainingJournalDayExercise.UserId &&
@@ -117,7 +117,7 @@ namespace BodyReport.Crud.Module
         /// <param name="key">Primary Key</param>
         public void Delete(TrainingExerciseKey key)
         {
-            if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.BodyExerciseId == 0)
+            if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.BodyExerciseId == 0)
                 return;
 
             var row = _dbContext.TrainingExercises.Where(t => t.UserId == key.UserId && t.Year == key.Year &&

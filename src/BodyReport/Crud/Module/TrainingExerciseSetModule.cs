@@ -27,7 +27,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingExerciseSet == null || string.IsNullOrWhiteSpace(trainingExerciseSet.UserId) ||
                 trainingExerciseSet.Year == 0 || trainingExerciseSet.WeekOfYear == 0 ||
-                trainingExerciseSet.DayOfWeek == 0 || trainingExerciseSet.TrainingDayId == 0 ||
+                trainingExerciseSet.DayOfWeek < 0 || trainingExerciseSet.DayOfWeek > 6 || trainingExerciseSet.TrainingDayId == 0 ||
                 trainingExerciseSet.BodyExerciseId == 0 || trainingExerciseSet.Id == 0)
                 return null;
 
@@ -46,7 +46,7 @@ namespace BodyReport.Crud.Module
         public TrainingExerciseSet Get(TrainingExerciseSetKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) ||
-                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 || key.BodyExerciseId == 0 || key.Id == 0)
+                key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.BodyExerciseId == 0 || key.Id == 0)
                 return null;
 
             var row = _dbContext.TrainingExerciseSets.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
@@ -91,7 +91,7 @@ namespace BodyReport.Crud.Module
         {
             if (trainingExerciseSet == null || string.IsNullOrWhiteSpace(trainingExerciseSet.UserId) ||
                 trainingExerciseSet.Year == 0 || trainingExerciseSet.WeekOfYear == 0 ||
-                trainingExerciseSet.DayOfWeek == 0 || trainingExerciseSet.TrainingDayId == 0 ||
+                trainingExerciseSet.DayOfWeek < 0 || trainingExerciseSet.DayOfWeek > 6 || trainingExerciseSet.TrainingDayId == 0 ||
                 trainingExerciseSet.BodyExerciseId == 0 || trainingExerciseSet.Id == 0)
                 return null;
 
@@ -120,8 +120,8 @@ namespace BodyReport.Crud.Module
         /// <param name="key">Primary Key</param>
         public void Delete(TrainingExerciseSetKey key)
         {
-            if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek == 0 ||
-                key.BodyExerciseId == 0 || key.Id == 0)
+            if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 ||
+                key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.BodyExerciseId == 0 || key.Id == 0)
                 return;
 
             var row = _dbContext.TrainingExerciseSets.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
