@@ -46,7 +46,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
             if (sequencerRow != null)
             {
                 return SequencerTransformer.ToBean(sequencerRow);
@@ -64,7 +64,7 @@ namespace BodyReport.Crud.Module
             if (sequencer == null || sequencer.Id == 0)
                 return null;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == sequencer.Id).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == sequencer.Id && m.Name == sequencer.Name).FirstOrDefault();
             if (sequencerRow == null)
             { // No data in database
                 return Create(sequencer);
@@ -86,7 +86,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
             if (sequencerRow != null)
             {
                 _dbContext.Sequencers.Remove(sequencerRow);
