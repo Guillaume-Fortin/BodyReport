@@ -65,7 +65,6 @@ namespace BodyReport.Manager
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {
-                    _trainingDayExerciseSetModule.Delete(set);
                     result.TrainingExerciseSets.Add(_trainingDayExerciseSetModule.Update(set));
                 }
             }
