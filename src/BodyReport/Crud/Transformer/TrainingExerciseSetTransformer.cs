@@ -23,6 +23,7 @@ namespace BodyReport.Crud.Transformer
             row.Id = bean.Id;
             row.NumberOfSets = bean.NumberOfSets;
             row.NumberOfReps = bean.NumberOfReps;
+            row.Weight = bean.Weight;
         }
 
         internal static TrainingExerciseSet ToBean(TrainingExerciseSetRow row)
@@ -40,6 +41,7 @@ namespace BodyReport.Crud.Transformer
             bean.Id = row.Id;
             bean.NumberOfSets = row.NumberOfSets;
             bean.NumberOfReps = row.NumberOfReps;
+            bean.Weight = row.Weight;
             return bean;
         }
     }

@@ -1,0 +1,75 @@
+﻿@model TrainingExercisesViewModel
+
+@{
+}
+
+<h2>@Translation.TRAINING_EXERCISE. </h2>
+
+<form asp-action="AddTrainingExercises" method="post" class="form-horizontal" role="form">
+    <h4>@Translation.ADD_EXERCISES.</h4>
+    <hr />
+
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <input asp-for="UserId" hidden="hidden" />
+    <input asp-for="Year" hidden="hidden" />
+    <input asp-for="WeekOfYear" hidden="hidden" />
+    <input asp-for="DayOfWeek" hidden="hidden" />
+    <input asp-for="TrainingDayId" hidden="hidden" />
+
+    <div class="form-group">
+        <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups" onchange='this.form.submit()'></select>
+            <span asp-validation-for="MuscularGroupId" class="text-danger"></span>
+        </div>
+    </div>
+
+    @if (Model.MuscularGroupId > 0)
+    {
+        <div class="form-group">
+            <label asp-for="MuscleId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="MuscleId" asp-items="ViewBag.Muscles" onchange='this.form.submit()'></select>
+                <span asp-validation-for="MuscleId" class="text-danger"></span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <input asp-for="MuscleId" hidden="hidden" />
+    }
+
+    @if (Model.BodyExerciseList != null)
+    {
+        @for (int i = 0; i < Model.BodyExerciseList.Count; i+= 4)
+        {
+            <div class="row">
+                @for (int index = i; index < i+4; index++)
+                {
+                    <div class="col-sm-3">
+                        @if (index < Model.BodyExerciseList.Count)
+                        {
+                            var bodyExercise = Model.BodyExerciseList[index] as SelectBodyExercise;
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <input asp-for="@Model.BodyExerciseList[index].Id" hidden="hidden" />
+                                    <input asp-for="@Model.BodyExerciseList[index].Selected" type="checkbox"/> @bodyExercise.Name 
+                                </div>
+                                <div class="panel-body">
+                                    <img src="@string.Format("/images/bodyexercises/{0}.png", bodyExercise.Id)" style="height:150px; width:150px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+       <div class="form-group">
+            <div class="col-md-offset-0 col-md-10">
+                <button type="submit" name="buttonType" value="submit" class="btn btn-default">@Translation.SUBMIT</button>
+            </div>
+       </div>
+    }
+
+</form>

@@ -235,10 +235,11 @@ namespace BodyReport.Resources
         public static string ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI { get { return Get(TRS.ARE_YOU_SURE_YOU_WANNA_DELETE_THIS_ELEMENT_PI); } }
         public static string FROM { get { return Get(TRS.FROM); } }
         public static string TO { get { return Get(TRS.TO); } }
-        public static string ADD_NEW_EXERCISE { get { return Get(TRS.ADD_NEW_EXERCISE); } }
+        public static string ADD_EXERCISES { get { return Get(TRS.ADD_EXERCISES); } }
         public static string REST_TIME { get { return Get(TRS.REST_TIME); } }
         public static string REPS { get { return Get(TRS.REPS); } }
         public static string ADD_REPS { get { return Get(TRS.ADD_REPS); } }
+        public static string SETS { get { return Get(TRS.SETS); } }
     }
 
     /// <summary>
@@ -803,10 +804,10 @@ namespace BodyReport.Resources
         [Translation("To")]
         public const string TO = "TO";
         // <summary>
-        /// Add new exercise
+        /// Add exercises
         /// </summary>
-        [Translation("Add new exercise")]
-        public const string ADD_NEW_EXERCISE = "ADD_NEW_EXERCISE";
+        [Translation("Add exercises")]
+        public const string ADD_EXERCISES = "ADD_EXERCISES";
         // <summary>
         /// Rest time
         /// </summary>
@@ -822,6 +823,11 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Add reps")]
         public const string ADD_REPS = "ADD_REPS";
+        // <summary>
+        /// Sets
+        /// </summary>
+        [Translation("Sets")]
+        public const string SETS = "SETS";
     }
 }
  

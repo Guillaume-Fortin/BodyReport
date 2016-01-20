@@ -46,5 +46,9 @@ namespace BodyReport.Models
         /// Number of reps
         /// </summary>
         public int NumberOfReps { get; set; }
+        /// <summary>
+        /// Weight
+        /// </summary>
+        public int Weight { get; set; }
     }
 }

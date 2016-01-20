@@ -113,6 +113,7 @@ namespace BodyReport.Manager
 
                 if (trainingDay.TrainingExercises != null)
                 {
+                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {

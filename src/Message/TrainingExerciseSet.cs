@@ -47,6 +47,10 @@ namespace Message
         /// Number of reps
         /// </summary>
         public int NumberOfReps { get; set; }
+        /// <summary>
+        /// Weight
+        /// </summary>
+        public int Weight { get; set; }
     }
 
     public class TrainingExerciseSetCriteria : CriteriaField

@@ -237,6 +237,8 @@ namespace BodyReport.Areas.User.Controllers
         public IActionResult View(string userId, int year, int weekOfYear, int? dayOfWeekSelected)
         {
             DayOfWeek currentDayOfWeek = GetCurrentDayOfWeek(dayOfWeekSelected);
+            if (!dayOfWeekSelected.HasValue)
+                dayOfWeekSelected = (int)currentDayOfWeek;
 
             var trainingWeekManager = new TrainingWeekManager(_dbContext);
 
@@ -362,11 +364,11 @@ namespace BodyReport.Areas.User.Controllers
                 BodyExerciseImage = string.Format("/images/bodyexercises/{0}.png", trainingExercise.BodyExerciseId)
             };
 
-            viewModel.TupleSetReps = new List<Tuple<int, int>>();
+            viewModel.TupleSetReps = new List<Tuple<int, int, int>>();
             if (trainingExercise.TrainingExerciseSets != null)
             {
                 foreach (var set in trainingExercise.TrainingExerciseSets)
-                    viewModel.TupleSetReps.Add(new Tuple<int, int>(set.NumberOfSets, set.NumberOfReps));
+                    viewModel.TupleSetReps.Add(new Tuple<int, int, int>(set.NumberOfSets, set.NumberOfReps, set.Weight));
             }
 
             return viewModel;
@@ -592,58 +594,241 @@ namespace BodyReport.Areas.User.Controllers
             }
         }
 
-        // Add a training exercise
-        // GET: /User/TrainingJournal/AddTrainingExercise
-        [HttpGet]
-        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int bodyExerciseId)
+        private bool IncorrectHttpData(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || User.GetUserId() != userId)
-                return RedirectToAction("Index");
-
-            var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
-
-            var trainingDayManager = new TrainingDayManager(_dbContext);
-
-            var key = new TrainingDayKey()
-            {
-                UserId = userId,
-                Year = year,
-                WeekOfYear = weekOfYear,
-                DayOfWeek = dayOfWeek,
-                TrainingDayId = trainingDayId
-            };
-            var trainingDay = trainingDayManager.GetTrainingDay(key, true);
-            if (trainingDay == null)
-                return actionResult;
-            
-            InsertViewBagOnEditTrainingExercise();
-            return View(new TrainingExerciseViewModel());
+            return string.IsNullOrWhiteSpace(userId) || User.GetUserId() != userId || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0;
         }
 
-        private void InsertViewBagOnEditTrainingExercise(int currentMuscularGroupId = 0, int currentMuscleId = 0, int currentBodyExerciseId = 0)
+        private IActionResult GetViewActionResult(string userId, int year, int weekOfYear, int dayOfWeek)
         {
+            return RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
+        }
+
+        // Add a training exercises
+        // GET: /User/TrainingJournal/AddTrainingExercises
+        [HttpGet]
+        public IActionResult AddTrainingExercises(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
+        {
+            if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId))
+                return RedirectToAction("Index");
+
+            List<BodyExercise> bodyExerciseList;
+            InsertViewBagOnEditTrainingExercise(out bodyExerciseList);
+
+            var viewModel = new TrainingExercisesViewModel();
+            CopyViewBagBodyExerciseToViewModel(viewModel, bodyExerciseList);
+            return View(viewModel);
+        }
+
+        // Add a training exercises
+        // POST: /User/TrainingJournal/AddTrainingExercise
+        [HttpPost]
+        public IActionResult AddTrainingExercises(TrainingExercisesViewModel viewModel, string buttonType)
+        {
+            if (IncorrectHttpData(viewModel.UserId, viewModel.Year, viewModel.WeekOfYear, viewModel.DayOfWeek, viewModel.TrainingDayId))
+                return View(viewModel);
+
+            bool displayMessage = buttonType == "submit";
+
+            int currentMuscularGroupId = 0, currentMuscleId = 0;
+            if (viewModel != null)
+            {
+                currentMuscularGroupId = viewModel.MuscularGroupId;
+                currentMuscleId = viewModel.MuscleId;
+            }
+
+            List<BodyExercise> bodyExerciseList;
+            InsertViewBagOnEditTrainingExercise(out bodyExerciseList, currentMuscularGroupId, currentMuscleId);
+            ModelState.Clear();
+
+            if (ModelState.IsValid)
+            {
+                if(viewModel.BodyExerciseList != null)
+                { // filter selected data with existing exercise
+                    if (bodyExerciseList == null)
+                        viewModel.BodyExerciseList = null;
+                    else
+                    {
+                        var deleteList = new List<SelectBodyExercise>();
+                        foreach(var selectBodyExercise in viewModel.BodyExerciseList)
+                        {
+                            if(bodyExerciseList.FirstOrDefault(c => c.Id == selectBodyExercise.Id) == null)
+                            {
+                                deleteList.Add(selectBodyExercise);
+                            }
+                        }
+
+                        foreach (var selectBodyExercise in deleteList)
+                        {
+                            viewModel.BodyExerciseList.Remove(selectBodyExercise);
+                        }
+                    }
+                }
+
+                if (viewModel.BodyExerciseList == null || viewModel.BodyExerciseList.Count(b => b.Selected == true) == 0)
+                {
+                    CopyViewBagBodyExerciseToViewModel(viewModel, bodyExerciseList);
+                    if (displayMessage)
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.THE_P0_FIELD_IS_REQUIRED, Translation.BODY_EXERCISES));
+                    return View(viewModel);
+                }
+
+                var trainingDayManager = new TrainingDayManager(_dbContext);
+                var trainingDayKey = new TrainingDayKey() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId };
+                var trainingDay = trainingDayManager.GetTrainingDay(trainingDayKey, true);
+
+                if(trainingDay == null)
+                {
+                    CopyViewBagBodyExerciseToViewModel(viewModel, bodyExerciseList);
+                    ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_DAY));
+                    return View(viewModel);
+                }
+
+                if (trainingDay.TrainingExercises == null)
+                    trainingDay.TrainingExercises = new List<TrainingExercise>();
+
+                int bodyExerciseCount = trainingDay.TrainingExercises.Count;
+                TrainingExercise trainingExercise;
+                var bodyExerciseSelectedList = viewModel.BodyExerciseList.Where(b => b.Selected == true);
+                foreach (var bodyExercise in bodyExerciseSelectedList)
+                {
+                    if(trainingDay.TrainingExercises.Count(e => e.BodyExerciseId == bodyExercise.Id) == 0)
+                    { //Only manage add in this page
+                        trainingExercise = new TrainingExercise() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId, BodyExerciseId = bodyExercise.Id };
+                        trainingDay.TrainingExercises.Add(trainingExercise);
+                    }
+                }
+                if(bodyExerciseCount != trainingDay.TrainingExercises.Count)
+                { //data changed
+                    trainingDayManager.UpdateTrainingDay(trainingDay);
+                }
+
+                return GetViewActionResult(viewModel.UserId, viewModel.Year, viewModel.WeekOfYear, viewModel.DayOfWeek);
+            }
+
+            CopyViewBagBodyExerciseToViewModel(viewModel, bodyExerciseList);
+            return View(viewModel);
+        }
+
+        private void CopyViewBagBodyExerciseToViewModel(TrainingExercisesViewModel viewModel, List<BodyExercise> bodyExerciseList)
+        {
+            viewModel.BodyExerciseList = new List<SelectBodyExercise>();
+            if (bodyExerciseList != null)
+            {   
+                foreach (BodyExercise bodyExercise in bodyExerciseList)
+                {
+                    viewModel.BodyExerciseList.Add(new SelectBodyExercise() { Id = bodyExercise.Id, Name = bodyExercise.Name });
+                }
+            }
+        }
+
+        private void InsertViewBagOnEditTrainingExercise(out List<BodyExercise> bodyExerciseList, int currentMuscularGroupId = 0, int currentMuscleId = 0, int currentBodyExerciseId = 0)
+        {
+            bodyExerciseList = null;
             var muscularGroupManager = new MuscularGroupManager(_dbContext);
             ViewBag.MuscularGroups = ControllerUtils.CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), currentMuscularGroupId, true);
 
-            if (currentMuscularGroupId != 0)
+            var bodyExerciseManager = new BodyExerciseManager(_dbContext);
+            if (currentMuscularGroupId == 0)
+            { // All exercises
+                bodyExerciseList = bodyExerciseManager.FindBodyExercises();
+            }
+            else
             {
                 var muscleManager = new MuscleManager(_dbContext);
                 var muscleCriteria = new MuscleCriteria()
                 {
                     MuscularGroupId = new IntegerCriteria() { EqualList = new List<int>() { currentMuscularGroupId } }
                 };
-                ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleManager.FindMuscles(muscleCriteria), currentMuscleId, true);
-                
-                if(currentMuscleId != 0)
+                var muscleList = muscleManager.FindMuscles(muscleCriteria);
+                ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleList, currentMuscleId, true);
+
+                if (currentMuscleId == 0)
                 {
-                    var bodyExerciseManager = new BodyExerciseManager(_dbContext);
+                    if (muscleList != null)
+                    {
+                        var mucleIdList = new List<int>();
+                        foreach (var muscle in muscleList)
+                        {
+                            mucleIdList.Add(muscle.Id);
+                        }
+                        var bodyExerciseCriteria = new BodyExerciseCriteria()
+                        {
+                            MuscleId = new IntegerCriteria() { EqualList = mucleIdList }
+                        };
+                        bodyExerciseList = bodyExerciseManager.FindBodyExercises(bodyExerciseCriteria);
+                    }
+                    else //Security
+                        bodyExerciseList = bodyExerciseManager.FindBodyExercises();
+                }
+                else
+                {
                     var bodyExerciseCriteria = new BodyExerciseCriteria()
                     {
                         MuscleId = new IntegerCriteria() { EqualList = new List<int>() { currentMuscleId } }
                     };
-                    ViewBag.BodyExercises = ControllerUtils.CreateSelectBodyExerciseItemList(bodyExerciseManager.FindBodyExercises(bodyExerciseCriteria), currentBodyExerciseId, true);
+                    bodyExerciseList = bodyExerciseManager.FindBodyExercises(bodyExerciseCriteria);
                 }
             }
+        }
+
+        // Add a training exercise
+        // GET: /User/TrainingJournal/AddTrainingExercise
+        [HttpGet]
+        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int bodyExerciseId)
+        {
+            if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId))
+                return RedirectToAction("Index");
+
+            var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
+
+            var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+
+            var key = new TrainingExerciseKey()
+            {
+                UserId = userId,
+                Year = year,
+                WeekOfYear = weekOfYear,
+                DayOfWeek = dayOfWeek,
+                TrainingDayId = trainingDayId,
+                BodyExerciseId = bodyExerciseId
+            };
+            var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
+            if (trainingExercise == null)
+                return actionResult;
+
+            var bodyExerciseManager = new BodyExerciseManager(_dbContext);
+
+            var bodyExercise = bodyExerciseManager.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
+
+            var viewModel = new TrainingExerciseViewModel();
+            viewModel.UserId = userId;
+            viewModel.Year = year;
+            viewModel.WeekOfYear = weekOfYear;
+            viewModel.DayOfWeek = dayOfWeek;
+            viewModel.TrainingDayId = trainingDayId;
+            viewModel.BodyExerciseId = bodyExerciseId;
+            viewModel.BodyExerciseName = bodyExercise.Name;
+            viewModel.BodyExerciseImage = bodyExercise.ImageName;
+            viewModel.RestTime = trainingExercise.RestTime;
+            
+            if(trainingExercise.TrainingExerciseSets != null)
+            { 
+                foreach(var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+                {
+                    for(int i=0; i < trainingExerciseSet.NumberOfSets; i++)
+                    {
+                        viewModel.Reps.Add(trainingExerciseSet.NumberOfReps);
+                        viewModel.Weights.Add(trainingExerciseSet.Weight);
+                    }
+                }
+            }
+
+            if(viewModel.Reps == null || viewModel.Reps.Count == 0)
+                viewModel.Reps = new List<int>() { 8, 8, 8, 8 };
+            if (viewModel.Weights == null || viewModel.Weights.Count == 0)
+                viewModel.Weights = new List<int>() { 0, 0, 0, 0 };
+            return View(viewModel);
         }
 
         // Add a training exercise
@@ -651,105 +836,103 @@ namespace BodyReport.Areas.User.Controllers
         [HttpPost]
         public IActionResult EditTrainingExercise(TrainingExerciseViewModel viewModel, string buttonType)
         {
-            int currentMuscularGroupId = 0, currentMuscleId = 0;
-            if (viewModel != null)
-            {
-                currentMuscularGroupId = viewModel.MuscularGroupId;
-                currentMuscleId = viewModel.MuscleId;
-            }
-            InsertViewBagOnEditTrainingExercise(currentMuscularGroupId, currentMuscleId);
+            const int MAX_REPS = 10;
+            if(viewModel == null)
+                return RedirectToAction("Index");
 
             if (viewModel.Reps == null || viewModel.Reps.Count == 0) //Security
                 viewModel.Reps = new List<int>() { 8, 8, 8, 8 };
 
-            if ("addRepBtn" == buttonType)
+            if (viewModel.Weights == null)
+                viewModel.Weights = new List<int>();
+
+            while(viewModel.Weights.Count < viewModel.Reps.Count)
             {
-                if (viewModel.Reps.Count < 10)
+                viewModel.Weights.Add(0);
+            }
+
+            if ("addRep" == buttonType)
+            {
+                if (viewModel.Reps.Count < MAX_REPS)
                 {
                     int newRepValue = 8;
                     if (viewModel.Reps.Count > 0)
                         newRepValue = viewModel.Reps[viewModel.Reps.Count - 1];
                     viewModel.Reps.Add(newRepValue);
+
+                    int newWeightValue = 8;
+                    if (viewModel.Weights.Count > 0)
+                        newWeightValue = viewModel.Weights[viewModel.Weights.Count - 1];
+                    viewModel.Weights.Add(newWeightValue);
                 }
                 return View(viewModel);
             }
-
-            if (ModelState.IsValid)
+            else if ("delete" == buttonType)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || User.GetUserId() != viewModel.UserId)
-                    return RedirectToAction("Index");
-
-                if (viewModel.MuscularGroupId == 0 || viewModel.MuscleId == 0 || viewModel.BodyExerciseId == 0)
-                {
+                if (viewModel.Reps.Count > 1)
+                    viewModel.Reps.RemoveAt(viewModel.Reps.Count - 1);
+                if (viewModel.Weights.Count > 1)
+                    viewModel.Weights.RemoveAt(viewModel.Weights.Count - 1);
+            }
+            else if ("submit" == buttonType && ModelState.IsValid)
+            {
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || User.GetUserId() != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.BodyExerciseId == 0)
                     return View(viewModel);
-                }
 
-                if (viewModel.MuscleId > 0)
-                {
-                    var muscleManager = new MuscleManager(_dbContext);
-                    var muscle = muscleManager.GetMuscle(new MuscleKey() { Id = viewModel.MuscleId });
-                    if (muscle == null || muscle.MuscularGroupId != viewModel.MuscularGroupId)
-                    { // Muscle don't link with MuscularGroup
-                        viewModel.MuscleId = viewModel.BodyExerciseId = 0;
-                    }
-                }
+                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
 
-                if (viewModel.BodyExerciseId > 0)
-                {
-                    var bodyExerciseManager = new BodyExerciseManager(_dbContext);
-                    var bodyExercise = bodyExerciseManager.GetBodyExercise(new BodyExerciseKey() { Id = viewModel.BodyExerciseId });
-                    if (bodyExercise == null || bodyExercise.MuscleId != viewModel.MuscleId)
-                    { // bodyExercise don't link with Muscle
-                        viewModel.BodyExerciseId = 0;
-                    }
-                }
-
-                //Model not complete
-                if (viewModel.MuscularGroupId == 0 || viewModel.MuscleId == 0 || viewModel.BodyExerciseId == 0)
-                {
-                    return View(viewModel);
-                }
-
-                var trainingExercise = new TrainingExercise()
+                var key = new TrainingExerciseKey()
                 {
                     UserId = viewModel.UserId,
                     Year = viewModel.Year,
                     WeekOfYear = viewModel.WeekOfYear,
                     DayOfWeek = viewModel.DayOfWeek,
                     TrainingDayId = viewModel.TrainingDayId,
-                    BodyExerciseId = viewModel.BodyExerciseId,
-                    RestTime = viewModel.RestTime
+                    BodyExerciseId = viewModel.BodyExerciseId
                 };
+                var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
+                if (trainingExercise == null)
+                {
+                    ModelState.AddModelError(string.Empty, string.Format("{0} {1}", Translation.INVALID_INPUT_2P, Translation.TRAINING_EXERCISE));
+                    return View(viewModel);
+                }
+
+                trainingExercise.RestTime = viewModel.RestTime;
 
                 if (viewModel.Reps != null && viewModel.Reps.Count > 0)
                 {
                     //Regroup Reps with Set
-                    int nbSet = 0, currentRepValue = 0;
-                    var tupleSetRepList = new List<Tuple<int, int>>();
-                    foreach(var repValue in viewModel.Reps)
+                    int nbSet = 0, currentRepValue = 0, currentWeightValue = 0;
+                    var tupleSetRepList = new List<Tuple<int, int, int>>();
+                    int repValue, weightValue;
+                    //foreach (var repValue in viewModel.Reps)
+                    for (int i=0; i < viewModel.Reps.Count; i++)
                     {
-                        if(repValue == 0)
+                        repValue = viewModel.Reps[i];
+                        weightValue = viewModel.Weights[i];
+                        if (repValue == 0)
                             continue;
 
-                        if(repValue == currentRepValue)
+                        if (weightValue == currentWeightValue && repValue == currentRepValue)
                             nbSet++;
                         else
                         {
-                            if(nbSet != 0)
-                                tupleSetRepList.Add(new Tuple<int, int>(nbSet, currentRepValue));
+                            if (nbSet != 0)
+                                tupleSetRepList.Add(new Tuple<int, int, int>(nbSet, currentRepValue, currentWeightValue));
                             currentRepValue = repValue;
+                            currentWeightValue = weightValue;
                             nbSet = 1;
                         }
                     }
 
                     //last data
                     if (nbSet != 0)
-                        tupleSetRepList.Add(new Tuple<int, int>(nbSet, currentRepValue));
+                        tupleSetRepList.Add(new Tuple<int, int, int>(nbSet, currentRepValue, currentWeightValue));
 
                     trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
                     int id = 1;
-                    foreach (Tuple<int, int> tupleSetRep in tupleSetRepList)
+                    foreach (Tuple<int, int, int> tupleSetRep in tupleSetRepList)
                     {
                         trainingExercise.TrainingExerciseSets.Add(new TrainingExerciseSet()
                         {
@@ -761,16 +944,17 @@ namespace BodyReport.Areas.User.Controllers
                             BodyExerciseId = viewModel.BodyExerciseId,
                             Id = id,
                             NumberOfSets = tupleSetRep.Item1,
-                            NumberOfReps = tupleSetRep.Item2
+                            NumberOfReps = tupleSetRep.Item2,
+                            Weight = tupleSetRep.Item3
                         });
                         id++;
                     }
+                    
+                    trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true);
+
+                    return RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = viewModel.UserId, year = viewModel.Year, weekOfYear = viewModel.WeekOfYear, dayOfWeekSelected = viewModel.DayOfWeek });
+
                 }
-
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true);
-
-                return RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = viewModel.UserId, year = viewModel.Year, weekOfYear = viewModel.WeekOfYear, dayOfWeekSelected = viewModel.DayOfWeek });
             }
             return View(viewModel);
         }

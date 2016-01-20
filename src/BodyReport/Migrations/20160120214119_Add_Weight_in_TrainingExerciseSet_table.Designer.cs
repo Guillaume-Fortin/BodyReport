@@ -8,9 +8,10 @@ using BodyReport.Models;
 namespace BodyReport.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160120214119_Add_Weight_in_TrainingExerciseSet_table")]
+    partial class Add_Weight_in_TrainingExerciseSet_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")

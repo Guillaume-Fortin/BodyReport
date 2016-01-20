@@ -15,78 +15,75 @@
     <input asp-for="WeekOfYear" hidden="hidden" />
     <input asp-for="DayOfWeek" hidden="hidden" />
     <input asp-for="TrainingDayId" hidden="hidden" />
+    <input asp-for="BodyExerciseId" hidden="hidden" />
 
     <div class="form-group">
-        <label asp-for="MuscularGroupId" class="col-md-2 control-label"></label>
+        <label asp-for="BodyExerciseName" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <select asp-for="MuscularGroupId" asp-items="ViewBag.MuscularGroups" onchange='this.form.submit()'></select>
-            <span asp-validation-for="MuscularGroupId" class="text-danger"></span>
+            @Model.BodyExerciseName
+            <br/>
+            <img src="@string.Format("/images/bodyexercises/{0}.png", Model.BodyExerciseId)" style="height:150px; width:150px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+        </div>
+    </div>
+    
+    
+
+    <div class="form-group">
+        <label asp-for="RestTime" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="RestTime" class="form-control" type="number" />
+            <span asp-validation-for="RestTime" class="text-danger"></span>
         </div>
     </div>
 
-    @if (Model.MuscularGroupId > 0)
+    @if (Model.Reps != null && Model.Weights != null)
     {
         <div class="form-group">
-            <label asp-for="MuscleId" class="col-md-2 control-label"></label>
+            <label class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="MuscleId" asp-items="ViewBag.Muscles" onchange='this.form.submit()'></select>
-                <span asp-validation-for="MuscleId" class="text-danger"></span>
-            </div>
-        </div>
-        @if (Model.MuscleId > 0)
-        {
-            <div class="form-group">
-                <label asp-for="BodyExerciseId" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <select asp-for="BodyExerciseId" asp-items="ViewBag.BodyExercises" id="BodyExerciseSelectList" onchange='displayBodyExerciseImage()'></select>
+                @if (Model.Reps.Count < 10)
+                {
+                    <button type="submit" name="buttonType" value="addRep" class="btn btn-default">@Translation.ADD_REPS</button>
+                    <br /><br /><br />
+                }
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Translation.REPS
+                        </th>
+                        <th>
+                            @Translation.WEIGHT
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
 
-                    <span asp-validation-for="BodyExerciseId" class="text-danger"></span>
-                    <br />
-                    <img style="height:100px; width:100px;display:none" id="previewBodyExercise" onerror='this.style.display="none"' />
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label asp-for="RestTime" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="RestTime" class="form-control" type="number" />
-                    <span asp-validation-for="RestTime" class="text-danger"></span>
-                </div>
-            </div>
-
-            @if (Model.Reps != null)
-            {
-                <div class="form-group">
-                    <label asp-for="@Model.Reps" class="col-md-2 control-label"></label>
-                    <div class="col-md-10">
-                        @for (int i = 0; i < Model.Reps.Count; i++)
-                        {
+                    @for (int i = 0; i < Model.Reps.Count; i++)
+                    {
+                    <tr>
+                        <td>
                             <input asp-for="@Model.Reps[i]" class="form-control" type="number" />
-                        }
-                        @if (Model.Reps.Count < 10)
-                        {
-                            <button type="submit" name="buttonType" value="addRepBtn" class="btn btn-default">@Translation.ADD_REPS</button>
-                        }
-                        </div>
-                </div>
-            }
+                        </td>
+                        <td>
+                            <input asp-for="@Model.Weights[i]" class="form-control" type="number" />
+                        </td>
+                        <td>
+                            @if (i > 0 && i == (Model.Reps.Count - 1))
+                            {
+                                <button type="submit" name="buttonType" value="delete" class="btn btn-default">@Translation.DELETE</button>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </table>
+</div>
+        </div>
+    }
 
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <button type="submit" name="buttonType" value="submitBtn" class="btn btn-default">@Translation.MODIFY</button>
-                </div>
-            </div>
-        }
-        else
-        {
-            <input asp-for="BodyExerciseId" hidden="hidden" />
-        }
-    }
-    else
-    {
-        <input asp-for="MuscleId" hidden="hidden" />
-        <input asp-for="BodyExerciseId" hidden="hidden" />
-    }
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" name="buttonType" value="submit" class="btn btn-default">@Translation.MODIFY</button>
+        </div>
+    </div>
 
 </form>

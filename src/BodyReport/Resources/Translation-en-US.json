@@ -111,9 +111,10 @@
   "CREATE_NEW_PE": "Create new!",
   "FROM": "From",
   "TO": "To",
-  "ADD_NEW_EXERCISE": "Add new exercise",
+  "ADD_EXERCISES": "Add exercises",
   "TRAINING_EXERCISE": "Training exercise",
   "REST_TIME": "Rest time",
   "REPS": "Reps",
-  "ADD_REPS": "Add reps"
+  "ADD_REPS": "Add reps",
+  "SETS": "Sets"
 }
