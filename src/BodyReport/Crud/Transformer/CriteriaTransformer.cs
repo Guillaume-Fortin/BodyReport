@@ -48,7 +48,7 @@ namespace BodyReport.Crud.Transformer
                 }
                 else
                 {
-                    expression = Expression.And(expression, exp);
+                    expression = Expression.Or(expression, exp);
                 }
             }
             return expression;
