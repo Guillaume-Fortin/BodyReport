@@ -114,5 +114,7 @@
   "REPS": "Répétitions",
   "THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2": "Le champ {0} doit être compris entre {1} et {2}",
   "ADD_REPS": "Ajout répétitions",
-  "SETS": "Séries"
+  "SETS": "Séries",
+  "VALIDATE": "Valider",
+  "DAY_OF_WEEK": "Jour de la semaine"
 }

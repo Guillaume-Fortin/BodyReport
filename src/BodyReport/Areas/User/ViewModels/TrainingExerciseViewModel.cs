@@ -34,11 +34,14 @@ namespace BodyReport.Areas.User.ViewModels
         public int RestTime { get; set; }
 
         [Display(Name = TRS.REPS, ResourceType = typeof(Translation))]
-        public List<int> Reps { get; set; } = new List<int>();
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public List<int?> Reps { get; set; } = new List<int?>();
 
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
-        public List<int> Weights { get; set; } = new List<int>();
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public List<int?> Weights { get; set; } = new List<int?>();
 
+        [Display(Name = TRS.NAME, ResourceType = typeof(Translation))]
         public string BodyExerciseName { get; set; }
         public string BodyExerciseImage { get; set; }
         public List<Tuple<int, int, int>> TupleSetReps { get; set; }

@@ -240,6 +240,8 @@ namespace BodyReport.Resources
         public static string REPS { get { return Get(TRS.REPS); } }
         public static string ADD_REPS { get { return Get(TRS.ADD_REPS); } }
         public static string SETS { get { return Get(TRS.SETS); } }
+        public static string VALIDATE { get { return Get(TRS.VALIDATE); } }
+        public static string DAY_OF_WEEK { get { return Get(TRS.DAY_OF_WEEK); } }
     }
 
     /// <summary>
@@ -828,6 +830,16 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Sets")]
         public const string SETS = "SETS";
+        // <summary>
+        /// Validate
+        /// </summary>
+        [Translation("Validate")]
+        public const string VALIDATE = "VALIDATE";
+        // <summary>
+        /// Day of week
+        /// </summary>
+        [Translation("Day of week")]
+        public const string DAY_OF_WEEK = "DAY_OF_WEEK";
     }
 }
  

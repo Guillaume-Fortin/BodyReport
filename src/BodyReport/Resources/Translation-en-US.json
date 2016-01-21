@@ -116,5 +116,7 @@
   "REST_TIME": "Rest time",
   "REPS": "Reps",
   "ADD_REPS": "Add reps",
-  "SETS": "Sets"
+  "SETS": "Sets",
+  "VALIDATE": "Validate",
+  "DAY_OF_WEEK": "Day of week"
 }
