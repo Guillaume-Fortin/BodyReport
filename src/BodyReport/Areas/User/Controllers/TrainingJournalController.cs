@@ -825,9 +825,9 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             if(viewModel.Reps == null || viewModel.Reps.Count == 0)
-                viewModel.Reps = new List<int>() { 8, 8, 8, 8 };
+                viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
             if (viewModel.Weights == null || viewModel.Weights.Count == 0)
-                viewModel.Weights = new List<int>() { 0, 0, 0, 0 };
+                viewModel.Weights = new List<int?>() { 0, 0, 0, 0 };
             return View(viewModel);
         }
 
@@ -841,14 +841,32 @@ namespace BodyReport.Areas.User.Controllers
                 return RedirectToAction("Index");
 
             if (viewModel.Reps == null || viewModel.Reps.Count == 0) //Security
-                viewModel.Reps = new List<int>() { 8, 8, 8, 8 };
+                viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
 
             if (viewModel.Weights == null)
-                viewModel.Weights = new List<int>();
+                viewModel.Weights = new List<int?>();
 
-            while(viewModel.Weights.Count < viewModel.Reps.Count)
+            while (viewModel.Reps.Count > MAX_REPS)
+            {
+                viewModel.Reps.RemoveAt(viewModel.Reps.Count - 1);
+            }
+
+            while (viewModel.Weights.Count > MAX_REPS)
+            {
+                viewModel.Weights.RemoveAt(viewModel.Weights.Count - 1);
+            }
+
+            while (viewModel.Weights.Count < viewModel.Reps.Count)
             {
                 viewModel.Weights.Add(0);
+            }
+
+            for (int i = 0; i < viewModel.Reps.Count; i++)
+            {
+                if(viewModel.Reps[i] == null)
+                    viewModel.Reps[i] = 0;
+                if (viewModel.Weights[i] == null)
+                    viewModel.Weights[i] = 0;
             }
 
             if ("addRep" == buttonType)
@@ -857,12 +875,12 @@ namespace BodyReport.Areas.User.Controllers
                 {
                     int newRepValue = 8;
                     if (viewModel.Reps.Count > 0)
-                        newRepValue = viewModel.Reps[viewModel.Reps.Count - 1];
+                        newRepValue = viewModel.Reps[viewModel.Reps.Count - 1].Value;
                     viewModel.Reps.Add(newRepValue);
 
                     int newWeightValue = 8;
                     if (viewModel.Weights.Count > 0)
-                        newWeightValue = viewModel.Weights[viewModel.Weights.Count - 1];
+                        newWeightValue = viewModel.Weights[viewModel.Weights.Count - 1].Value;
                     viewModel.Weights.Add(newWeightValue);
                 }
                 return View(viewModel);
@@ -909,8 +927,8 @@ namespace BodyReport.Areas.User.Controllers
                     //foreach (var repValue in viewModel.Reps)
                     for (int i=0; i < viewModel.Reps.Count; i++)
                     {
-                        repValue = viewModel.Reps[i];
-                        weightValue = viewModel.Weights[i];
+                        repValue = viewModel.Reps[i].Value;
+                        weightValue = viewModel.Weights[i].Value;
                         if (repValue == 0)
                             continue;
 
