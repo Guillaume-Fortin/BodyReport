@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Framework;
+using Message;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,8 +17,33 @@ namespace BodyReport.Framework
         {
             get
             {
-                return Configuration["Data:DefaultConnection:ConnectionString"];
+                return GetStringParameterValue("Data:DefaultConnection:ConnectionString");
             }
+        }
+
+        public static TDataBaseServerType TDataBaseServerType
+        {
+            get
+            {
+                return Utils.IntToEnum<TDataBaseServerType>(GetIntParameterValue("Data:DefaultConnection:DataBaseServerType"));
+            }
+        }
+
+        private static string GetStringParameterValue(string key)
+        {
+            return Configuration[key];
+        }
+
+        private static int GetIntParameterValue(string key)
+        {
+            int value;
+            string stringValue = GetStringParameterValue(key);
+            if (int.TryParse(stringValue, out value))
+            {
+                return value;
+            }
+            else
+                return 0;
         }
 
         #region logger

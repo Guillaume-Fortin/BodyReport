@@ -29,6 +29,11 @@ namespace BodyReport
 {
     public class Startup
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(Startup));
+
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration sources.
@@ -59,10 +64,20 @@ namespace BodyReport
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            var entityFramework = services.AddEntityFramework();
+
+            if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.PostgreSQL)
+            {
+                entityFramework = entityFramework.AddNpgsql().AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(WebAppConfiguration.DatabaseConnectionString));
+            }
+            else if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.SqlServer)
+            {
+                entityFramework = entityFramework.AddSqlServer().AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(WebAppConfiguration.DatabaseConnectionString));
+            }
+            else
+                _logger.LogError("Unknown database connection type");
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

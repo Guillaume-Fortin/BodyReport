@@ -58,5 +58,16 @@ namespace Framework
 
             return startOfYear.AddDays(7 *(week -1));
         }
+
+        public static TEnum IntToEnum<TEnum>(int value)
+        {
+            Type type = typeof(TEnum);
+            if (Enum.IsDefined(type, value))
+            {
+                return (TEnum)((object)value);
+            }
+            else
+                return (TEnum)(Enum.GetValues(type).GetValue(0));
+        }
     }
 }

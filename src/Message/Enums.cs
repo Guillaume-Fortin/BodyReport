@@ -37,4 +37,10 @@ namespace Message
         November = 11,
         December = 12
     }
+
+    public enum TDataBaseServerType
+    {
+        SqlServer,
+        PostgreSQL
+    }
 }

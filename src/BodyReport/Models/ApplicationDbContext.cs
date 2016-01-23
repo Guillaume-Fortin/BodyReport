@@ -7,6 +7,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.Entity.Infrastructure;
 using BodyReport.Framework;
+using Microsoft.Extensions.Logging;
 
 namespace BodyReport.Models
 {
@@ -15,6 +16,11 @@ namespace BodyReport.Models
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(ApplicationDbContext));
+
         public ApplicationDbContext()
         {
         }
@@ -109,7 +115,12 @@ namespace BodyReport.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(WebAppConfiguration.DatabaseConnectionString);
+            if(WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.PostgreSQL)
+                optionsBuilder.UseNpgsql(WebAppConfiguration.DatabaseConnectionString);
+            else if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.SqlServer)
+                optionsBuilder.UseSqlServer(WebAppConfiguration.DatabaseConnectionString);
+            else
+                _logger.LogError("Unknown database connection type");
         }
 
         public DbSet<TranslationRow> Translations { get; set; }
