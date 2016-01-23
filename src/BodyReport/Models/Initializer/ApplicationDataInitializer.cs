@@ -171,6 +171,7 @@ namespace BodyReport.Models.Initializer
                         {
                             using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
                             {
+                                var cities = new List<CityRow>();
                                 while ((line = streamReader.ReadLine()) != null)
                                 {
                                     if (line.StartsWith("#"))
@@ -197,15 +198,25 @@ namespace BodyReport.Models.Initializer
                                                 duplicateCityZipCodes.Add(city.ZipCode, city.Id);
                                             }
 
-                                            _context.Cities.Add(city);
+                                            cities.Add(city);
+                                            
                                             rowCount++;
                                             if (rowCount % 5000 == 0) //Commit all 500 row
+                                            {
+                                                _context.Cities.AddRange(cities);
                                                 _context.SaveChanges();
+                                                cities.Clear();
+                                            }   
                                         }
                                     }
                                 }
                                 //Security save change
-                                _context.SaveChanges();
+                                if (cities.Count > 0)
+                                {
+                                    _context.Cities.AddRange(cities);
+                                    _context.SaveChanges();
+                                    cities.Clear();
+                                }
                             }
                         }
                         _logger.LogInformation(string.Format("End of Populate {0} cities in database: number row={1}", cityShortName, rowCount));
