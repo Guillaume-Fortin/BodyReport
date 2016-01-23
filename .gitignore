@@ -215,4 +215,4 @@ src/BodyReport/wwwroot/images/bodyexercises/*
 # client userprofil images
 src/BodyReport/wwwroot/images/userprofil/*
 # database migration
-#src/BodyReport/Migrations/*	
+src/BodyReport/Migrations/*	
