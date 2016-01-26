@@ -1,6 +1,14 @@
 ﻿@model UserProfilViewModel
 @{
     ViewData["Title"] = Translation.MY_PROFILE;
+
+    string weightUnit = "kg", lengthUnit = "cm";
+
+    if (Model.Unit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+    }
 }
 
 <h2>@ViewData["Title"].</h2>
@@ -68,18 +76,21 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-md-2 control-label">@Translation.CHOOSE_FILE</label>
+        <label class="col-md-2 control-label">@Translation.IMAGE <br /> @Translation.CHOOSE_FILE</label>
         <div class="col-md-10">
             <br />  
             <input type="file" id="imageFile" name="imageFile" />
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">@Translation.IMAGE</label>
-        <div class="col-md-10">
-            <image src="@Model.ImageUrl" width="200px" height="200px"/>
+    @if(!string.IsNullOrWhiteSpace(Model.ImageUrl))
+    {
+        <div class="form-group">
+            <label class="col-md-2 control-label">@Translation.IMAGE</label>
+            <div class="col-md-10">
+                <image src="@Model.ImageUrl" width="200px" height="200px" onerror='this.style.display="none"'/>
+            </div>
         </div>
-    </div>
+    }
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <button type="submit" class="btn btn-default">@Translation.SUBMIT</button>

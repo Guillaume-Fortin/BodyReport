@@ -19,10 +19,10 @@
         <div class="panel-body">
             <div class="container-fluid">
                 <div class="row">
-                    @if (ViewBag.IsMobileBrowser)
+                    @if (ViewBag.IsMobileBrowser && !string.IsNullOrWhiteSpace(Model.ImageUrl))
                     {
                         <div class="col-sm-12">
-                            <img class="img-responsive img-thumbnail" src="@Model.ImageUrl" />
+                            <img class="img-responsive img-thumbnail" src="@Model.ImageUrl" onerror='this.style.display="none"'/>
                         </div>
                     }
                     <div class="col-sm-8">
@@ -75,16 +75,17 @@
                             </dd>
                         </dl>
                     </div>
-                    @if(!ViewBag.IsMobileBrowser)
+                    @if(!ViewBag.IsMobileBrowser && !string.IsNullOrWhiteSpace(Model.ImageUrl))
                     {
                         <div class="col-sm-4">
-                            <img class="img-responsive img-thumbnail" src="@Model.ImageUrl" />
+                            <img class="img-responsive img-thumbnail" src="@Model.ImageUrl" onerror='this.style.display="none"'/>
                         </div>
                     }
                 </div>
             </div>
         </div>
     </div>
+    @*
     <div class="panel panel-danger">
         <div class="panel-heading">@Translation.OBJECTIVES_OF_BODY_BUILDING <a asp-controller="User" asp-action="EditProfil">[@Translation.EDIT]</a></div>
         <div class="panel-body">
@@ -99,5 +100,5 @@
                 </dd>
             </dl>
         </div>
-    </div>
+    </div>*@
 </div>

@@ -42,7 +42,7 @@ namespace BodyReport.Framework
         {
             if (!System.IO.File.Exists(Path.Combine(rootPath, "images", module, imageName)))
             {
-                return "/images/unknown.png";
+                return null;
             }
             else
             {
