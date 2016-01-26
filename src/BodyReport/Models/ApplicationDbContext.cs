@@ -99,8 +99,8 @@ namespace BodyReport.Models
             trainingJournalExerciseTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
             trainingJournalExerciseTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
             trainingJournalExerciseTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.BodyExerciseId).ValueGeneratedNever();
-            trainingJournalExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.BodyExerciseId });
+            trainingJournalExerciseTable.Property(p => p.Id).ValueGeneratedNever();
+            trainingJournalExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.Id });
 
             var trainingExerciseSetTable = builder.Entity<TrainingExerciseSetRow>().ToTable("TrainingExerciseSet");
             trainingExerciseSetTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
@@ -108,9 +108,9 @@ namespace BodyReport.Models
             trainingExerciseSetTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
-            trainingExerciseSetTable.Property(p => p.BodyExerciseId).ValueGeneratedNever();
+            trainingExerciseSetTable.Property(p => p.TrainingExerciseId).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.Id).ValueGeneratedNever();
-            trainingExerciseSetTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.BodyExerciseId, t.Id });
+            trainingExerciseSetTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.TrainingExerciseId, t.Id });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

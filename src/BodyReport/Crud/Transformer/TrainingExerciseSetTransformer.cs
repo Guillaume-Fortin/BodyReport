@@ -19,7 +19,7 @@ namespace BodyReport.Crud.Transformer
             row.WeekOfYear = bean.WeekOfYear;
             row.DayOfWeek = bean.DayOfWeek;
             row.TrainingDayId = bean.TrainingDayId;
-            row.BodyExerciseId = bean.BodyExerciseId;
+            row.TrainingExerciseId = bean.TrainingExerciseId;
             row.Id = bean.Id;
             row.NumberOfSets = bean.NumberOfSets;
             row.NumberOfReps = bean.NumberOfReps;
@@ -37,7 +37,7 @@ namespace BodyReport.Crud.Transformer
             bean.WeekOfYear = row.WeekOfYear;
             bean.DayOfWeek = row.DayOfWeek;
             bean.TrainingDayId = row.TrainingDayId;
-            bean.BodyExerciseId = row.BodyExerciseId;
+            bean.TrainingExerciseId = row.TrainingExerciseId;
             bean.Id = row.Id;
             bean.NumberOfSets = row.NumberOfSets;
             bean.NumberOfReps = row.NumberOfReps;

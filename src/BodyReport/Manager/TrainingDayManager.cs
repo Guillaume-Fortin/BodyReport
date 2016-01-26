@@ -64,7 +64,7 @@ namespace BodyReport.Manager
                 {
                     UserId = new StringCriteria() { EqualList = new List<string>() { trainingJournalDay.UserId } },
                     Year = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
-                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
+                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.WeekOfYear } },
                     DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.DayOfWeek } },
                     TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.TrainingDayId } }
                 };

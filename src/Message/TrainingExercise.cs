@@ -28,13 +28,17 @@ namespace Message
         /// </summary>
         public int TrainingDayId { get; set; }
         /// <summary>
-        /// Id of body exercise
+        /// Id of training exercise
         /// </summary>
-        public int BodyExerciseId { get; set; }
+        public int Id { get; set; }
     }
 
     public class TrainingExercise : TrainingExerciseKey
-    {   
+    {
+        /// <summary>
+        /// Id of body exercise
+        /// </summary>
+        public int BodyExerciseId { get; set; }
         /// <summary>
         /// Rest time (second)
         /// </summary>
@@ -69,6 +73,11 @@ namespace Message
         /// Training Day Id
         /// </summary>
         public IntegerCriteria TrainingDayId { get; set; }
+        
+        /// <summary>
+        /// Training Exercise Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
 
         /// <summary>
         /// Body Exercise Id

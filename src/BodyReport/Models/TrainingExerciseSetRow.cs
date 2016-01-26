@@ -31,9 +31,9 @@ namespace BodyReport.Models
         /// </summary>
         public int TrainingDayId { get; set; }
         /// <summary>
-        /// Id of body exercise
+        /// Id of training exercise
         /// </summary>
-        public int BodyExerciseId { get; set; }
+        public int TrainingExerciseId { get; set; }
         /// <summary>
         /// Id of set/Rep
         /// </summary>

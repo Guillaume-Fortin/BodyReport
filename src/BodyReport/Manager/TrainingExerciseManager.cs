@@ -43,14 +43,14 @@ namespace BodyReport.Manager
             {
                 if(manageDeleteLinkItem)
                 {
-                    var setList = _trainingDayExerciseSetModule.Find(new TrainingExerciseCriteria()
+                    var setList = _trainingDayExerciseSetModule.Find(new TrainingExerciseSetCriteria()
                     {
                         UserId = new StringCriteria() { EqualList = new List<string>() { trainingExercise.UserId } },
                         Year = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Year } },
                         WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.WeekOfYear } },
                         DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.DayOfWeek } },
                         TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.TrainingDayId } },
-                        BodyExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.BodyExerciseId } },
+                        TrainingExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Id } }
                     });
 
                     if(setList != null && setList.Count > 0)
@@ -83,7 +83,7 @@ namespace BodyReport.Manager
                     WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.WeekOfYear } },
                     DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.DayOfWeek } },
                     TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.TrainingDayId } },
-                    BodyExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.BodyExerciseId } }
+                    TrainingExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Id } }
                 };
                 var trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
                 trainingExercise.TrainingExerciseSets = trainingExerciseSetManager.FindTrainingExerciseSet(criteria);

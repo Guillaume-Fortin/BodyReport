@@ -25,6 +25,9 @@ namespace BodyReport.Areas.User.ViewModels
         public int TrainingDayId { get; set; }
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        public int TrainingExerciseId { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.BODY_EXERCISES, ResourceType = typeof(Translation))]
         public int BodyExerciseId { get; set; }
 

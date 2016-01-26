@@ -358,6 +358,7 @@ namespace BodyReport.Areas.User.Controllers
                 WeekOfYear = trainingExercise.WeekOfYear,
                 DayOfWeek = trainingExercise.DayOfWeek,
                 TrainingDayId = trainingExercise.TrainingDayId,
+                TrainingExerciseId = trainingExercise.Id,
                 BodyExerciseId = trainingExercise.BodyExerciseId,
                 RestTime = trainingExercise.RestTime,
                 BodyExerciseName = bodyExercise != null && !string.IsNullOrWhiteSpace(bodyExercise.Name) ? bodyExercise.Name : string.Empty,
@@ -594,9 +595,10 @@ namespace BodyReport.Areas.User.Controllers
             }
         }
 
-        private bool IncorrectHttpData(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
+        private bool IncorrectHttpData(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int? trainingExerciseId = null)
         {
-            return string.IsNullOrWhiteSpace(userId) || User.GetUserId() != userId || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0;
+            return string.IsNullOrWhiteSpace(userId) || User.GetUserId() != userId || year == 0 || weekOfYear == 0 ||
+                dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || (trainingExerciseId != null && !trainingExerciseId.HasValue);
         }
 
         private IActionResult GetViewActionResult(string userId, int year, int weekOfYear, int dayOfWeek)
@@ -688,15 +690,17 @@ namespace BodyReport.Areas.User.Controllers
                     trainingDay.TrainingExercises = new List<TrainingExercise>();
 
                 int bodyExerciseCount = trainingDay.TrainingExercises.Count;
+                int maxId = 1;
+                if (bodyExerciseCount > 0)
+                    maxId = trainingDay.TrainingExercises.Max(t => t.Id) + 1;
                 TrainingExercise trainingExercise;
                 var bodyExerciseSelectedList = viewModel.BodyExerciseList.Where(b => b.Selected == true);
                 foreach (var bodyExercise in bodyExerciseSelectedList)
                 {
-                    if(trainingDay.TrainingExercises.Count(e => e.BodyExerciseId == bodyExercise.Id) == 0)
-                    { //Only manage add in this page
-                        trainingExercise = new TrainingExercise() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId, BodyExerciseId = bodyExercise.Id };
-                        trainingDay.TrainingExercises.Add(trainingExercise);
-                    }
+                    //Only manage add in this page
+                    trainingExercise = new TrainingExercise() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId, Id = maxId, BodyExerciseId = bodyExercise.Id };
+                    trainingDay.TrainingExercises.Add(trainingExercise);
+                    maxId++;
                 }
                 if(bodyExerciseCount != trainingDay.TrainingExercises.Count)
                 { //data changed
@@ -775,9 +779,9 @@ namespace BodyReport.Areas.User.Controllers
         // Add a training exercise
         // GET: /User/TrainingJournal/AddTrainingExercise
         [HttpGet]
-        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int bodyExerciseId)
+        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int trainingExerciseId)
         {
-            if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId))
+            if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId, trainingExerciseId))
                 return RedirectToAction("Index");
 
             var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
@@ -791,7 +795,7 @@ namespace BodyReport.Areas.User.Controllers
                 WeekOfYear = weekOfYear,
                 DayOfWeek = dayOfWeek,
                 TrainingDayId = trainingDayId,
-                BodyExerciseId = bodyExerciseId
+                Id = trainingExerciseId
             };
             var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
             if (trainingExercise == null)
@@ -807,7 +811,8 @@ namespace BodyReport.Areas.User.Controllers
             viewModel.WeekOfYear = weekOfYear;
             viewModel.DayOfWeek = dayOfWeek;
             viewModel.TrainingDayId = trainingDayId;
-            viewModel.BodyExerciseId = bodyExerciseId;
+            viewModel.TrainingExerciseId = trainingExerciseId;
+            viewModel.BodyExerciseId = bodyExercise.Id;
             viewModel.BodyExerciseName = bodyExercise.Name;
             viewModel.BodyExerciseImage = bodyExercise.ImageName;
             viewModel.RestTime = trainingExercise.RestTime;
@@ -895,7 +900,8 @@ namespace BodyReport.Areas.User.Controllers
             else if ("submit" == buttonType && ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || User.GetUserId() != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.BodyExerciseId == 0)
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.TrainingExerciseId == 0 ||
+                    viewModel.BodyExerciseId == 0)
                     return View(viewModel);
 
                 var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
@@ -907,7 +913,7 @@ namespace BodyReport.Areas.User.Controllers
                     WeekOfYear = viewModel.WeekOfYear,
                     DayOfWeek = viewModel.DayOfWeek,
                     TrainingDayId = viewModel.TrainingDayId,
-                    BodyExerciseId = viewModel.BodyExerciseId
+                    Id = viewModel.TrainingExerciseId
                 };
                 var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
                 if (trainingExercise == null)
@@ -916,6 +922,7 @@ namespace BodyReport.Areas.User.Controllers
                     return View(viewModel);
                 }
 
+                trainingExercise.BodyExerciseId = viewModel.BodyExerciseId;
                 trainingExercise.RestTime = viewModel.RestTime;
 
                 if (viewModel.Reps != null && viewModel.Reps.Count > 0)
@@ -959,7 +966,7 @@ namespace BodyReport.Areas.User.Controllers
                             WeekOfYear = viewModel.WeekOfYear,
                             DayOfWeek = viewModel.DayOfWeek,
                             TrainingDayId = viewModel.TrainingDayId,
-                            BodyExerciseId = viewModel.BodyExerciseId,
+                            TrainingExerciseId = viewModel.TrainingExerciseId,
                             Id = id,
                             NumberOfSets = tupleSetRep.Item1,
                             NumberOfReps = tupleSetRep.Item2,
