@@ -116,5 +116,7 @@
   "ADD_REPS": "Ajout répétitions",
   "SETS": "Séries",
   "VALIDATE": "Valider",
-  "DAY_OF_WEEK": "Jour de la semaine"
+  "DAY_OF_WEEK": "Jour de la semaine",
+  "URL": "Url",
+  "DATA": "Données"
 }

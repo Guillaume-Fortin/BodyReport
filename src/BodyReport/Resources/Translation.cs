@@ -75,7 +75,7 @@ namespace BodyReport.Resources
             dbContext.SaveChanges();
         }
 
-        public static void UpdateInDB(string key, string value, ApplicationDbContext dbContext = null)
+        public static void UpdateInDB(string key, string value, ApplicationDbContext dbContext = null, int cultureId=-1)
         {
             if (dbContext == null)
                 dbContext = new ApplicationDbContext();
@@ -83,7 +83,11 @@ namespace BodyReport.Resources
             var localizer = GetLocalizer() as StringLocalizer;
             localizer.RemoveTranslationInDictionnary("DB_" + key);
 
-                int currentCultureId = GetCurrentCultureId();
+            int currentCultureId;
+            if (cultureId == -1)
+                currentCultureId = GetCurrentCultureId();
+            else
+                currentCultureId = cultureId;
             TranslationRow row = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).FirstOrDefault();
             if(row == null)
             {
@@ -242,6 +246,8 @@ namespace BodyReport.Resources
         public static string SETS { get { return Get(TRS.SETS); } }
         public static string VALIDATE { get { return Get(TRS.VALIDATE); } }
         public static string DAY_OF_WEEK { get { return Get(TRS.DAY_OF_WEEK); } }
+        public static string URL { get { return Get(TRS.URL); } }
+        public static string DATA { get { return Get(TRS.DATA); } }
     }
 
     /// <summary>
@@ -840,6 +846,16 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Day of week")]
         public const string DAY_OF_WEEK = "DAY_OF_WEEK";
+        // <summary>
+        /// Url
+        /// </summary>
+        [Translation("Url")]
+        public const string URL = "URL";
+        // <summary>
+        /// Data
+        /// </summary>
+        [Translation("Data")]
+        public const string DATA = "DATA";
     }
 }
  

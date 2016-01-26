@@ -118,5 +118,7 @@
   "ADD_REPS": "Add reps",
   "SETS": "Sets",
   "VALIDATE": "Validate",
-  "DAY_OF_WEEK": "Day of week"
+  "DAY_OF_WEEK": "Day of week",
+  "URL": "Url",
+  "DATA": "Data"
 }
