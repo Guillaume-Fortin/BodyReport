@@ -76,7 +76,6 @@ namespace BodyReport.Manager
                     }
                 }
                 
-                TrainingExerciseSet trainingExerciseSet;
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {

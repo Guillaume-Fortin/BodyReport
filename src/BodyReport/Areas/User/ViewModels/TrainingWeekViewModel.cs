@@ -31,5 +31,9 @@ namespace BodyReport.Areas.User.ViewModels
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
         public double UserWeight { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.UNIT, ResourceType = typeof(Translation))]
+        public int Unit { get; set; }
     }
 }

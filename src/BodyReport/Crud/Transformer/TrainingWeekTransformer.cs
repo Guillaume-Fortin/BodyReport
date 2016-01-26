@@ -1,4 +1,5 @@
 ﻿using BodyReport.Models;
+using Framework;
 using Message;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace BodyReport.Crud.Transformer
             row.WeekOfYear = bean.WeekOfYear;
             row.UserHeight = bean.UserHeight;
             row.UserWeight = bean.UserWeight;
+            row.Unit = (int)bean.Unit;
         }
 
         internal static TrainingWeek ToBean(TrainingWeekRow row)
@@ -32,6 +34,7 @@ namespace BodyReport.Crud.Transformer
             bean.WeekOfYear = row.WeekOfYear;
             bean.UserHeight = row.UserHeight;
             bean.UserWeight = row.UserWeight;
+            bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
             return bean;
         }
     }

@@ -24,6 +24,14 @@ namespace Message
     public class TrainingWeek : TrainingWeekKey
     {
         /// <summary>
+        /// Unit Type
+        /// </summary>
+        public TUnitType Unit
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// User Height
         /// </summary>
         public double UserHeight { get; set; }

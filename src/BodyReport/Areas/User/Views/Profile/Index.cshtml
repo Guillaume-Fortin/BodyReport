@@ -15,8 +15,14 @@
 <h2>@Translation.MY_PROFILE.</h2>
 <div class="panel-group">
     <div class="panel panel-info">
-        <div class="panel-heading">@Translation.ACCOUNT_INFORMATION <a asp-route-area="User" asp-controller="Profile" asp-action="Edit">[@Translation.EDIT]</a></div>
-        <div class="panel-body">
+        <div class="panel-heading">@Translation.ACCOUNT_INFORMATION 
+            @if (ViewBag.Editable)
+            {
+                <a asp-route-area="User" asp-controller="Profile" asp-action="Edit">[@Translation.EDIT]</a>
+            }
+        </div>
+            
+                    <div class="panel-body">
             <div class="container-fluid">
                 <div class="row">
                     @if (ViewBag.IsMobileBrowser && !string.IsNullOrWhiteSpace(Model.ImageUrl))
@@ -40,16 +46,19 @@
                                 @if (Model.SexId == (int)TSexType.MAN)
                                 {
                                     @Translation.MAN
-                                }
+        }
                                 else
                                 {
                                     @Translation.WOMAN
                                 }
                             </dd>
-                            <dt>@Translation.UNIT :</dt>
-                            <dd>
-                                @unit
-                            </dd>
+                            @if (ViewBag.Editable)
+                            {
+                                <dt>@Translation.UNIT :</dt>
+                                <dd>
+                                    @unit
+                                </dd>
+                            }
                             <dt>@Translation.HEIGHT :</dt>
                             <dd>
                                 @(Math.Round(Model.Height, 2)) @lengthUnit

@@ -1,4 +1,5 @@
 ﻿using BodyReport.Models;
+using Framework;
 using Message;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace BodyReport.Crud.Transformer
             row.NumberOfSets = bean.NumberOfSets;
             row.NumberOfReps = bean.NumberOfReps;
             row.Weight = bean.Weight;
+            row.Unit = (int)bean.Unit;
         }
 
         internal static TrainingExerciseSet ToBean(TrainingExerciseSetRow row)
@@ -42,6 +44,7 @@ namespace BodyReport.Crud.Transformer
             bean.NumberOfSets = row.NumberOfSets;
             bean.NumberOfReps = row.NumberOfReps;
             bean.Weight = row.Weight;
+            bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
             return bean;
         }
     }

@@ -30,5 +30,13 @@ namespace BodyReport.Models
         /// User Weight
         /// </summary>
         public double UserWeight { get; set; }
+        /// <summary>
+        /// Unit Type
+        /// </summary>
+        public int Unit
+        {
+            get;
+            set;
+        }
     }
 }

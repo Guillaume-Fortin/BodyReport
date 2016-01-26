@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity;
 using System.Security.Claims;
 using System.Globalization;
 using BodyReport.Resources;
+using Framework;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -76,7 +77,7 @@ namespace BodyReport.Areas.User.Controllers
             var userInfoManager = new UserInfoManager(_dbContext);
             var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
             if (userInfo == null)
-                return RedirectToAction("Index");
+                userInfo = new UserInfo();
 
             DateTime dateTime = DateTime.Now; // TODO Manage Time with world position of user
 
@@ -84,8 +85,9 @@ namespace BodyReport.Areas.User.Controllers
             trainingWeek.UserId = User.GetUserId();
             trainingWeek.Year = dateTime.Year;
             trainingWeek.WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            trainingWeek.UserHeight = userInfo.Height;
-            trainingWeek.UserWeight = userInfo.Weight;
+            trainingWeek.UserHeight = trainingWeek.UserHeight;
+            trainingWeek.UserWeight = trainingWeek.UserWeight;
+            trainingWeek.Unit = userInfo.Unit;
 
             ViewBag.UserUnit = userInfo.Unit;
             return View(TransformTrainingWeekToViewModel(trainingWeek));
@@ -102,10 +104,11 @@ namespace BodyReport.Areas.User.Controllers
                     return View(viewModel);
 
                 //Verify valide week of year
-                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
+                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 && 
+                    (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                 {
                     var trainingWeekManager = new TrainingWeekManager(_dbContext);
-                    var trainingWeek = TransformViewModelToTrainingJournal(viewModel);
+                    var trainingWeek = TransformViewModelToTrainingWeek(viewModel);
 
                     var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
                     var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
@@ -168,10 +171,11 @@ namespace BodyReport.Areas.User.Controllers
                     return View(viewModel);
 
                 //Verify valide week of year
-                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
+                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 &&
+                    (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                 {
                     var trainingWeekManager = new TrainingWeekManager(_dbContext);
-                    var trainingWeek = TransformViewModelToTrainingJournal(viewModel);
+                    var trainingWeek = TransformViewModelToTrainingWeek(viewModel);
 
                     var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
                     var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
@@ -255,6 +259,13 @@ namespace BodyReport.Areas.User.Controllers
             if (trainingWeek == null)
                 return RedirectToAction("Index");
 
+            //Unit viewer convertion
+            string userIdViewer = User.GetUserId();
+            var viewerUnit = GetUserUnit(userIdViewer);
+            var userUnit = GetUserUnit(userId);
+            trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
+            trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, trainingWeek.UserWeight);
+            
             var bodyExerciseManager = new BodyExerciseManager(_dbContext);
             var trainingWeekViewModel = TransformTrainingWeekToViewModel(trainingWeek);
             List<TrainingDayViewModel> trainingDayViewModels = null;
@@ -273,6 +284,13 @@ namespace BodyReport.Areas.User.Controllers
                         {
                             foreach (var trainingExercise in trainingExercises)
                             {
+                                //Convert user Unit to viewer unit
+                                if (trainingExercise.TrainingExerciseSets != null)
+                                {
+                                    foreach (var set in trainingExercise.TrainingExerciseSets)
+                                        set.Weight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, set.Weight);
+                                }
+
                                 if (trainingExerciseViewModels == null)
                                     trainingExerciseViewModels = new List<TrainingExerciseViewModel>();
                                 trainingExerciseViewModels.Add(TransformTrainingExerciseToViewModel(bodyExerciseManager, trainingExercise));
@@ -283,7 +301,8 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             ViewBag.CurrentDayOfWeek = currentDayOfWeek;
-            ViewBag.UserUnit = GetUserUnit(userId);
+            ViewBag.ViewerUnit = viewerUnit;
+            ViewBag.Editable = userId == userIdViewer;
             return View(new Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>, List<TrainingExerciseViewModel>>(trainingWeekViewModel, trainingDayViewModels, trainingExerciseViewModels));
         }
 
@@ -305,7 +324,7 @@ namespace BodyReport.Areas.User.Controllers
             return trainingExerciseManager.FindTrainingExercise(criteria);
         }
 
-        private TrainingWeek TransformViewModelToTrainingJournal(TrainingWeekViewModel viewModel)
+        private TrainingWeek TransformViewModelToTrainingWeek(TrainingWeekViewModel viewModel)
         {
             TrainingWeek trainingJournal = new TrainingWeek();
 
@@ -314,6 +333,7 @@ namespace BodyReport.Areas.User.Controllers
             trainingJournal.WeekOfYear = viewModel.WeekOfYear;
             trainingJournal.UserHeight = viewModel.UserHeight;
             trainingJournal.UserWeight = viewModel.UserWeight;
+            trainingJournal.Unit = Utils.IntToEnum<TUnitType>(viewModel.Unit);
 
             return trainingJournal;
         }
@@ -327,6 +347,7 @@ namespace BodyReport.Areas.User.Controllers
             trainingJournalVM.WeekOfYear = trainingWeek.WeekOfYear;
             trainingJournalVM.UserHeight = trainingWeek.UserHeight;
             trainingJournalVM.UserWeight = trainingWeek.UserWeight;
+            trainingJournalVM.Unit = (int)trainingWeek.Unit;
 
             var userManager = new UserManager(_dbContext);
             var user = userManager.GetUser(new UserKey() { Id = trainingWeek.UserId });
@@ -820,10 +841,14 @@ namespace BodyReport.Areas.User.Controllers
             viewModel.BodyExerciseName = bodyExercise.Name;
             viewModel.BodyExerciseImage = bodyExercise.ImageName;
             viewModel.RestTime = trainingExercise.RestTime;
-            
-            if(trainingExercise.TrainingExerciseSets != null)
-            { 
-                foreach(var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+            viewModel.Unit = (int)GetUserUnit(userId);
+
+            if (trainingExercise.TrainingExerciseSets != null)
+            {
+                if(trainingExercise.TrainingExerciseSets.Count > 0) //Take unit of first user set if exist
+                    viewModel.Unit = (int)trainingExercise.TrainingExerciseSets[0].Unit;
+
+                foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
                 {
                     for(int i=0; i < trainingExerciseSet.NumberOfSets; i++)
                     {
@@ -908,7 +933,8 @@ namespace BodyReport.Areas.User.Controllers
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || User.GetUserId() != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.TrainingExerciseId == 0 ||
-                    viewModel.BodyExerciseId == 0)
+                    viewModel.BodyExerciseId == 0 &&
+                    (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                     return View(viewModel);
 
                 var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
@@ -939,7 +965,6 @@ namespace BodyReport.Areas.User.Controllers
                     var tupleSetRepList = new List<Tuple<int, int, double>>();
                     int repValue;
                     double weightValue, currentWeightValue = 0;
-                    //foreach (var repValue in viewModel.Reps)
                     for (int i=0; i < viewModel.Reps.Count; i++)
                     {
                         repValue = viewModel.Reps[i].Value;
@@ -965,6 +990,7 @@ namespace BodyReport.Areas.User.Controllers
 
                     trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
                     int id = 1;
+                    var unit = Utils.IntToEnum<TUnitType>(viewModel.Unit);
                     foreach (Tuple<int, int, double> tupleSetRep in tupleSetRepList)
                     {
                         trainingExercise.TrainingExerciseSets.Add(new TrainingExerciseSet()
@@ -978,7 +1004,8 @@ namespace BodyReport.Areas.User.Controllers
                             Id = id,
                             NumberOfSets = tupleSetRep.Item1,
                             NumberOfReps = tupleSetRep.Item2,
-                            Weight = tupleSetRep.Item3
+                            Weight = tupleSetRep.Item3,
+                            Unit = unit
                         });
                         id++;
                     }

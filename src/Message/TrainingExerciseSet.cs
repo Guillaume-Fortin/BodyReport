@@ -40,6 +40,14 @@ namespace Message
     public class TrainingExerciseSet : TrainingExerciseSetKey
     {
         /// <summary>
+        /// Unit Type
+        /// </summary>
+        public TUnitType Unit
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Number of sets
         /// </summary>
         public int NumberOfSets { get; set; }

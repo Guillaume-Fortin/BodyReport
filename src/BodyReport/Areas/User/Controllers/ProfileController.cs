@@ -18,6 +18,7 @@ using Microsoft.AspNet.Http;
 using System.IO;
 using BodyReport.Areas.User.ViewModels;
 using System.Net.Http;
+using Framework;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -47,10 +48,13 @@ namespace BodyReport.Areas.User.Controllers
         //
         // GET: /User/Profile/Index
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string userId)
         {
+            string userIdViewer = User.GetUserId();
+            if(userId == null)
+                userId = User.GetUserId();
             var userManager = new UserManager(_dbContext);
-            var user = userManager.GetUser(new UserKey() { Id = User.GetUserId() });
+            var user = userManager.GetUser(new UserKey() { Id = userId });
 
             var viewModel = new UserProfilViewModel();
             viewModel.UserId = user.Id;
@@ -61,13 +65,16 @@ namespace BodyReport.Areas.User.Controllers
                 viewModel.Email = user.Email;
 
                 var userInfoManager = new UserInfoManager(_dbContext);
-                var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
+                var userInfoViewer = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userIdViewer });
+                if (userInfoViewer == null)
+                    userInfoViewer = new UserInfo();
+                var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
                 if (userInfo != null)
                 {
                     viewModel.SexId = (int)userInfo.Sex;
-                    viewModel.Unit = (int)userInfo.Unit;
-                    viewModel.Height = userInfo.Height;
-                    viewModel.Weight = userInfo.Weight;
+                    viewModel.Unit = (int)userInfoViewer.Unit; //On viewer Mode, it's viewer unit which display
+                    viewModel.Height = Utils.TransformLengthToUnitSytem(userInfo.Unit, userInfoViewer.Unit, userInfo.Height);
+                    viewModel.Weight = Utils.TransformWeightToUnitSytem(userInfo.Unit, userInfoViewer.Unit, userInfo.Weight);
                     viewModel.ZipCode = userInfo.ZipCode;
                     viewModel.CountryId = userInfo.CountryId;
 
@@ -93,6 +100,7 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
 
+            ViewBag.Editable = userIdViewer == userId;
             ViewBag.IsMobileBrowser = Request.IsMobileBrowser();
             return View(viewModel);
         }

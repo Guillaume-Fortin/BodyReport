@@ -5,7 +5,7 @@
 @{
     string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
 
-    if (ViewBag.UserUnit == (int)TUnitType.Imperial)
+    if (ViewBag.ViewerUnit == (int)TUnitType.Imperial)
     {
         weightUnit = Translation.POUND;
         lengthUnit = Translation.INCH;
@@ -53,7 +53,13 @@
 
 <p>@date</p>
 <div class="panel panel-info">
-    <div class="panel-heading">@Translation.USER : @Model.Item1.UserName <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear">[@Translation.EDIT]</a></div>
+    <div class="panel-heading">
+        @Translation.USER : @Model.Item1.UserName
+        @if (ViewBag.Editable)
+        {
+            <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="Edit" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear">[@Translation.EDIT]</a>
+        }
+    </div>
     <div class="panel-body">
         <dl class="dl-horizontal">
             <dt>@Translation.WEEK_NUMBER :</dt>
@@ -103,28 +109,39 @@
 
 @if (currentTrainingDayList.Count == 0)
 {
-    <p>
-        @Translation.YOU_HAVENT_CREATE_THIS_TRAINING_DAY.
-        <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE_NEW_PE</a>
-    </p>
+    @if (ViewBag.Editable)
+    {
+        <p>
+            @Translation.YOU_HAVENT_CREATE_THIS_TRAINING_DAY.
+            <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE_NEW_PE</a>
+        </p>
+    }
 }
 else
 {
+    @if (ViewBag.Editable)
+    {
     <p>
         <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE_NEW_PE</a>
     </p>
+    }
 
     @foreach (TrainingDayViewModel trainingDay in currentTrainingDayList)
     {
         <div class="panel panel-info">
             <div class="panel-heading">
-                @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
-                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT</a>
+               @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
+               @if (ViewBag.Editable)
+               {
+                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT</a>
                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="DeleteTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.DELETE]</a>
+               }
             </div>
             <div class="panel-body">
+                @if (ViewBag.Editable)
+                {
                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="AddTrainingExercises" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.ADD_EXERCISES</a>
-
+                }
                 <div>
                     <table class="table">
                         <tr>
@@ -143,9 +160,12 @@ else
                             <th>
                                 @Translation.REST_TIME
                             </th>
+                            @if (ViewBag.Editable)
+                            {
                             <th>
                                 @Translation.ACTION
                             </th>
+                            }
                         </tr>
 
                         @if (Model.Item3 != null)
@@ -179,10 +199,13 @@ else
                                     <td>
                                         @trainingExercise.RestTime sec
                                     </td>
+                                    @if (ViewBag.Editable)
+                                    {
                                     <td>
                                         <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.EDIT</a> |
                                         <a asp-action="DeleteTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.DELETE</a>
                                     </td>
+                                    }
                                 </tr>
                                 }
                             }
