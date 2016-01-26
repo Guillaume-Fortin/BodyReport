@@ -1,5 +1,6 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Models;
+using Framework;
 using Message;
 using Microsoft.Data.Entity;
 using System;
@@ -23,6 +24,15 @@ namespace BodyReport.Manager
             _userInfoModule = new UserInfoModule(_dbContext);
         }
 
+        private TUnitType GetUserUnit(string userId)
+        {
+            TUnitType unit = TUnitType.Imperial;
+            var userInfo = _userInfoModule.Get(new UserInfoKey() { UserId = userId });
+            if (userInfo != null)
+                unit = userInfo.Unit;
+            return unit;
+        }
+
         internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
         {
             TrainingWeek trainingWeekResult = null;
@@ -30,9 +40,12 @@ namespace BodyReport.Manager
             {
                 try
                 {
+                    var userUnit = GetUserUnit(trainingWeek.UserId);
+                    TransformUserUnitToMetricUnit(userUnit, trainingWeek);
                     trainingWeekResult = _trainingWeekModule.Create(trainingWeek);
+                    TransformMetricUnitToUserUnit(userUnit, trainingWeek);
 
-                    if(trainingWeek.TrainingDays != null)
+                    if (trainingWeek.TrainingDays != null)
                     {
                         var trainingDayManager = new TrainingDayManager(_dbContext);
                         foreach(var trainingDay in trainingWeek.TrainingDays)
@@ -58,7 +71,10 @@ namespace BodyReport.Manager
             {
                 try
                 {
+                    var userUnit = GetUserUnit(trainingWeek.UserId);
+                    TransformUserUnitToMetricUnit(userUnit, trainingWeek);
                     trainingWeekResult = _trainingWeekModule.Update(trainingWeek);
+                    TransformMetricUnitToUserUnit(userUnit, trainingWeek);
 
                     if (trainingWeek.TrainingDays != null)
                     {
@@ -82,10 +98,15 @@ namespace BodyReport.Manager
         internal TrainingWeek GetTrainingWeek(TrainingWeekKey key, bool manageTrainingDay)
         {
             var trainingWeek = _trainingWeekModule.Get(key);
-
-            if (manageTrainingDay)
+            if (trainingWeek != null)
             {
-                CompleteTrainingWeekWithTrainingDay(trainingWeek);
+                var userUnit = GetUserUnit(trainingWeek.UserId);
+                TransformMetricUnitToUserUnit(userUnit, trainingWeek);
+
+                if (manageTrainingDay)
+                {
+                    CompleteTrainingWeekWithTrainingDay(trainingWeek);
+                }
             }
 
             return trainingWeek;
@@ -95,10 +116,6 @@ namespace BodyReport.Manager
         {
             if (trainingWeek != null)
             {
-                var userInfo = _userInfoModule.Get(new UserInfoKey() { UserId = trainingWeek.UserId });
-                if (userInfo != null)
-                    trainingWeek.Unit = userInfo.Unit;
-
                 var trainingDayManager = new TrainingDayManager(_dbContext);
                 var trainingDayCriteria = new TrainingDayCriteria()
                 {
@@ -153,6 +170,24 @@ namespace BodyReport.Manager
                     _dbContext.Database.RollbackTransaction();
                     throw exception;
                 }
+            }
+        }
+
+        private void TransformUserUnitToMetricUnit(TUnitType userUnit, TrainingWeek trainingWeek)
+        {
+            if (trainingWeek != null)
+            {
+                trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, TUnitType.Metric, trainingWeek.UserHeight);
+                trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, TUnitType.Metric, trainingWeek.UserWeight);
+            }   
+        }
+
+        private void TransformMetricUnitToUserUnit(TUnitType userUnit, TrainingWeek trainingWeek)
+        {
+            if (trainingWeek != null)
+            {
+                trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(TUnitType.Metric, userUnit, trainingWeek.UserHeight);
+                trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(TUnitType.Metric, userUnit, trainingWeek.UserWeight);
             }
         }
     }

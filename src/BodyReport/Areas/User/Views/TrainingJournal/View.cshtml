@@ -138,7 +138,7 @@ else
                                 @Translation.SETS / @Translation.REPS
                             </th>
                             <th>
-                                @Translation.WEIGHT
+                                @Translation.WEIGHT<br/>(@weightUnit)
                             </th>
                             <th>
                                 @Translation.REST_TIME
@@ -164,16 +164,16 @@ else
                                     <td>
                                         @if (trainingExercise.TupleSetReps != null)
                                         {
-                                            @foreach (Tuple<int, int, int> tupleSetRep in trainingExercise.TupleSetReps)
+                                            @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
                                             {
                                                 @tupleSetRep.Item1 @: x @tupleSetRep.Item2<br/>
                                             }
                                         }
                                     </td>
                                     <td>
-                                        @foreach (Tuple<int, int, int> tupleSetRep in trainingExercise.TupleSetReps)
+                                        @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
                                         {
-                                            @tupleSetRep.Item3<br />
+                                            @Math.Round(tupleSetRep.Item3, 3)<br />
                                         }
                                     </td>
                                     <td>

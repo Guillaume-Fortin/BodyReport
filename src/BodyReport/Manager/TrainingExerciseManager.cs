@@ -1,5 +1,6 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Models;
+using Framework;
 using Message;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Storage;
@@ -13,23 +14,36 @@ namespace BodyReport.Manager
     public class TrainingExerciseManager : ServiceManager
     {
         TrainingExerciseModule _trainingDayExerciseModule = null;
-        TrainingExerciseSetModule _trainingDayExerciseSetModule = null;
+        UserInfoModule _userInfoModule = null;
+        TrainingExerciseSetManager _trainingExerciseSetManager = null;
 
         public TrainingExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _trainingDayExerciseModule = new TrainingExerciseModule(_dbContext);
-            _trainingDayExerciseSetModule = new TrainingExerciseSetModule(_dbContext);
+            _userInfoModule = new UserInfoModule(_dbContext);
+            _trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
+        }
+
+        private TUnitType GetUserUnit(string userId)
+        {
+            TUnitType unit = TUnitType.Imperial;
+            var userInfo = _userInfoModule.Get(new UserInfoKey() { UserId = userId });
+            if (userInfo != null)
+                unit = userInfo.Unit;
+            return unit;
         }
 
         public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             var result = _trainingDayExerciseModule.Create(trainingExercise);
-            if(result != null && trainingExercise.TrainingExerciseSets != null)
+            if (result != null && trainingExercise.TrainingExerciseSets != null)
             {
+                TrainingExerciseSet trainingExerciseSet;
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {
-                    result.TrainingExerciseSets.Add(_trainingDayExerciseSetModule.Create(set));
+                    trainingExerciseSet = _trainingExerciseSetManager.CreateTrainingExerciseSet(set);
+                    result.TrainingExerciseSets.Add(trainingExerciseSet);
                 }
             }
 
@@ -43,7 +57,7 @@ namespace BodyReport.Manager
             {
                 if(manageDeleteLinkItem)
                 {
-                    var setList = _trainingDayExerciseSetModule.Find(new TrainingExerciseSetCriteria()
+                    var setList = _trainingExerciseSetManager.FindTrainingExerciseSet(new TrainingExerciseSetCriteria()
                     {
                         UserId = new StringCriteria() { EqualList = new List<string>() { trainingExercise.UserId } },
                         Year = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Year } },
@@ -57,15 +71,16 @@ namespace BodyReport.Manager
                     {
                         foreach (var set in setList)
                         {
-                            _trainingDayExerciseSetModule.Delete(set);
+                            _trainingExerciseSetManager.DeleteTrainingExerciseSet(set);
                         }
                     }
                 }
-
+                
+                TrainingExerciseSet trainingExerciseSet;
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {
-                    result.TrainingExerciseSets.Add(_trainingDayExerciseSetModule.Update(set));
+                    result.TrainingExerciseSets.Add(_trainingExerciseSetManager.UpdateTrainingExerciseSet(set));
                 }
             }
 
@@ -85,8 +100,7 @@ namespace BodyReport.Manager
                     TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.TrainingDayId } },
                     TrainingExerciseId = new IntegerCriteria() { EqualList = new List<int>() { trainingExercise.Id } }
                 };
-                var trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
-                trainingExercise.TrainingExerciseSets = trainingExerciseSetManager.FindTrainingExerciseSet(criteria);
+                trainingExercise.TrainingExerciseSets = _trainingExerciseSetManager.FindTrainingExerciseSet(criteria);
             }
         }
 
@@ -123,11 +137,26 @@ namespace BodyReport.Manager
 
             if (trainingExercise.TrainingExerciseSets != null)
             {
-                var trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
                 foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
                 {
-                    trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
+                    _trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
                 }
+            }
+        }
+
+        private void TransformUserUnitToMetricUnit(TUnitType userUnit, TrainingExerciseSet trainingExerciseSet)
+        {
+            if (trainingExerciseSet != null)
+            {
+                trainingExerciseSet.Weight = Utils.TransformWeightToUnitSytem(userUnit, TUnitType.Metric, trainingExerciseSet.Weight);
+            }
+        }
+
+        private void TransformMetricUnitToUserUnit(TUnitType userUnit, TrainingExerciseSet trainingExerciseSet)
+        {
+            if (trainingExerciseSet != null)
+            {
+                trainingExerciseSet.Weight = Utils.TransformWeightToUnitSytem(TUnitType.Metric, userUnit, trainingExerciseSet.Weight);
             }
         }
     }

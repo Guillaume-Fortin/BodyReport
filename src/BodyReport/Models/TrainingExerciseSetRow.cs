@@ -49,6 +49,6 @@ namespace BodyReport.Models
         /// <summary>
         /// Weight
         /// </summary>
-        public int Weight { get; set; }
+        public double Weight { get; set; }
     }
 }

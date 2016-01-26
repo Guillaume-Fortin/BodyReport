@@ -1,6 +1,14 @@
 ﻿@model TrainingExerciseViewModel
 
 @{
+    string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
+
+    if (ViewBag.UserUnit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
 }
 
 <h2>@Translation.TRAINING_EXERCISE. </h2>
@@ -53,7 +61,7 @@
                             @Translation.REPS
                         </th>
                         <th>
-                            @Translation.WEIGHT
+                            @Translation.WEIGHT (@weightUnit)
                         </th>
                         <th>
                         </th>
@@ -63,10 +71,10 @@
                     {
                     <tr>
                         <td>
-                            <input asp-for="@Model.Reps[i]" class="form-control" type="number" />
+                            <input asp-for="@Model.Reps[i]" class="form-control" />
                         </td>
                         <td>
-                            <input asp-for="@Model.Weights[i]" class="form-control" type="number" />
+                            <input asp-for="@Model.Weights[i]" class="form-control" />
                         </td>
                         <td>
                             @if (i > 0 && i == (Model.Reps.Count - 1))

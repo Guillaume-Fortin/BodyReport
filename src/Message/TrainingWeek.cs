@@ -32,10 +32,6 @@ namespace Message
         /// </summary>
         public double UserWeight { get; set; }
         /// <summary>
-        /// Unit 
-        /// </summary>
-        public TUnitType Unit { get; set; }
-        /// <summary>
         /// User Weight
         /// </summary>
         public List<TrainingDay> TrainingDays { get; set; }

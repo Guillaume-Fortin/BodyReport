@@ -50,7 +50,7 @@ namespace Message
         /// <summary>
         /// Weight
         /// </summary>
-        public int Weight { get; set; }
+        public double Weight { get; set; }
     }
 
     public class TrainingExerciseSetCriteria : CriteriaField

@@ -141,6 +141,7 @@ namespace BodyReport.Areas.User.Controllers
             if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
                 return RedirectToAction("Index");
 
+            ViewBag.UserUnit = GetUserUnit(userId);
             var trainingJournalManager = new TrainingWeekManager(_dbContext);
             var key = new TrainingWeekKey()
             {
@@ -162,6 +163,7 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
+                ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || User.GetUserId() != viewModel.UserId)
                     return View(viewModel);
 
@@ -281,6 +283,7 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             ViewBag.CurrentDayOfWeek = currentDayOfWeek;
+            ViewBag.UserUnit = GetUserUnit(userId);
             return View(new Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>, List<TrainingExerciseViewModel>>(trainingWeekViewModel, trainingDayViewModels, trainingExerciseViewModels));
         }
 
@@ -365,11 +368,11 @@ namespace BodyReport.Areas.User.Controllers
                 BodyExerciseImage = string.Format("/images/bodyexercises/{0}.png", trainingExercise.BodyExerciseId)
             };
 
-            viewModel.TupleSetReps = new List<Tuple<int, int, int>>();
+            viewModel.TupleSetReps = new List<Tuple<int, int, double>>();
             if (trainingExercise.TrainingExerciseSets != null)
             {
                 foreach (var set in trainingExercise.TrainingExerciseSets)
-                    viewModel.TupleSetReps.Add(new Tuple<int, int, int>(set.NumberOfSets, set.NumberOfReps, set.Weight));
+                    viewModel.TupleSetReps.Add(new Tuple<int, int, double>(set.NumberOfSets, set.NumberOfReps, set.Weight));
             }
 
             return viewModel;
@@ -775,7 +778,7 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
         }
-
+        
         // Add a training exercise
         // GET: /User/TrainingJournal/AddTrainingExercise
         [HttpGet]
@@ -783,8 +786,9 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId, trainingExerciseId))
                 return RedirectToAction("Index");
-
-            var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
+            
+           ViewBag.UserUnit = GetUserUnit(userId);
+           var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
 
             var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
 
@@ -832,7 +836,8 @@ namespace BodyReport.Areas.User.Controllers
             if(viewModel.Reps == null || viewModel.Reps.Count == 0)
                 viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
             if (viewModel.Weights == null || viewModel.Weights.Count == 0)
-                viewModel.Weights = new List<int?>() { 0, 0, 0, 0 };
+                viewModel.Weights = new List<double?>() { 0, 0, 0, 0 };
+           
             return View(viewModel);
         }
 
@@ -845,11 +850,13 @@ namespace BodyReport.Areas.User.Controllers
             if(viewModel == null)
                 return RedirectToAction("Index");
 
+            ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+
             if (viewModel.Reps == null || viewModel.Reps.Count == 0) //Security
                 viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
 
             if (viewModel.Weights == null)
-                viewModel.Weights = new List<int?>();
+                viewModel.Weights = new List<double?>();
 
             while (viewModel.Reps.Count > MAX_REPS)
             {
@@ -883,7 +890,7 @@ namespace BodyReport.Areas.User.Controllers
                         newRepValue = viewModel.Reps[viewModel.Reps.Count - 1].Value;
                     viewModel.Reps.Add(newRepValue);
 
-                    int newWeightValue = 8;
+                    double newWeightValue = 8;
                     if (viewModel.Weights.Count > 0)
                         newWeightValue = viewModel.Weights[viewModel.Weights.Count - 1].Value;
                     viewModel.Weights.Add(newWeightValue);
@@ -928,9 +935,10 @@ namespace BodyReport.Areas.User.Controllers
                 if (viewModel.Reps != null && viewModel.Reps.Count > 0)
                 {
                     //Regroup Reps with Set
-                    int nbSet = 0, currentRepValue = 0, currentWeightValue = 0;
-                    var tupleSetRepList = new List<Tuple<int, int, int>>();
-                    int repValue, weightValue;
+                    int nbSet = 0, currentRepValue = 0;
+                    var tupleSetRepList = new List<Tuple<int, int, double>>();
+                    int repValue;
+                    double weightValue, currentWeightValue = 0;
                     //foreach (var repValue in viewModel.Reps)
                     for (int i=0; i < viewModel.Reps.Count; i++)
                     {
@@ -944,7 +952,7 @@ namespace BodyReport.Areas.User.Controllers
                         else
                         {
                             if (nbSet != 0)
-                                tupleSetRepList.Add(new Tuple<int, int, int>(nbSet, currentRepValue, currentWeightValue));
+                                tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
                             currentRepValue = repValue;
                             currentWeightValue = weightValue;
                             nbSet = 1;
@@ -953,11 +961,11 @@ namespace BodyReport.Areas.User.Controllers
 
                     //last data
                     if (nbSet != 0)
-                        tupleSetRepList.Add(new Tuple<int, int, int>(nbSet, currentRepValue, currentWeightValue));
+                        tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
 
                     trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
                     int id = 1;
-                    foreach (Tuple<int, int, int> tupleSetRep in tupleSetRepList)
+                    foreach (Tuple<int, int, double> tupleSetRep in tupleSetRepList)
                     {
                         trainingExercise.TrainingExerciseSets.Add(new TrainingExerciseSet()
                         {
@@ -982,6 +990,19 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
             return View(viewModel);
+        }
+
+        private TUnitType GetUserUnit(string userId)
+        {
+            TUnitType result = TUnitType.Imperial;
+
+            if(userId != null)
+            {
+                var userInfo = new UserInfoManager(_dbContext).GetUserInfo(new UserInfoKey() { UserId = userId });
+                if(userInfo != null)
+                    result = userInfo.Unit;
+            }
+            return result;
         }
     }
 }

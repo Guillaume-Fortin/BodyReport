@@ -42,11 +42,11 @@ namespace BodyReport.Areas.User.ViewModels
 
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public List<int?> Weights { get; set; } = new List<int?>();
+        public List<double?> Weights { get; set; } = new List<double?>();
 
         [Display(Name = TRS.NAME, ResourceType = typeof(Translation))]
         public string BodyExerciseName { get; set; }
         public string BodyExerciseImage { get; set; }
-        public List<Tuple<int, int, int>> TupleSetReps { get; set; }
+        public List<Tuple<int, int, double>> TupleSetReps { get; set; }
     }
 }
