@@ -29,6 +29,46 @@ namespace BodyReport.Framework
             }
         }
 
+        public static string SmtpServer
+        {
+            get
+            {
+                return GetStringParameterValue("Smtp:Server");
+            }
+        }
+
+        public static int SmtpPort
+        {
+            get
+            {
+                return GetIntParameterValue("Smtp:Port");
+            }
+        }
+
+        public static string SmtpEmail
+        {
+            get
+            {
+                return GetStringParameterValue("Smtp:Email");
+            }
+        }
+
+        public static string SmtpUserName
+        {
+            get
+            {
+                return GetStringParameterValue("Smtp:UserName");
+            }
+        }
+
+        public static string SmtpPassword
+        {
+            get
+            {
+                return GetStringParameterValue("Smtp:Password");
+            }
+        }
+
         private static string GetStringParameterValue(string key)
         {
             return Configuration[key];

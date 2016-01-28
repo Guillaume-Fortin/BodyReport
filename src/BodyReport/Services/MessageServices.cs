@@ -1,6 +1,11 @@
-﻿using System;
+﻿using BodyReport.Framework;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BodyReport.Services
@@ -12,6 +17,24 @@ namespace BodyReport.Services
     {
         public Task SendEmailAsync(string email, string subject, string message)
         {
+            using (var client = new SmtpClient())
+            {
+                // client.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+               // client.Authenticate("username", "password");
+
+                var mimeMessage = new MimeMessage();
+                mimeMessage.From.Add(new MailboxAddress("BodyReport", WebAppConfiguration.SmtpEmail));
+                mimeMessage.To.Add(new MailboxAddress(email, email));
+                mimeMessage.Subject = subject;
+                mimeMessage.Body = new TextPart("html") { Text = message };
+                
+                client.Connect(WebAppConfiguration.SmtpServer, WebAppConfiguration.SmtpPort, SecureSocketOptions.None);
+                client.Authenticate(WebAppConfiguration.SmtpUserName, WebAppConfiguration.SmtpPassword);
+
+                client.Send(mimeMessage);
+                client.Disconnect(true);
+            }
+            
             // Plug in your email service here to send an email.
             return Task.FromResult(0);
         }
