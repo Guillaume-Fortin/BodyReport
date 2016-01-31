@@ -90,6 +90,7 @@ namespace BodyReport
 
             services.Configure<IdentityOptions>(options =>
             {
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(10);
                 options.Cookies.ApplicationCookie.LoginPath = new Microsoft.AspNet.Http.PathString("/Site/Account/Login");
             });
 
