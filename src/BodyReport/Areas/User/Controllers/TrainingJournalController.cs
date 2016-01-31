@@ -799,20 +799,80 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
         }
-        
+
+        private void OrderTrainingExercices(List<TrainingExercise> trainingExercises, int index, bool upward)
+        {
+            if (upward && index == 0)
+                return;
+            if (!upward && index == (trainingExercises.Count -1))
+                return;
+
+            var trainingExercise = trainingExercises[index];
+            trainingExercises.RemoveAt(index);
+            if (upward)
+                trainingExercises.Insert(index - 1, trainingExercise);
+            else
+                trainingExercises.Insert(index + 1, trainingExercise);
+
+            //Parse and change index of exercise
+            for (int i = 0; i < trainingExercises.Count; i++)
+            {
+                index = i + 1;
+                trainingExercise = trainingExercises[i];
+                trainingExercise.Id = index;
+
+                foreach(var set in trainingExercise.TrainingExerciseSets)
+                {
+                    set.TrainingExerciseId = index;
+                }
+            }
+        }
+
         // Add a training exercise
-        // GET: /User/TrainingJournal/AddTrainingExercise
+        // GET: /User/TrainingJournal/EditTrainingExercise
         [HttpGet]
-        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int trainingExerciseId)
+        public IActionResult EditTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId,
+            int trainingExerciseId, bool upward=false, bool downward=false)
         {
             if (IncorrectHttpData(userId, year, weekOfYear, dayOfWeek, trainingDayId, trainingExerciseId))
                 return RedirectToAction("Index");
-            
-           ViewBag.UserUnit = GetUserUnit(userId);
-           var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
 
+            var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
             var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
 
+            if (upward || downward)
+            {
+                var findcriteria = new TrainingExerciseCriteria()
+                {
+                    UserId = new StringCriteria() { EqualList = new List<string>() { userId } },
+                    Year = new IntegerCriteria() { EqualList = new List<int>() { year } },
+                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { weekOfYear } },
+                    DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { dayOfWeek } },
+                    TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingDayId } }
+                };
+                var trainingExercises = trainingExerciseManager.FindTrainingExercise(findcriteria);
+                if (trainingExercises == null || trainingExercises.Count == 0)
+                    return actionResult;
+
+                trainingExercises = trainingExercises.OrderBy(t => t.Id).ToList();
+                int indexOfCurrentExercice = trainingExercises.FindIndex(t => t.Id == trainingExerciseId);
+                if (indexOfCurrentExercice == -1)
+                    return actionResult;
+
+                foreach (var trainingExerciseTmp in trainingExercises)
+                    trainingExerciseManager.DeleteTrainingExercise(trainingExerciseTmp);
+
+                OrderTrainingExercices(trainingExercises, indexOfCurrentExercice, upward == true);
+
+                foreach (var trainingExerciseTmp in trainingExercises)
+                    trainingExerciseManager.CreateTrainingExercise(trainingExerciseTmp);
+
+                return actionResult;
+            }
+
+
+            ViewBag.UserUnit = GetUserUnit(userId);
+            
             var key = new TrainingExerciseKey()
             {
                 UserId = userId,
@@ -825,6 +885,7 @@ namespace BodyReport.Areas.User.Controllers
             var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
             if (trainingExercise == null)
                 return actionResult;
+
 
             var bodyExerciseManager = new BodyExerciseManager(_dbContext);
 

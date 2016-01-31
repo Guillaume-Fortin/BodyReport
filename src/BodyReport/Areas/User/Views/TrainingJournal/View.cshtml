@@ -170,8 +170,9 @@ else
 
                         @if (Model.Item3 != null)
                         {
-                            @foreach (TrainingExerciseViewModel trainingExercise in Model.Item3)
+                            @for(int i=0; i < Model.Item3.Count; i++)
                             {
+                                TrainingExerciseViewModel trainingExercise = Model.Item3[i];
                                 @if(trainingDay.TrainingDayId == trainingExercise.TrainingDayId)
                                 {
                                 <tr>
@@ -202,6 +203,19 @@ else
                                     @if (ViewBag.Editable)
                                     {
                                     <td>
+                                        @if (i > 0)
+                                        {
+                                        <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-upward="true">
+                                            <img src="/images/btn_up.png" width="25" />
+                                        </a> 
+                                        }
+                                        @if (i != Model.Item3.Count - 1)
+                                        {
+                                            <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-downward="true">
+                                                <img src="/images/btn_down.png" width="25" />
+                                            </a>
+                                        }
+                                        <br /><br />
                                         <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.EDIT</a> |
                                         <a asp-action="DeleteTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.DELETE</a>
                                     </td>
