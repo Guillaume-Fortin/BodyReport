@@ -250,6 +250,7 @@ namespace BodyReport.Resources
         public static string DATA { get { return Get(TRS.DATA); } }
         public static string REGISTRATION_DATE { get { return Get(TRS.REGISTRATION_DATE); } }
         public static string LAST_LOGIN_DATE { get { return Get(TRS.LAST_LOGIN_DATE); } }
+        public static string COPY { get { return Get(TRS.COPY); } }
     }
 
     /// <summary>
@@ -868,5 +869,10 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Last login date")]
         public const string LAST_LOGIN_DATE = "LAST_LOGIN_DATE";
+        // <summary>
+        /// Copy
+        /// </summary>
+        [Translation("Copy")]
+        public const string COPY = "COPY";
     }
 }

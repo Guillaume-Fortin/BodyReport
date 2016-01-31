@@ -33,6 +33,7 @@ namespace BodyReport.Manager
                 if (trainingDay.TrainingExercises != null)
                 {
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
                         trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
@@ -115,6 +116,7 @@ namespace BodyReport.Manager
                 {
                     trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
                         trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));

@@ -65,7 +65,7 @@ namespace BodyReport.Crud.Module
             List<TrainingWeek> resultList = null;
             IQueryable<TrainingWeekRow> rowList = _dbContext.TrainingWeeks;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
-            rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).OrderByDescending(t => t.WeekOfYear);
+            rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
             if (rowList != null && rowList.Count() > 0)
             {

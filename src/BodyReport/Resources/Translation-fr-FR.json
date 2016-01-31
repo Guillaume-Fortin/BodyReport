@@ -120,5 +120,6 @@
   "URL": "Url",
   "DATA": "Données",
   "REGISTRATION_DATE": "Date d'enregistrement",
-  "LAST_LOGIN_DATE": "Date de dernière connexion"
+  "LAST_LOGIN_DATE": "Date de dernière connexion",
+  "COPY": "Copier"
 }

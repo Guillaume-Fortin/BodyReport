@@ -33,7 +33,8 @@ namespace BodyReport.Manager
                     if (trainingWeek.TrainingDays != null)
                     {
                         var trainingDayManager = new TrainingDayManager(_dbContext);
-                        foreach(var trainingDay in trainingWeek.TrainingDays)
+                        trainingWeekResult.TrainingDays = new List<TrainingDay>();
+                        foreach (var trainingDay in trainingWeek.TrainingDays)
                         {
                             trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay, false));
                         }
@@ -61,6 +62,7 @@ namespace BodyReport.Manager
                     if (trainingWeek.TrainingDays != null)
                     {
                         var trainingDayManager = new TrainingDayManager(_dbContext);
+                        trainingWeekResult.TrainingDays = new List<TrainingDay>();
                         foreach (var trainingDay in trainingWeek.TrainingDays)
                         {
                             trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, false));

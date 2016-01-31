@@ -39,6 +39,7 @@
                 </td>
                 <td>
                     <a asp-action="View" asp-route-userId="@item.UserId" asp-route-weekOfYear="@item.WeekOfYear" asp-route-year="@item.Year">@Translation.VIEW</a> |
+                    <a asp-action="Copy" asp-route-userId="@item.UserId" asp-route-weekOfYear="@item.WeekOfYear" asp-route-year="@item.Year">@Translation.COPY</a> |
                     <a asp-action="Delete" asp-route-userId="@item.UserId" asp-route-weekOfYear="@item.WeekOfYear" asp-route-year="@item.Year">@Translation.DELETE</a>
                 </td>
             </tr>

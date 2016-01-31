@@ -122,5 +122,6 @@
   "URL": "Url",
   "DATA": "Data",
   "REGISTRATION_DATE": "Registration date",
-  "LAST_LOGIN_DATE": "Last login date"
+  "LAST_LOGIN_DATE": "Last login date",
+  "COPY": "Copy"
 }

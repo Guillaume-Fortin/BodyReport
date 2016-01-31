@@ -202,6 +202,137 @@ namespace BodyReport.Areas.User.Controllers
             return View(viewModel);
         }
 
+        // Copy a training week
+        // GET: /User/TrainingJournal/Copy
+        [HttpGet]
+        public IActionResult Copy(string userId, int year, int weekOfYear)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
+                return RedirectToAction("Index");
+
+            ViewBag.UserUnit = GetUserUnit(userId);
+            var trainingWeekManager = new TrainingWeekManager(_dbContext);
+            var key = new TrainingWeekKey()
+            {
+                UserId = userId,
+                Year = year,
+                WeekOfYear = weekOfYear
+            };
+            var trainingWeek = trainingWeekManager.GetTrainingWeek(key, true);
+            if (trainingWeek == null) // no data found
+                return RedirectToAction("Index");
+
+            DateTime dateTime = DateTime.Now; // TODO Manage Time with world position of user
+            int nextWeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+
+            if (dateTime.Year == year && nextWeekOfYear == weekOfYear
+                && nextWeekOfYear < 52)
+            {
+                nextWeekOfYear++;
+            }
+
+            var viewModel = new CopyTrainingWeekViewModel()
+            {
+                UserId = userId,
+                OriginWeekOfYear = weekOfYear,
+                OriginYear = year,
+                Year = dateTime.Year,
+                WeekOfYear = nextWeekOfYear
+            };
+
+            //Need for refresh WeekOfYear in CopyTrainingWeekViewModel. Why? i don't understand on this page.
+            ModelState.Clear();
+            return View(viewModel);
+        }
+
+        // Edit a training journal week
+        // GET: /User/TrainingJournal/Copy
+        [HttpPost]
+        public IActionResult Copy(CopyTrainingWeekViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.OriginYear == 0 || viewModel.OriginWeekOfYear == 0 ||
+                    viewModel.Year == 0 || viewModel.WeekOfYear == 0 || User.GetUserId() != viewModel.UserId)
+                    return View(viewModel);
+
+                //Verify valide week of year
+                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 && 
+                    !(viewModel.Year == viewModel.OriginYear && viewModel.WeekOfYear == viewModel.OriginWeekOfYear))
+                {
+                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                    //check if new trainingWeek exist
+                    var trainingWeekKey = new TrainingWeekKey() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear };
+                    var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+
+                    if (trainingWeek != null)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_ALREADY_EXIST, Translation.TRAINING_WEEK));
+                        return View(viewModel);
+                    }
+
+                    // Check if origin training week exist
+                    trainingWeekKey = new TrainingWeekKey() { UserId = viewModel.UserId, Year = viewModel.OriginYear, WeekOfYear = viewModel.OriginWeekOfYear };
+                    trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+
+                    if (trainingWeek == null)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
+                        return View(viewModel);
+                    }
+
+                    //Change ids of origin training week/exercise/day etc.. for new trainingweek
+                    ChangeIDForNewTrainingWeek(trainingWeek, viewModel.OriginYear, viewModel.OriginWeekOfYear, viewModel.Year, viewModel.WeekOfYear);
+
+                    // Create data in database (with update for Security existing old data in database)
+                    trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+
+                    if (trainingWeek == null)
+                    {
+                        ModelState.AddModelError(string.Empty, string.Format(Translation.IMPOSSIBLE_TO_CREATE_P0, Translation.TRAINING_WEEK));
+                        return View(viewModel);
+                    }
+
+                    return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
+                }
+            }
+
+            return View(viewModel);
+        }
+
+        private void ChangeIDForNewTrainingWeek(TrainingWeek trainingWeek, int oldTrainingYear, int oldTrainingWeek, int newTrainingYear, int newTrainingWeek)
+        {
+            trainingWeek.Year = newTrainingYear;
+            trainingWeek.WeekOfYear = newTrainingWeek;
+            if (trainingWeek.TrainingDays != null)
+            {
+                foreach (var trainginDay in trainingWeek.TrainingDays)
+                {
+                    trainginDay.Year = newTrainingYear;
+                    trainginDay.WeekOfYear = newTrainingWeek;
+
+                    if (trainginDay.TrainingExercises != null)
+                    {
+                        foreach (var trainginsExercise in trainginDay.TrainingExercises)
+                        {
+                            trainginsExercise.Year = newTrainingYear;
+                            trainginsExercise.WeekOfYear = newTrainingWeek;
+
+                            if (trainginsExercise.TrainingExerciseSets != null)
+                            {
+                                foreach (var set in trainginsExercise.TrainingExerciseSets)
+                                {
+                                    set.Year = newTrainingYear;
+                                    set.WeekOfYear = newTrainingWeek;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Delete a training journals
         // GET: /User/TrainingJournal/Delete
         [HttpGet]
