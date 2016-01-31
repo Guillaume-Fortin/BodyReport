@@ -70,7 +70,15 @@ namespace BodyReport.Areas.Admin.Controllers
             {
                 foreach (var user in users)
                 {
-                    userViewModel = new UserViewModel() { Id = user.Id, Name = user.Name, Email = user.Email, Suspended = user.Suspended };
+                    userViewModel = new UserViewModel()
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        RegistrationDate = user.RegistrationDate,
+                        LastLoginDate = user.LastLoginDate,
+                        Suspended = user.Suspended
+                    };
                     if (user.Role != null)
                     {
                         userViewModel.RoleId = user.Role.Id;
@@ -106,11 +114,15 @@ namespace BodyReport.Areas.Admin.Controllers
                 var user = manager.GetUser(key);
                 if (user != null)
                 {
-                    var viewModel = new UserViewModel();
-                    viewModel.Id = user.Id;
-                    viewModel.Name = user.Name;
-                    viewModel.Email = user.Email;
-                    viewModel.Suspended = user.Suspended;
+                    var viewModel = new UserViewModel()
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        RegistrationDate = user.RegistrationDate,
+                        LastLoginDate = user.LastLoginDate,
+                        Suspended = user.Suspended
+                    };
                     if (user.Role != null)
                         viewModel.RoleId = user.Role.Id;
 

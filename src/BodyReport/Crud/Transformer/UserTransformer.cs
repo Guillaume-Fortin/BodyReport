@@ -18,6 +18,8 @@ namespace BodyReport.Crud.Transformer
             row.UserName = bean.Name;
             row.Email = bean.Email;
             row.Suspended = bean.Suspended;
+            row.RegistrationDate = bean.RegistrationDate;
+            row.LastLoginDate = bean.LastLoginDate;
         }
 
         internal static User ToBean(ApplicationUser row)
@@ -30,6 +32,8 @@ namespace BodyReport.Crud.Transformer
             bean.Name = row.UserName;
             bean.Email = row.Email;
             bean.Suspended = row.Suspended;
+            bean.RegistrationDate = row.RegistrationDate;
+            bean.LastLoginDate = row.LastLoginDate;
             return bean;
         }
     }

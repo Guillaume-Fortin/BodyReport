@@ -34,5 +34,15 @@ namespace BodyReport.ViewModels.Admin
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.SUSPENDED, ResourceType = typeof(Translation))]
         public bool Suspended { get; set; }
+
+        [Display(Name = TRS.REGISTRATION_DATE, ResourceType = typeof(Translation))]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
+        public virtual DateTime RegistrationDate { get; set; }
+
+        [Display(Name = TRS.LAST_LOGIN_DATE, ResourceType = typeof(Translation))]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
+        public virtual DateTime LastLoginDate { get; set; }
     }
 }

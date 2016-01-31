@@ -45,6 +45,12 @@
                @Translation.EMAIL
             </th>
             <th>
+                @Translation.REGISTRATION_DATE
+            </th>
+            <th>
+                @Translation.LAST_LOGIN_DATE
+            </th>
+            <th>
                 @Translation.ROLE
             </th>
             <th>@Translation.ACTION</th>
@@ -61,6 +67,12 @@
                 </td>
                 <td>
                     @item.Email
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.RegistrationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => item.LastLoginDate)
                 </td>
                 <td>
                     @item.RoleName

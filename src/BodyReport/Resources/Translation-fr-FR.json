@@ -1,5 +1,5 @@
 {
-  "HOME": "Acceuil",
+  "HOME": "Accueil",
   "EMAIL": "Email",
   "PASSWORD": "Mot de passe",
   "REMEMBER_ME": "Se souvenir de moi",
@@ -118,5 +118,7 @@
   "VALIDATE": "Valider",
   "DAY_OF_WEEK": "Jour de la semaine",
   "URL": "Url",
-  "DATA": "Données"
+  "DATA": "Données",
+  "REGISTRATION_DATE": "Date d'enregistrement",
+  "LAST_LOGIN_DATE": "Date de dernière connexion"
 }

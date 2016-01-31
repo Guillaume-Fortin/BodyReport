@@ -28,6 +28,14 @@ namespace Message
         /// </summary>
         public bool Suspended { get; set; }
         /// <summary>
+        /// RegistrationDate
+        /// </summary>
+        public virtual DateTime RegistrationDate { get; set; }
+        /// <summary>
+        /// Last login date
+        /// </summary>
+        public virtual DateTime LastLoginDate { get; set; }
+        /// <summary>
         /// User role
         /// </summary>
         public Role Role { get; set; } = null;

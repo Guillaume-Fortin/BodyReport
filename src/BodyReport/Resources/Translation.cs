@@ -248,6 +248,8 @@ namespace BodyReport.Resources
         public static string DAY_OF_WEEK { get { return Get(TRS.DAY_OF_WEEK); } }
         public static string URL { get { return Get(TRS.URL); } }
         public static string DATA { get { return Get(TRS.DATA); } }
+        public static string REGISTRATION_DATE { get { return Get(TRS.REGISTRATION_DATE); } }
+        public static string LAST_LOGIN_DATE { get { return Get(TRS.LAST_LOGIN_DATE); } }
     }
 
     /// <summary>
@@ -856,6 +858,15 @@ namespace BodyReport.Resources
         /// </summary>
         [Translation("Data")]
         public const string DATA = "DATA";
+        // <summary>
+        /// Registration date
+        /// </summary>
+        [Translation("Registration date")]
+        public const string REGISTRATION_DATE = "REGISTRATION_DATE";
+        // <summary>
+        /// Last login date
+        /// </summary>
+        [Translation("Last login date")]
+        public const string LAST_LOGIN_DATE = "LAST_LOGIN_DATE";
     }
 }
- 

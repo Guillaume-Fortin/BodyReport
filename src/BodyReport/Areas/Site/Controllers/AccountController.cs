@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using BodyReport.Models;
 using BodyReport.Services;
 using BodyReport.Areas.Site.ViewModels.Account;
+using System;
 
 namespace BodyReport.Areas.Site.Controllers
 {
@@ -83,6 +84,8 @@ namespace BodyReport.Areas.Site.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    user.LastLoginDate = DateTime.Now;
+                    await _userManager.UpdateAsync(user);
                     _logger.LogInformation(1, "User logged in.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -134,6 +137,9 @@ namespace BodyReport.Areas.Site.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    user.RegistrationDate = DateTime.Now;
+                    await _userManager.UpdateAsync(user);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

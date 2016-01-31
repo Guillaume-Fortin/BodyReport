@@ -120,5 +120,7 @@
   "VALIDATE": "Validate",
   "DAY_OF_WEEK": "Day of week",
   "URL": "Url",
-  "DATA": "Data"
+  "DATA": "Data",
+  "REGISTRATION_DATE": "Registration date",
+  "LAST_LOGIN_DATE": "Last login date"
 }
