@@ -952,9 +952,12 @@ namespace BodyReport.Areas.User.Controllers
                 trainingExercise = trainingExercises[i];
                 trainingExercise.Id = index;
 
-                foreach(var set in trainingExercise.TrainingExerciseSets)
+                if (trainingExercise.TrainingExerciseSets != null)
                 {
-                    set.TrainingExerciseId = index;
+                    foreach (var set in trainingExercise.TrainingExerciseSets)
+                    {
+                        set.TrainingExerciseId = index;
+                    }
                 }
             }
         }
