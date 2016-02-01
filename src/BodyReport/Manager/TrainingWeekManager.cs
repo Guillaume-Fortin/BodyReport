@@ -24,27 +24,15 @@ namespace BodyReport.Manager
         internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
         {
             TrainingWeek trainingWeekResult = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    trainingWeekResult = _trainingWeekModule.Create(trainingWeek);
+            trainingWeekResult = _trainingWeekModule.Create(trainingWeek);
 
-                    if (trainingWeek.TrainingDays != null)
-                    {
-                        var trainingDayManager = new TrainingDayManager(_dbContext);
-                        trainingWeekResult.TrainingDays = new List<TrainingDay>();
-                        foreach (var trainingDay in trainingWeek.TrainingDays)
-                        {
-                            trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay, false));
-                        }
-                    }
-                    transaction.Commit();
-                }
-                catch(Exception exception)
+            if (trainingWeek.TrainingDays != null)
+            {
+                var trainingDayManager = new TrainingDayManager(_dbContext);
+                trainingWeekResult.TrainingDays = new List<TrainingDay>();
+                foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    transaction.Rollback();
-                    throw exception;
+                    trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay));
                 }
             }
             return trainingWeekResult;
@@ -53,27 +41,15 @@ namespace BodyReport.Manager
         internal TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek)
         {
             TrainingWeek trainingWeekResult = null;
-            using (_dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    trainingWeekResult = _trainingWeekModule.Update(trainingWeek);
+            trainingWeekResult = _trainingWeekModule.Update(trainingWeek);
 
-                    if (trainingWeek.TrainingDays != null)
-                    {
-                        var trainingDayManager = new TrainingDayManager(_dbContext);
-                        trainingWeekResult.TrainingDays = new List<TrainingDay>();
-                        foreach (var trainingDay in trainingWeek.TrainingDays)
-                        {
-                            trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, false));
-                        }
-                    }
-                    _dbContext.Database.CommitTransaction();
-                }
-                catch (Exception exception)
+            if (trainingWeek.TrainingDays != null)
+            {
+                var trainingDayManager = new TrainingDayManager(_dbContext);
+                trainingWeekResult.TrainingDays = new List<TrainingDay>();
+                foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    _dbContext.Database.RollbackTransaction();
-                    throw exception;
+                    trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay));
                 }
             }
             return trainingWeekResult;
@@ -123,30 +99,18 @@ namespace BodyReport.Manager
         internal void DeleteTrainingWeek(TrainingWeekKey key)
         {
             //TODO manage training Day and TrainingExercise
-            using (_dbContext.Database.BeginTransaction())
+            var trainingWeek = GetTrainingWeek(key, true);
+            if (trainingWeek != null)
             {
-                try
-                {
-                    var trainingWeek = GetTrainingWeek(key, true);
-                    if (trainingWeek != null)
-                    {
-                        _trainingWeekModule.Delete(key);
+                _trainingWeekModule.Delete(key);
 
-                        if (trainingWeek.TrainingDays != null)
-                        {
-                            var trainingDayManager = new TrainingDayManager(_dbContext);
-                            foreach (var trainingDay in trainingWeek.TrainingDays)
-                            {
-                                trainingDayManager.DeleteTrainingDay(trainingDay, false);
-                            }
-                        }
-                        _dbContext.Database.CommitTransaction();
-                    }
-                }
-                catch (Exception exception)
+                if (trainingWeek.TrainingDays != null)
                 {
-                    _dbContext.Database.RollbackTransaction();
-                    throw exception;
+                    var trainingDayManager = new TrainingDayManager(_dbContext);
+                    foreach (var trainingDay in trainingWeek.TrainingDays)
+                    {
+                        trainingDayManager.DeleteTrainingDay(trainingDay);
+                    }
                 }
             }
         }

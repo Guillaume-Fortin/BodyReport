@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Globalization;
 using BodyReport.Resources;
 using Framework;
+using Microsoft.Data.Entity;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -120,7 +121,20 @@ namespace BodyReport.Areas.User.Controllers
                     }
 
                     //Create data in database
-                    trainingWeek = trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            trainingWeek = trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                            transaction.Commit();
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogCritical("Unable to create training week", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }   
 
                     if (trainingWeek == null)
                     {
@@ -186,7 +200,7 @@ namespace BodyReport.Areas.User.Controllers
                         return View(viewModel);
                     }
 
-                    //Create data in database
+                    //Create data in database. No need transaction, only header
                     trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
 
                     if (trainingWeek == null)
@@ -286,7 +300,20 @@ namespace BodyReport.Areas.User.Controllers
                     ChangeIDForNewTrainingWeek(trainingWeek, viewModel.OriginYear, viewModel.OriginWeekOfYear, viewModel.Year, viewModel.WeekOfYear);
 
                     // Create data in database (with update for Security existing old data in database)
-                    trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+                            transaction.Commit();
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogCritical("Unable to copy training week", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }
 
                     if (trainingWeek == null)
                     {
@@ -351,11 +378,25 @@ namespace BodyReport.Areas.User.Controllers
                     Year = year,
                     WeekOfYear = weekOfYear
                 };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(key, true);
+                var trainingWeek = trainingWeekManager.GetTrainingWeek(key, false);
                 if (trainingWeek == null)
                     return actionResult;
 
-                trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                using (var transaction = _dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                        transaction.Commit();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogCritical("Unable to delete training week", exception);
+                        transaction.Rollback();
+                        throw exception;
+                    }
+                }
+                
                 return actionResult;
             }
             else
@@ -634,7 +675,7 @@ namespace BodyReport.Areas.User.Controllers
                     }
 
                     trainingDay.TrainingDayId = trainingDayId;
-
+                    // no need transaction, only header
                     trainingDay = trainingDayManager.CreateTrainingDay(trainingDay);
                     if (trainingDay != null)
                     {
@@ -702,7 +743,21 @@ namespace BodyReport.Areas.User.Controllers
                         return View(viewModel);
                     }
 
-                    trainingDay = trainingDayManager.UpdateTrainingDay(trainingDay, true);
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            trainingDay = trainingDayManager.UpdateTrainingDay(trainingDay);
+                            transaction.Commit();
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogCritical("Unable to edit training day", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }
+                        
                     if (trainingDay != null)
                     {
                         return RedirectToAction("View", new { userId = trainingDay.UserId, year = trainingDay.Year, weekOfYear = trainingDay.WeekOfYear, dayOfWeekSelected = trainingDay.DayOfWeek });
@@ -737,7 +792,22 @@ namespace BodyReport.Areas.User.Controllers
                 if (trainingDay == null)
                     return actionResult;
 
-                trainingDayManager.DeleteTrainingDay(trainingDay);
+
+                using (var transaction = _dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        trainingDayManager.DeleteTrainingDay(trainingDay);
+                        transaction.Commit();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogCritical("Unable to delete training day", exception);
+                        transaction.Rollback();
+                        throw exception;
+                    }
+                }
+                
                 return actionResult;
             }
             else
@@ -859,7 +929,20 @@ namespace BodyReport.Areas.User.Controllers
                 }
                 if(bodyExerciseCount != trainingDay.TrainingExercises.Count)
                 { //data changed
-                    trainingDayManager.UpdateTrainingDay(trainingDay);
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            trainingDayManager.UpdateTrainingDay(trainingDay);
+                            transaction.Commit();
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogCritical("Unable to add training exercises", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }
                 }
 
                 return GetViewActionResult(viewModel.UserId, viewModel.Year, viewModel.WeekOfYear, viewModel.DayOfWeek);
@@ -988,18 +1071,32 @@ namespace BodyReport.Areas.User.Controllers
                 if (trainingExercises == null || trainingExercises.Count == 0)
                     return actionResult;
 
-                trainingExercises = trainingExercises.OrderBy(t => t.Id).ToList();
-                int indexOfCurrentExercice = trainingExercises.FindIndex(t => t.Id == trainingExerciseId);
-                if (indexOfCurrentExercice == -1)
-                    return actionResult;
+                using (var transaction = _dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        trainingExercises = trainingExercises.OrderBy(t => t.Id).ToList();
+                        int indexOfCurrentExercice = trainingExercises.FindIndex(t => t.Id == trainingExerciseId);
+                        if (indexOfCurrentExercice == -1)
+                            return actionResult;
 
-                foreach (var trainingExerciseTmp in trainingExercises)
-                    trainingExerciseManager.DeleteTrainingExercise(trainingExerciseTmp);
+                        foreach (var trainingExerciseTmp in trainingExercises)
+                            trainingExerciseManager.DeleteTrainingExercise(trainingExerciseTmp);
 
-                OrderTrainingExercices(trainingExercises, indexOfCurrentExercice, upward == true);
+                        OrderTrainingExercices(trainingExercises, indexOfCurrentExercice, upward == true);
 
-                foreach (var trainingExerciseTmp in trainingExercises)
-                    trainingExerciseManager.CreateTrainingExercise(trainingExerciseTmp);
+                        foreach (var trainingExerciseTmp in trainingExercises)
+                            trainingExerciseManager.CreateTrainingExercise(trainingExerciseTmp);
+
+                        transaction.Commit();
+                    }
+                    catch(Exception exception)
+                    {
+                        _logger.LogCritical("Unable ordering training exercise", exception);
+                        transaction.Rollback();
+                        throw exception;
+                    }
+                }
 
                 return actionResult;
             }
@@ -1204,8 +1301,21 @@ namespace BodyReport.Areas.User.Controllers
                         });
                         id++;
                     }
-                    
-                    trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true);
+
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true);
+                            transaction.Commit();
+                        }
+                        catch (Exception exception)
+                        {
+                            _logger.LogCritical("Unable to modify training exercise", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }
 
                     return RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = viewModel.UserId, year = viewModel.Year, weekOfYear = viewModel.WeekOfYear, dayOfWeekSelected = viewModel.DayOfWeek });
 
@@ -1252,7 +1362,21 @@ namespace BodyReport.Areas.User.Controllers
                 if (trainingExercise == null)
                     return actionResult;
 
-                trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                using (var transaction = _dbContext.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                        transaction.Commit();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogCritical("Unable to delete training exercise", exception);
+                        transaction.Rollback();
+                        throw exception;
+                    }
+                }
+                
                 return actionResult;
             }
             else

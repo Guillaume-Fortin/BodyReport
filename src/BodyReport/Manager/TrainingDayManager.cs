@@ -19,41 +19,21 @@ namespace BodyReport.Manager
             _trainingDayModule = new TrainingDayModule(_dbContext);
         }
 
-        internal TrainingDay CreateTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
+        internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
         {
             TrainingDay trainingDayResult = null;
-            IRelationalTransaction transaction = null;
-            if (manageTransaction)
-                transaction = _dbContext.Database.BeginTransaction();
+            trainingDayResult = _trainingDayModule.Create(trainingDay);
 
-            try
+            if (trainingDay.TrainingExercises != null)
             {
-                trainingDayResult = _trainingDayModule.Create(trainingDay);
-
-                if (trainingDay.TrainingExercises != null)
+                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                trainingDayResult.TrainingExercises = new List<TrainingExercise>();
+                foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {
-                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
-                    foreach (var trainingExercise in trainingDay.TrainingExercises)
-                    {
-                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
-                    }
+                    trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
                 }
+            }
 
-                if (manageTransaction)
-                    transaction.Commit();
-            }
-            catch (Exception exception)
-            {
-                if (manageTransaction)
-                    transaction.Rollback();
-                throw exception;
-            }
-            finally
-            {
-                if (manageTransaction)
-                    transaction.Dispose();
-            }
             return trainingDayResult;
         }
 
@@ -101,77 +81,37 @@ namespace BodyReport.Manager
             return trainingDays;
         }
 
-        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
+        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay)
         {
             TrainingDay trainingDayResult = null;
-            IRelationalTransaction transaction = null;
-            if (manageTransaction)
-                transaction = _dbContext.Database.BeginTransaction();
+            
+            trainingDayResult = _trainingDayModule.Update(trainingDay);
 
-            try
+            if (trainingDay.TrainingExercises != null)
             {
-                trainingDayResult = _trainingDayModule.Update(trainingDay);
-
-                if (trainingDay.TrainingExercises != null)
+                trainingDayResult.TrainingExercises = new List<TrainingExercise>();
+                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                trainingDayResult.TrainingExercises = new List<TrainingExercise>();
+                foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {
-                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
-                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
-                    foreach (var trainingExercise in trainingDay.TrainingExercises)
-                    {
-                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
-                    }
+                    trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
                 }
+            }
 
-                if (manageTransaction)
-                    transaction.Commit();
-            }
-            catch (Exception exception)
-            {
-                if (manageTransaction)
-                    transaction.Rollback();
-                throw exception;
-            }
-            finally
-            {
-                if (manageTransaction)
-                    transaction.Dispose();
-            }
             return trainingDayResult;
         }
 
-        internal void DeleteTrainingDay(TrainingDay trainingDay, bool manageTransaction = true)
+        internal void DeleteTrainingDay(TrainingDay trainingDay)
         {
-            IRelationalTransaction transaction = null;
-            if (manageTransaction)
-                transaction = _dbContext.Database.BeginTransaction();
-            
-            try
-            {
-                _trainingDayModule.Delete(trainingDay);
+            _trainingDayModule.Delete(trainingDay);
 
-                if (trainingDay.TrainingExercises != null)
+            if (trainingDay.TrainingExercises != null)
+            {
+                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {
-                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                    foreach (var trainingExercise in trainingDay.TrainingExercises)
-                    {
-                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
-                    }
+                    trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
                 }
-
-                if (manageTransaction)
-                    transaction.Commit();
-            }
-            catch (Exception exception)
-            {
-                if (manageTransaction)
-                    transaction.Rollback();
-                throw exception;
-            }
-            finally
-            {
-                if (manageTransaction)
-                    transaction.Dispose();
             }
         }
     }
