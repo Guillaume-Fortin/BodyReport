@@ -31,8 +31,14 @@ namespace BodyReport.Crud.Module
 
             if (bodyExercise.Id == 0)
             {
+                var key = new BodyExerciseKey();
                 var sequencerManager = new SequencerManager();
-                bodyExercise.Id = sequencerManager.GetNextValue(_dbContext, 2, "bodyExercise");
+                do
+                {
+                    key.Id = sequencerManager.GetNextValue(_dbContext, 2, "bodyExercise");
+                }
+                while (Get(key) != null); // Test Record exist
+                bodyExercise.Id = key.Id;
             }
 
             if (bodyExercise.Id == 0)

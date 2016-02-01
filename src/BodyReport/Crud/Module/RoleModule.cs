@@ -32,8 +32,16 @@ namespace BodyReport.Crud.Module
 
             if (string.IsNullOrWhiteSpace(role.Id))
             {
+                int newId;
+                var key = new RoleKey();
                 var sequencerManager = new SequencerManager();
-                int newId = sequencerManager.GetNextValue(_dbContext, 3, "role");
+                do
+                {
+                    newId = sequencerManager.GetNextValue(_dbContext, 3, "role");
+                    key.Id = newId.ToString();
+                }
+                while (Get(key) != null); // Test Record exist
+
                 if (newId > 0)
                     role.Id = newId.ToString();
             }
