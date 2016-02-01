@@ -24,6 +24,7 @@ namespace BodyReport.Areas.User.ViewModels
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.HEIGHT, ResourceType = typeof(Translation))]
+        [Range(0, 250)] // 250 cm = 98 Inches
         public double Height { get; set; }
         
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
@@ -32,6 +33,7 @@ namespace BodyReport.Areas.User.ViewModels
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
+        [Range(0, 660)] // 660 pounds = 300 kilo
         public double Weight { get; set; }
 
         [Display(Name = TRS.ZIP_CODE, ResourceType = typeof(Translation))]
