@@ -2,23 +2,66 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Message
 {
-    public class TrainingWeekKey
+	public class TrainingWeekKey : INotifyPropertyChanged
     {
         /// <summary>
         /// UserId
         /// </summary>
-        public string UserId { get; set; }
+		private int _userId;
+		public int UserId
+		{
+			get { return _userId; }
+			set 
+			{ 
+				_userId = value;
+				OnPropertyChanged("UserId");
+			}
+		}
+
         /// <summary>
         /// Year
         /// </summary>
-        public int Year { get; set; }
+		private int _year;
+		public int Year
+		{
+			get { return _year; }
+			set 
+			{ 
+				_year = value;
+				OnPropertyChanged("Year");
+			}
+		}
+
         /// <summary>
         /// Week of year
         /// </summary>
-        public int WeekOfYear { get; set; }
+		private int _weekOfYear;
+
+		public int WeekOfYear
+		{
+			get { return _weekOfYear; }
+			set 
+			{ 
+				_weekOfYear = value;
+				OnPropertyChanged("WeekOfYear");
+			}
+		}
+
+		#region INotifyPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public void OnPropertyChanged(string propertyName)
+		{
+			if (this.PropertyChanged != null)
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		#endregion
     }
 
     public class TrainingWeek : TrainingWeekKey
@@ -34,11 +77,29 @@ namespace Message
         /// <summary>
         /// User Height
         /// </summary>
-        public double UserHeight { get; set; }
+		private int _userHeight;
+		public int UserHeight
+		{
+			get { return _userHeight; }
+			set 
+			{ 
+				_userHeight = value;
+				OnPropertyChanged("UserHeight");
+			}
+		}
         /// <summary>
         /// User Weight
         /// </summary>
-        public double UserWeight { get; set; }
+		private int _userWeight;
+		public int UserWeight
+		{
+			get { return _userWeight; }
+			set 
+			{ 
+				_userWeight = value;
+				OnPropertyChanged("UserWeight");
+			}
+		}
         /// <summary>
         /// User Weight
         /// </summary>

@@ -43,4 +43,10 @@ namespace Message
         SqlServer,
         PostgreSQL
     }
+
+	public enum TEditMode
+	{
+		Create,
+		Edit
+	}
 }
