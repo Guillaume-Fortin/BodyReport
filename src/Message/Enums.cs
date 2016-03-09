@@ -49,4 +49,10 @@ namespace Message
 		Create,
 		Edit
 	}
+
+	public enum LangType
+	{
+		en_US,
+		fr_FR
+	}
 }
