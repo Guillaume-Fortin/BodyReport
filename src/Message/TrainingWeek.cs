@@ -51,6 +51,22 @@ namespace Message
 			}
 		}
 
+
+		/// <summary>
+		/// Week of year description
+		/// </summary>
+		private string _weekOfYearDescription;
+
+		public string WeekOfYearDescription
+		{
+			get { return _weekOfYearDescription; }
+			set 
+			{ 
+				_weekOfYearDescription = value;
+				OnPropertyChanged("WeekOfYearDescription");
+			}
+		}
+
 		#region INotifyPropertyChanged
 		public event PropertyChangedEventHandler PropertyChanged;
 
