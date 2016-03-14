@@ -121,5 +121,6 @@
   "DATA": "Données",
   "REGISTRATION_DATE": "Date d'enregistrement",
   "LAST_LOGIN_DATE": "Date de dernière connexion",
-  "COPY": "Copier"
+  "COPY": "Copier",
+  "RETURN":"Retour"
 }
