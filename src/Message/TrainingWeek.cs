@@ -11,8 +11,8 @@ namespace Message
         /// <summary>
         /// UserId
         /// </summary>
-		private int _userId;
-		public int UserId
+		private string _userId;
+		public string UserId
 		{
 			get { return _userId; }
 			set 
@@ -93,8 +93,8 @@ namespace Message
         /// <summary>
         /// User Height
         /// </summary>
-		private int _userHeight;
-		public int UserHeight
+		private double _userHeight;
+		public double UserHeight
 		{
 			get { return _userHeight; }
 			set 
@@ -106,8 +106,8 @@ namespace Message
         /// <summary>
         /// User Weight
         /// </summary>
-		private int _userWeight;
-		public int UserWeight
+		private double _userWeight;
+		public double UserWeight
 		{
 			get { return _userWeight; }
 			set 
