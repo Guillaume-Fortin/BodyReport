@@ -92,14 +92,41 @@ namespace BodyReport
             {
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(10);
                 options.Cookies.ApplicationCookie.LoginPath = new Microsoft.AspNet.Http.PathString("/Site/Account/Login");
+                options.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToAccessDenied = ctx => {
+                        if (ctx.Request.Path.StartsWithSegments("/api"))
+                        {
+                            ctx.Response.StatusCode = 403;
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                        return Task.FromResult(0);
+                    },
+                    OnRedirectToLogin = ctx => {
+                        if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 401;
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                        return Task.FromResult(0);
+                    },
+                };
             });
 
+            /*
             services.Configure<CookieAuthenticationOptions>(opt =>
             {
                 opt.AccessDeniedPath = "/Site/Home/Index";
                 opt.LogoutPath = "/Site/Account/Login";
                 opt.LoginPath = "/Site/Account/Login";
             });
+            */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
 
