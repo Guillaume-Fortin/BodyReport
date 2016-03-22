@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     //[AllowAnonymous]
     [Area("Api")]
     public class TranslationsController : Controller

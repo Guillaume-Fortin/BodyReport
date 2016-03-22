@@ -1,5 +1,6 @@
 ﻿using BodyReport.Resources;
 using System.ComponentModel.DataAnnotations;
+using Message;
 
 namespace BodyReport.Areas.Api.ViewModels
 {

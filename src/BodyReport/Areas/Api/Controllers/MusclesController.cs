@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     //[AllowAnonymous]
     [Area("Api")]
     public class MusclesController : Controller
@@ -41,6 +41,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // POST api/Muscle/Post
         [HttpPost]
+		[Authorize(Roles = "Admin")]
         public List<Muscle> Post([FromBody]List<Muscle> muscles)
         {
             List<Muscle> results = new List<Muscle>();
@@ -56,6 +57,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // DELETE api/Muscles
         [HttpDelete]
+		[Authorize(Roles = "Admin")]
         public void Delete(MuscleKey key)
         {
             _manager.DeleteMuscle(key);

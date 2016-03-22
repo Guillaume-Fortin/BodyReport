@@ -24,6 +24,7 @@ using Microsoft.AspNet.Http;
 using BodyReport.Models.Initializer;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Identity;
+using Message;
 
 namespace BodyReport
 {
