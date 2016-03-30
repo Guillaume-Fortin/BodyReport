@@ -124,5 +124,8 @@
   "REGISTRATION_DATE": "Registration date",
   "LAST_LOGIN_DATE": "Last login date",
   "COPY": "Copy",
-  "RETURN":"Return"
+  "RETURN":"Return",
+  "CONNECTION":"Connection",
+  "OK":"Ok",
+  "CANCEL":"Cancel"
 }

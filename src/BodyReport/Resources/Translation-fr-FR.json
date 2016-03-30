@@ -122,5 +122,8 @@
   "REGISTRATION_DATE": "Date d'enregistrement",
   "LAST_LOGIN_DATE": "Date de dernière connexion",
   "COPY": "Copier",
-  "RETURN":"Retour"
+  "RETURN":"Retour",
+  "CONNECTION":"Connexion",
+  "OK":"Ok",
+  "CANCEL":"Annuler"
 }

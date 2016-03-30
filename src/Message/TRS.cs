@@ -627,5 +627,20 @@ namespace Message
 		/// </summary>
 		[Translation("Return")]
 		public const string RETURN = "RETURN";
+		// <summary>
+		/// Connection
+		/// </summary>
+		[Translation("Connection")]
+		public const string CONNECTION = "CONNECTION";
+		// <summary>
+		/// Ok
+		/// </summary>
+		[Translation("Ok")]
+		public const string OK = "OK";
+		// <summary>
+		/// Cancel
+		/// </summary>
+		[Translation("Cancel")]
+		public const string CANCEL = "CANCEL";
 	}
 }
