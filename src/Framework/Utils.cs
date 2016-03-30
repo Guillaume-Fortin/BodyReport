@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using System.Globalization;
 
 namespace Framework
 {
@@ -87,6 +88,17 @@ namespace Framework
 			}
 
 			return me.Member.Name;
+		}
+
+		public static bool TryParse(string strValue, out double value)
+		{
+			value = 0;
+			if (string.IsNullOrWhiteSpace (strValue))
+				return false;
+			
+			if(strValue.IndexOf(',') != -1)
+			   strValue = strValue.Replace(',', '.');
+			 return double.TryParse (strValue, NumberStyles.Any, CultureInfo.InvariantCulture, out value);
 		}
     }
 }
