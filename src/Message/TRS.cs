@@ -642,5 +642,20 @@ namespace Message
 		/// </summary>
 		[Translation("Cancel")]
 		public const string CANCEL = "CANCEL";
+		// <summary>
+		/// Menu
+		/// </summary>
+		[Translation("Menu")]
+		public const string MENU = "MENU";
+		// <summary>
+		/// Configuration
+		/// </summary>
+		[Translation("Configuration")]
+		public const string CONFIGURATION = "CONFIGURATION";
+		// <summary>
+		/// Language
+		/// </summary>
+		[Translation("Language")]
+		public const string LANGUAGE = "LANGUAGE";
 	}
 }

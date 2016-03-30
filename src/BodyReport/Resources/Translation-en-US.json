@@ -127,5 +127,8 @@
   "RETURN":"Return",
   "CONNECTION":"Connection",
   "OK":"Ok",
-  "CANCEL":"Cancel"
+  "CANCEL":"Cancel",
+  "MENU": "Menu",
+  "CONFIGURATION": "Configuration",
+  "LANGUAGE": "Language"
 }

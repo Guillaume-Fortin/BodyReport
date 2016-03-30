@@ -125,5 +125,8 @@
   "RETURN":"Retour",
   "CONNECTION":"Connexion",
   "OK":"Ok",
-  "CANCEL":"Annuler"
+  "CANCEL":"Annuler",
+  "MENU": "Menu",
+  "CONFIGURATION": "Configuration",
+  "LANGUAGE": "Langage"
 }
