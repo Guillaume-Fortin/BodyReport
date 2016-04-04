@@ -128,5 +128,6 @@
   "CANCEL":"Annuler",
   "MENU": "Menu",
   "CONFIGURATION": "Configuration",
-  "LANGUAGE": "Langage"
+  "LANGUAGE": "Langage",
+  "ERROR": "Erreur"
 }

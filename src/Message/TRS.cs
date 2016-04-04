@@ -657,5 +657,10 @@ namespace Message
 		/// </summary>
 		[Translation("Language")]
 		public const string LANGUAGE = "LANGUAGE";
+		// <summary>
+		/// Error
+		/// </summary>
+		[Translation("Error")]
+		public const string ERROR = "ERROR";
 	}
 }
