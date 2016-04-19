@@ -86,8 +86,8 @@ namespace BodyReport.Areas.User.Controllers
             trainingWeek.UserId = User.GetUserId();
             trainingWeek.Year = dateTime.Year;
             trainingWeek.WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
-            trainingWeek.UserHeight = trainingWeek.UserHeight;
-            trainingWeek.UserWeight = trainingWeek.UserWeight;
+            trainingWeek.UserHeight = userInfo.Height;
+            trainingWeek.UserWeight = userInfo.Weight;
             trainingWeek.Unit = userInfo.Unit;
 
             ViewBag.UserUnit = userInfo.Unit;
