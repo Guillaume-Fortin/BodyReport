@@ -6,6 +6,8 @@ using Message;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
+using System.Net;
+using Microsoft.Data.Entity;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -35,17 +37,61 @@ namespace BodyReport.Areas.Api.Controllers
 			return _manager.FindTrainingWeek (searchCriteria, false);
 		}
 
-		// Get api/TrainingWeeks/Update
-		[HttpPost]
-		public TrainingWeek Update([FromBody] TrainingWeek trainingWeek)
+        // Post api/TrainingWeeks/Create
+        [HttpPost]
+        public IActionResult Create([FromBody]TrainingWeek trainingWeek)
+        {
+            if(trainingWeek == null && trainingWeek.UserId != User.GetUserId())
+                return HttpBadRequest("Oups!");
+            
+            var result = _manager.CreateTrainingWeek(trainingWeek);
+            return new HttpOkObjectResult(result);
+        }
+
+        // Post api/TrainingWeeks/Update
+        [HttpPost]
+        public IActionResult Update([FromBody]TrainingWeek trainingWeek)
 		{
-			TrainingWeek result = null;
+           // return HttpBadRequest("Oups!");
+            TrainingWeek result = new TrainingWeek();
 			if (trainingWeek.UserId == User.GetUserId ())
 			{
 				result = _manager.UpdateTrainingWeek(trainingWeek);
 			}
-			return result;
+			return new HttpOkObjectResult(result);
 		}
-	}
+
+        // Post api/TrainingWeeks/DeleteByKey
+        [HttpPost]
+        public IActionResult DeleteByKey([FromBody]TrainingWeekKey trainingWeekKey)
+        {
+            if (trainingWeekKey == null)
+                return HttpBadRequest("Oups!");
+
+            if (trainingWeekKey.UserId != User.GetUserId() || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
+                return HttpBadRequest("Oups!");
+            
+            var trainingWeekManager = new TrainingWeekManager(_dbContext);
+            var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
+            if (trainingWeek == null)
+                return HttpBadRequest("Oups!");
+
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    //_logger.LogCritical("Unable to delete training week", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return new HttpOkResult();
+        }
+    }
 }
 

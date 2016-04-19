@@ -88,11 +88,11 @@ namespace BodyReport.Areas1.Api.Controllers
 		//
 		// GET: /Api/Account/GetUserInfo
 		[HttpGet]
-		public UserInfo GetUserInfo(string userId)
+		public IActionResult GetUserInfo(string userId)
 		{
 			UserInfo userInfo = null;
-			if(userId == null)
-				userId = User.GetUserId();
+			if(string.IsNullOrWhiteSpace(userId))
+                userId = User.GetUserId();
 			var userManager = new UserManager(_dbContext);
 			var user = userManager.GetUser(new UserKey() { Id = userId });
 
@@ -100,9 +100,10 @@ namespace BodyReport.Areas1.Api.Controllers
 			{
 				var userInfoManager = new UserInfoManager(_dbContext);
 				userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
-			}
-			return userInfo;
-		}
+                return new HttpOkObjectResult(userInfo);
+            }
+            return new HttpNotFoundObjectResult("Oups");
+        }
     }
 }
 
