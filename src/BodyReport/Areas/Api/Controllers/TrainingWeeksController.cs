@@ -8,6 +8,9 @@ using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using System.Net;
 using Microsoft.Data.Entity;
+using Message.WebApi;
+using BodyReport.Services;
+using BodyReport.Framework.Exceptions;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -28,8 +31,18 @@ namespace BodyReport.Areas.Api.Controllers
 			_manager = new TrainingWeekManager(_dbContext);
 		}
 
-		// Get api/TrainingWeeks/Find
-		[HttpGet]
+        // Get api/TrainingWeeks/Get
+        [HttpGet]
+        public IActionResult Get(TrainingWeekKey trainingWeekKey)
+        {
+            if (trainingWeekKey == null)
+                return HttpBadRequest();
+            var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, false);
+            return new HttpOkObjectResult(trainingWeek);
+        }
+
+        // Get api/TrainingWeeks/Find
+        [HttpGet]
 		public List<TrainingWeek> Find()
 		{
 			string userId = User.GetUserId ();
@@ -91,6 +104,28 @@ namespace BodyReport.Areas.Api.Controllers
                 }
             }
             return new HttpOkResult();
+        }
+
+        // Post api/TrainingWeeks/Copy
+        [HttpPost]
+        public IActionResult Copy([FromBody]CopyTrainingWeek copyTrainingWeek)
+        {
+            if (copyTrainingWeek == null)
+                return HttpBadRequest("Oups!");
+
+            try
+            {
+                var service = new TrainingWeekService(_dbContext);
+                TrainingWeek trainingWeek;
+                if (!service.CopyTrainingWeek(User.GetUserId(), copyTrainingWeek, out trainingWeek))
+                    return new HttpOkResult();
+
+                return new HttpOkObjectResult(trainingWeek);
+            }
+            catch (ErrorException error)
+            {
+                return HttpBadRequest(error.Message);
+            }
         }
     }
 }

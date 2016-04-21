@@ -16,6 +16,9 @@ using System.Globalization;
 using BodyReport.Resources;
 using Framework;
 using Microsoft.Data.Entity;
+using BodyReport.Services;
+using Message.WebApi;
+using BodyReport.Framework.Exceptions;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -267,99 +270,36 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.OriginYear == 0 || viewModel.OriginWeekOfYear == 0 ||
-                    viewModel.Year == 0 || viewModel.WeekOfYear == 0 || User.GetUserId() != viewModel.UserId)
+                if(viewModel == null)
                     return View(viewModel);
 
-                //Verify valide week of year
-                if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 && 
-                    !(viewModel.Year == viewModel.OriginYear && viewModel.WeekOfYear == viewModel.OriginWeekOfYear))
+                try
                 {
-                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
-                    //check if new trainingWeek exist
-                    var trainingWeekKey = new TrainingWeekKey() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear };
-                    var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
-
-                    if (trainingWeek != null)
+                    var service = new TrainingWeekService(_dbContext);
+                    var copyTrainingWeek = new CopyTrainingWeek()
                     {
-                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_ALREADY_EXIST, Translation.TRAINING_WEEK));
+                        UserId = viewModel.UserId,
+                        OriginYear = viewModel.OriginYear,
+                        OriginWeekOfYear = viewModel.OriginWeekOfYear,
+                        Year = viewModel.Year,
+                        WeekOfYear = viewModel.WeekOfYear
+                    };
+                    TrainingWeek trainingWeek;
+                    if (!service.CopyTrainingWeek(User.GetUserId(), copyTrainingWeek, out trainingWeek))
                         return View(viewModel);
-                    }
-
-                    // Check if origin training week exist
-                    trainingWeekKey = new TrainingWeekKey() { UserId = viewModel.UserId, Year = viewModel.OriginYear, WeekOfYear = viewModel.OriginWeekOfYear };
-                    trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
-
-                    if (trainingWeek == null)
-                    {
-                        ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
-                        return View(viewModel);
-                    }
-
-                    //Change ids of origin training week/exercise/day etc.. for new trainingweek
-                    ChangeIDForNewTrainingWeek(trainingWeek, viewModel.OriginYear, viewModel.OriginWeekOfYear, viewModel.Year, viewModel.WeekOfYear);
-
-                    // Create data in database (with update for Security existing old data in database)
-                    using (var transaction = _dbContext.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
-                            transaction.Commit();
-                        }
-                        catch (Exception exception)
-                        {
-                            _logger.LogCritical("Unable to copy training week", exception);
-                            transaction.Rollback();
-                            throw exception;
-                        }
-                    }
-
-                    if (trainingWeek == null)
-                    {
-                        ModelState.AddModelError(string.Empty, string.Format(Translation.IMPOSSIBLE_TO_CREATE_P0, Translation.TRAINING_WEEK));
-                        return View(viewModel);
-                    }
 
                     return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
+                }
+                catch (ErrorException error)
+                {
+                    ModelState.AddModelError(string.Empty, error.Message);
+                    return View(viewModel);
                 }
             }
 
             return View(viewModel);
         }
-
-        private void ChangeIDForNewTrainingWeek(TrainingWeek trainingWeek, int oldTrainingYear, int oldTrainingWeek, int newTrainingYear, int newTrainingWeek)
-        {
-            trainingWeek.Year = newTrainingYear;
-            trainingWeek.WeekOfYear = newTrainingWeek;
-            if (trainingWeek.TrainingDays != null)
-            {
-                foreach (var trainginDay in trainingWeek.TrainingDays)
-                {
-                    trainginDay.Year = newTrainingYear;
-                    trainginDay.WeekOfYear = newTrainingWeek;
-
-                    if (trainginDay.TrainingExercises != null)
-                    {
-                        foreach (var trainginsExercise in trainginDay.TrainingExercises)
-                        {
-                            trainginsExercise.Year = newTrainingYear;
-                            trainginsExercise.WeekOfYear = newTrainingWeek;
-
-                            if (trainginsExercise.TrainingExerciseSets != null)
-                            {
-                                foreach (var set in trainginsExercise.TrainingExerciseSets)
-                                {
-                                    set.Year = newTrainingYear;
-                                    set.WeekOfYear = newTrainingWeek;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+        
         // Delete a training journals
         // GET: /User/TrainingJournal/Delete
         [HttpGet]
