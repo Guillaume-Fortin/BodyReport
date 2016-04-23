@@ -122,12 +122,14 @@
   "REGISTRATION_DATE": "Date d'enregistrement",
   "LAST_LOGIN_DATE": "Date de dernière connexion",
   "COPY": "Copier",
-  "RETURN":"Retour",
-  "CONNECTION":"Connexion",
-  "OK":"Ok",
-  "CANCEL":"Annuler",
+  "RETURN": "Retour",
+  "CONNECTION": "Connexion",
+  "OK": "Ok",
+  "CANCEL": "Annuler",
   "MENU": "Menu",
   "CONFIGURATION": "Configuration",
   "LANGUAGE": "Langage",
-  "ERROR": "Erreur"
+  "ERROR": "Erreur",
+  "ORIGIN_TRAINING_WEEK": "Semaine d'entrainement d'origine",
+  "NEW_TRAINING_WEEK": "Nouvelle Semaine d'entrainement"
 }

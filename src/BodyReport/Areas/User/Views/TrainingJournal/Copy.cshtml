@@ -19,7 +19,7 @@
 
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
     <input asp-for="UserId" hidden="hidden" />
-    <p><u>Origin training week</u></p>
+    <p><u>@Translation.ORIGIN_TRAINING_WEEK</u></p>
     <div class="form-group">
         <label asp-for="OriginYear" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -36,7 +36,7 @@
     </div>
 
     <hr />
-   <p><u>New training week</u></p>
+   <p><u>@Translation.NEW_TRAINING_WEEK</u></p>
     <div class="form-group">
         <label asp-for="Year" class="col-md-2 control-label"></label>
         <div class="col-md-10">

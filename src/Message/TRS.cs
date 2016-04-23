@@ -662,5 +662,15 @@ namespace Message
 		/// </summary>
 		[Translation("Error")]
 		public const string ERROR = "ERROR";
-	}
+        // <summary>
+        /// Origin training week
+        /// </summary>
+        [Translation("Origin training week")]
+        public const string ORIGIN_TRAINING_WEEK = "ORIGIN_TRAINING_WEEK";
+        // <summary>
+        /// New training week
+        /// </summary>
+        [Translation("New training week")]
+        public const string NEW_TRAINING_WEEK = "NEW_TRAINING_WEEK";
+    }
 }

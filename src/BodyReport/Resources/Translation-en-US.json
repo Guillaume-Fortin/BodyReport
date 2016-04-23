@@ -124,12 +124,14 @@
   "REGISTRATION_DATE": "Registration date",
   "LAST_LOGIN_DATE": "Last login date",
   "COPY": "Copy",
-  "RETURN":"Return",
-  "CONNECTION":"Connection",
-  "OK":"Ok",
-  "CANCEL":"Cancel",
+  "RETURN": "Return",
+  "CONNECTION": "Connection",
+  "OK": "Ok",
+  "CANCEL": "Cancel",
   "MENU": "Menu",
   "CONFIGURATION": "Configuration",
   "LANGUAGE": "Language",
-  "ERROR": "Error"
+  "ERROR": "Error",
+  "ORIGIN_TRAINING_WEEK": "Origin training week",
+  "NEW_TRAINING_WEEK": "New training week"
 }

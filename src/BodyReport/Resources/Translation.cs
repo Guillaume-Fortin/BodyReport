@@ -251,5 +251,7 @@ namespace BodyReport.Resources
         public static string REGISTRATION_DATE { get { return Get(TRS.REGISTRATION_DATE); } }
         public static string LAST_LOGIN_DATE { get { return Get(TRS.LAST_LOGIN_DATE); } }
         public static string COPY { get { return Get(TRS.COPY); } }
+        public static string ORIGIN_TRAINING_WEEK { get { return Get(TRS.ORIGIN_TRAINING_WEEK); } }
+        public static string NEW_TRAINING_WEEK { get { return Get(TRS.NEW_TRAINING_WEEK); } }
     }
 }
