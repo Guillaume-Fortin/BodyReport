@@ -3,15 +3,13 @@ using Microsoft.AspNet.Mvc;
 using BodyReport.Models;
 using BodyReport.Manager;
 using Message;
-using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using System.Net;
 using Microsoft.Data.Entity;
 using Message.WebApi;
 using BodyReport.Services;
 using BodyReport.Framework.Exceptions;
-using BodyReport.Resources;
+using Message.WebApi.MultipleParameters;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -49,15 +47,21 @@ namespace BodyReport.Areas.Api.Controllers
             }
         }
 
-        // Get api/TrainingWeeks/Find
-        [HttpGet]
-		public IActionResult Find()
+        // Post api/TrainingWeeks/Find
+        [HttpPost]
+        public IActionResult Find([FromBody]TrainingWeekFinder trainingWeekFinder)
 		{
             try
             {
-			    string userId = User.GetUserId ();
-			    var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { EqualList = new List<string>() { userId } } };
-			    return new HttpOkObjectResult(_manager.FindTrainingWeek (searchCriteria, false));
+                if (trainingWeekFinder == null)
+                    return HttpBadRequest();
+
+                var trainingWeekCriteria = trainingWeekFinder.TrainingWeekCriteria;
+                var trainingWeekScenario = trainingWeekFinder.TrainingWeekScenario;
+
+                if (trainingWeekCriteria == null || trainingWeekCriteria.UserId == null)
+                    return HttpBadRequest();
+                return new HttpOkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteria, trainingWeekScenario));
             }
             catch (Exception exception)
             {
@@ -71,7 +75,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                if(trainingWeek == null && trainingWeek.UserId != User.GetUserId())
+                if(trainingWeek == null || trainingWeek.UserId != User.GetUserId())
                     return HttpBadRequest();
             
                 var result = _manager.CreateTrainingWeek(trainingWeek);

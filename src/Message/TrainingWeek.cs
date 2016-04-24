@@ -139,4 +139,13 @@ namespace Message
         /// </summary>
         public IntegerCriteria WeekOfYear { get; set; }
     }
+
+    public class TrainingWeekScenario
+    {
+        public bool ManageTrainingDay { get; set; } = true;
+
+        public TrainingWeekScenario()
+        {
+        }
+    }
 }

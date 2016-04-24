@@ -81,11 +81,11 @@ namespace BodyReport.Manager
             }
         }
 
-        public List<TrainingWeek> FindTrainingWeek(CriteriaField criteriaField, bool manageTrainingDay)
+        public List<TrainingWeek> FindTrainingWeek(CriteriaField criteriaField, TrainingWeekScenario trainingWeekScenario)
         {
             List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(criteriaField);
             
-            if (manageTrainingDay)
+            if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {
                 foreach (TrainingWeek trainingJournal in trainingWeeks)
                 {

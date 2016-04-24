@@ -59,7 +59,8 @@ namespace BodyReport.Areas.User.Controllers
             var trainingWeekManager = new TrainingWeekManager(_dbContext);
 
             var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { EqualList = new List<string>() { User.GetUserId() } } };
-            var trainingWeekList = trainingWeekManager.FindTrainingWeek(searchCriteria, false);
+            var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+            var trainingWeekList = trainingWeekManager.FindTrainingWeek(searchCriteria, scenario);
 
             if (trainingWeekList != null)
             {
