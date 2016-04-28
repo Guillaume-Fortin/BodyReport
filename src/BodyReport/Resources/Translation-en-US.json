@@ -133,5 +133,6 @@
   "LANGUAGE": "Language",
   "ERROR": "Error",
   "ORIGIN_TRAINING_WEEK": "Origin training week",
-  "NEW_TRAINING_WEEK": "New training week"
+  "NEW_TRAINING_WEEK": "New training week",
+  "CONNECTION_FAILED": "Connection failed"
 }

@@ -131,5 +131,6 @@
   "LANGUAGE": "Langage",
   "ERROR": "Erreur",
   "ORIGIN_TRAINING_WEEK": "Semaine d'entrainement d'origine",
-  "NEW_TRAINING_WEEK": "Nouvelle Semaine d'entrainement"
+  "NEW_TRAINING_WEEK": "Nouvelle Semaine d'entrainement",
+  "CONNECTION_FAILED": "Connexion impossible"
 }

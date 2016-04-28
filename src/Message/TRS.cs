@@ -672,5 +672,10 @@ namespace Message
         /// </summary>
         [Translation("New training week")]
         public const string NEW_TRAINING_WEEK = "NEW_TRAINING_WEEK";
+        // <summary>
+        /// Connection failed
+        /// </summary>
+        [Translation("Connection failed")]
+        public const string CONNECTION_FAILED = "CONNECTION_FAILED";
     }
 }

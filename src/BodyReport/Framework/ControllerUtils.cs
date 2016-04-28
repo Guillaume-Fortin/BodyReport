@@ -1,9 +1,11 @@
 ﻿using BodyReport.Resources;
 using Message;
+using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BodyReport.Framework
@@ -111,6 +113,23 @@ namespace BodyReport.Framework
             }
 
             return result;
+        }
+
+        public static string GetModelStateError(ModelStateDictionary modelState)
+        {
+            StringBuilder sbError = new StringBuilder();
+            foreach (var state in modelState)
+            {
+                if (state.Value != null)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        if(error != null && !string.IsNullOrWhiteSpace(error.ErrorMessage))
+                            sbError.AppendLine(error.ErrorMessage);
+                    }
+                }
+            }
+            return sbError.ToString();
         }
     }
 }
