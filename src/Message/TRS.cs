@@ -677,5 +677,10 @@ namespace Message
         /// </summary>
         [Translation("Connection failed")]
         public const string CONNECTION_FAILED = "CONNECTION_FAILED";
+        // <summary>
+        /// Verify spam into your mail box
+        /// </summary>
+        [Translation("Verify spam into your mail box")]
+        public const string VERIFY_SPAM_INTO_YOUR_MAIL_BOX = "VERIFY_SPAM_INTO_YOUR_MAIL_BOX";
     }
 }

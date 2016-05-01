@@ -134,5 +134,6 @@
   "ERROR": "Error",
   "ORIGIN_TRAINING_WEEK": "Origin training week",
   "NEW_TRAINING_WEEK": "New training week",
-  "CONNECTION_FAILED": "Connection failed"
+  "CONNECTION_FAILED": "Connection failed",
+  "VERIFY_SPAM_INTO_YOUR_MAIL_BOX": "Verify spam into your mail box"
 }
