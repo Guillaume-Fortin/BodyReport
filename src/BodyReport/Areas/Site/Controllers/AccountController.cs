@@ -10,6 +10,7 @@ using BodyReport.Models;
 using BodyReport.Services;
 using BodyReport.Areas.Site.ViewModels.Account;
 using System;
+using BodyReport.Resources;
 
 namespace BodyReport.Areas.Site.Controllers
 {
@@ -70,13 +71,13 @@ namespace BodyReport.Areas.Site.Controllers
                 var user = await _userManager.FindByNameAsync(model.UserName);
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", Translation.INVALID_LOGIN_ATTEMPT);
                     return View(model);
                 }
                 //Add this to check if the email was confirmed.
                 if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
-                    ModelState.AddModelError("", "You need to confirm your email.");
+                    ModelState.AddModelError("", Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL);
                     return View(model);
                 }
                 // This doesn't count login failures towards account lockout
@@ -86,7 +87,7 @@ namespace BodyReport.Areas.Site.Controllers
                 {
                     user.LastLoginDate = DateTime.Now;
                     await _userManager.UpdateAsync(user);
-                    _logger.LogInformation(1, "User logged in.");
+                    _logger.LogInformation(1, Translation.USER_LOGGED_IN);
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -95,12 +96,12 @@ namespace BodyReport.Areas.Site.Controllers
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning(2, "User account locked out.");
+                    _logger.LogWarning(2, Translation.USER_ACCOUNT_LOCKED_OUT);
                     return View("Lockout");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, Translation.INVALID_LOGIN_ATTEMPT);
                     return View(model);
                 }
             }

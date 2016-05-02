@@ -135,5 +135,9 @@
   "ORIGIN_TRAINING_WEEK": "Origin training week",
   "NEW_TRAINING_WEEK": "New training week",
   "CONNECTION_FAILED": "Connection failed",
-  "VERIFY_SPAM_INTO_YOUR_MAIL_BOX": "Verify spam into your mail box"
+  "VERIFY_SPAM_INTO_YOUR_MAIL_BOX": "Verify spam into your mail box",
+  "INVALID_LOGIN_ATTEMPT": "Invalid login attempt",
+  "YOU_NEED_TO_CONFIRM_YOUR_EMAIL": "You need to confirm your email",
+  "USER_LOGGED_IN": "User logged in",
+  "USER_ACCOUNT_LOCKED_OUT": "User account locked out"
 }

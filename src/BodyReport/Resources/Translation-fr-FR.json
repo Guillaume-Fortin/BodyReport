@@ -133,5 +133,9 @@
   "ORIGIN_TRAINING_WEEK": "Semaine d'entrainement d'origine",
   "NEW_TRAINING_WEEK": "Nouvelle Semaine d'entrainement",
   "CONNECTION_FAILED": "Connexion impossible",
-  "VERIFY_SPAM_INTO_YOUR_MAIL_BOX": "Verifier les spams dans votre boîte mail"
+  "VERIFY_SPAM_INTO_YOUR_MAIL_BOX": "Verifier les spams dans votre boîte mail",
+  "INVALID_LOGIN_ATTEMPT": "Impossible de se connecter",
+  "YOU_NEED_TO_CONFIRM_YOUR_EMAIL": "Vous devez confirmer votre email",
+  "USER_LOGGED_IN": "Utilisateur connecté",
+  "USER_ACCOUNT_LOCKED_OUT": "Compte utilisateur bloqué"
 }

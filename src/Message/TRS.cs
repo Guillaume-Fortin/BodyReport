@@ -682,5 +682,25 @@ namespace Message
         /// </summary>
         [Translation("Verify spam into your mail box")]
         public const string VERIFY_SPAM_INTO_YOUR_MAIL_BOX = "VERIFY_SPAM_INTO_YOUR_MAIL_BOX";
+        // <summary>
+        /// Invalid login attempt
+        /// </summary>
+        [Translation("Invalid login attempt")]
+        public const string INVALID_LOGIN_ATTEMPT = "INVALID_LOGIN_ATTEMPT";
+        // <summary>
+        /// You need to confirm your email
+        /// </summary>
+        [Translation("You need to confirm your email")]
+        public const string YOU_NEED_TO_CONFIRM_YOUR_EMAIL = "YOU_NEED_TO_CONFIRM_YOUR_EMAIL";
+        // <summary>
+        /// User logged in
+        /// </summary>
+        [Translation("User logged in")]
+        public const string USER_LOGGED_IN = "USER_LOGGED_IN";
+        // <summary>
+        /// User account locked out
+        /// </summary>
+        [Translation("User account locked out")]
+        public const string USER_ACCOUNT_LOCKED_OUT = "USER_ACCOUNT_LOCKED_OUT";
     }
 }

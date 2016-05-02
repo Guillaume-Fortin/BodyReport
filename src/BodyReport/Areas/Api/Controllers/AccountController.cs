@@ -16,6 +16,8 @@ using System.Text;
 using BodyReport.Areas.Site.ViewModels.Account;
 using BodyReport.Areas.Api.ViewModels;
 using BodyReport.Framework;
+using System.Globalization;
+using BodyReport.Resources;
 
 namespace BodyReport.Areas1.Api.Controllers
 {
@@ -59,6 +61,7 @@ namespace BodyReport.Areas1.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string userName, string password)
         {
+            string culture = CultureInfo.CurrentCulture.Name;
             if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
                 return new HttpStatusCodeResult(403);
 
@@ -66,12 +69,12 @@ namespace BodyReport.Areas1.Api.Controllers
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return HttpBadRequest(new WebApiException("Invalid login attempt."));
+                return HttpBadRequest(new WebApiException(Translation.INVALID_LOGIN_ATTEMPT));
             }
             //Add this to check if the email was confirmed.
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
-                return HttpBadRequest(new WebApiException("You need to confirm your email."));
+                return HttpBadRequest(new WebApiException(Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL));
             }
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -80,12 +83,12 @@ namespace BodyReport.Areas1.Api.Controllers
             {
                 user.LastLoginDate = DateTime.Now;
                 await _userManager.UpdateAsync(user);
-                _logger.LogInformation(1, "User logged in.");
+                _logger.LogInformation(1, Translation.USER_LOGGED_IN);
                 return new HttpOkResult();
             }
             if (result.IsLockedOut)
             {
-                _logger.LogWarning(2, "User account locked out.");
+                _logger.LogWarning(2, Translation.USER_ACCOUNT_LOCKED_OUT);
                 return new HttpStatusCodeResult(403);
             }
             else

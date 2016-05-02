@@ -253,5 +253,9 @@ namespace BodyReport.Resources
         public static string COPY { get { return Get(TRS.COPY); } }
         public static string ORIGIN_TRAINING_WEEK { get { return Get(TRS.ORIGIN_TRAINING_WEEK); } }
         public static string NEW_TRAINING_WEEK { get { return Get(TRS.NEW_TRAINING_WEEK); } }
+        public static string INVALID_LOGIN_ATTEMPT { get { return Get(TRS.INVALID_LOGIN_ATTEMPT); } }
+        public static string YOU_NEED_TO_CONFIRM_YOUR_EMAIL { get { return Get(TRS.YOU_NEED_TO_CONFIRM_YOUR_EMAIL); } }
+        public static string USER_LOGGED_IN { get { return Get(TRS.USER_LOGGED_IN); } }
+        public static string USER_ACCOUNT_LOCKED_OUT { get { return Get(TRS.USER_ACCOUNT_LOCKED_OUT); } }
     }
 }
