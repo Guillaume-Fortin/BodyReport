@@ -32,13 +32,13 @@ namespace BodyReport.Areas.Api.Controllers
 
         // Get api/TrainingWeeks/Get
         [HttpGet]
-        public IActionResult Get(TrainingWeekKey trainingWeekKey)
+        public IActionResult Get(TrainingWeekKey trainingWeekKey, Boolean manageDay = false)
         {
             try
             {
                 if (trainingWeekKey == null)
                     return HttpBadRequest();
-                var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, false);
+                var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, manageDay);
                 return new HttpOkObjectResult(trainingWeek);
             }
             catch(Exception exception)
