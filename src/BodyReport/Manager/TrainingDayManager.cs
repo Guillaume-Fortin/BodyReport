@@ -66,15 +66,18 @@ namespace BodyReport.Manager
             return trainingDay;
         }
 
-        internal List<TrainingDay> FindTrainingDay(CriteriaField criteriaField, bool manageExercise)
+        internal List<TrainingDay> FindTrainingDay(CriteriaField criteriaField, TrainingDayScenario trainingDayScenario)
         {
             var trainingDays = _trainingDayModule.Find(criteriaField);
 
-            if (manageExercise && trainingDays != null)
+            if (trainingDayScenario != null)
             {
-                foreach (var trainingDay in trainingDays)
+                if (trainingDayScenario.ManageExercise && trainingDays != null)
                 {
-                    CompleteTrainingDayWithExercise(trainingDay);
+                    foreach (var trainingDay in trainingDays)
+                    {
+                        CompleteTrainingDayWithExercise(trainingDay);
+                    }
                 }
             }
 

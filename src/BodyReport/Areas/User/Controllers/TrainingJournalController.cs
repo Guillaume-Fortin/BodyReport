@@ -532,7 +532,11 @@ namespace BodyReport.Areas.User.Controllers
                 Year = new IntegerCriteria() { EqualList = new List<int>() { year } },
                 WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { weekOfYear } }
             };
-            var trainingDayList = trainingDayManager.FindTrainingDay(trainingDayCriteria, false);
+            var trainingDayScenario = new TrainingDayScenario()
+            {
+                ManageExercise = false
+            };
+            var trainingDayList = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
 
             int trainingDayId = 0;
             if (trainingDayList != null && trainingDayList.Count > 0)
@@ -550,22 +554,7 @@ namespace BodyReport.Areas.User.Controllers
             ViewBag.UserUnit = userInfo.Unit;
             return View(TransformTrainingDayToViewModel(trainingDay));
         }
-
-        private TrainingDay TransformViewModelToTrainingDay(TrainingDayViewModel viewModel)
-        {
-            TrainingDay trainingDay = new TrainingDay();
-
-            trainingDay.UserId = viewModel.UserId;
-            trainingDay.Year = viewModel.Year;
-            trainingDay.WeekOfYear = viewModel.WeekOfYear;
-            trainingDay.DayOfWeek = viewModel.DayOfWeek;
-            trainingDay.TrainingDayId = viewModel.TrainingDayId;
-            trainingDay.BeginHour = viewModel.BeginHour;
-            trainingDay.EndHour = viewModel.EndHour;
-
-            return trainingDay;
-        }
-
+        
         // Create a training day
         // GET: /User/TrainingJournal/CreateTrainingDay
         [HttpPost]
@@ -579,7 +568,6 @@ namespace BodyReport.Areas.User.Controllers
 
                 //Verify trainingWeek exist
                 var trainingWeekManager = new TrainingWeekManager(_dbContext);
-
                 var trainingWeekKey = new TrainingWeekKey()
                 {
                     UserId = viewModel.UserId,
@@ -594,30 +582,12 @@ namespace BodyReport.Areas.User.Controllers
                     return View(viewModel);
                 }
 
-                //Verify valide week of year
+                //Verify valid week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
-                    var trainingDayManager = new TrainingDayManager(_dbContext);
-                    var trainingDay = TransformViewModelToTrainingDay(viewModel);
-
-                    var trainingDayCriteria = new TrainingDayCriteria()
-                    {
-                        UserId = new StringCriteria() { EqualList = new List<string>() { viewModel.UserId } },
-                        Year = new IntegerCriteria() { EqualList = new List<int>() { viewModel.Year } },
-                        WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { viewModel.WeekOfYear } },
-                        DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { viewModel.DayOfWeek } },
-                    };
-
-                    var trainingDayList = trainingDayManager.FindTrainingDay(trainingDayCriteria, false);
-                    int trainingDayId = 1;
-                    if (trainingDayList != null && trainingDayList.Count > 0)
-                    {
-                        trainingDayId = trainingDayList.Max(td => td.TrainingDayId) + 1;
-                    }
-
-                    trainingDay.TrainingDayId = trainingDayId;
-                    // no need transaction, only header
-                    trainingDay = trainingDayManager.CreateTrainingDay(trainingDay);
+                    var trainingDay = ControllerUtils.TransformViewModelToTrainingDay(viewModel);
+                    TrainingDayService service = new TrainingDayService(_dbContext);
+                    trainingDay = service.CreateTrainingDay(trainingDay);
                     if (trainingDay != null)
                     {
                         return RedirectToAction("View", new { userId = trainingDay.UserId, year = trainingDay.Year, weekOfYear = trainingDay.WeekOfYear, dayOfWeekSelected = trainingDay.DayOfWeek });
@@ -666,7 +636,7 @@ namespace BodyReport.Areas.User.Controllers
                 //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
-                    var trainingDay = TransformViewModelToTrainingDay(viewModel);
+                    var trainingDay = ControllerUtils.TransformViewModelToTrainingDay(viewModel);
 
                     var trainingDayManager = new TrainingDayManager(_dbContext);
                     var key = new TrainingDayKey()

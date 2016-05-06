@@ -1,4 +1,5 @@
-﻿using BodyReport.Resources;
+﻿using BodyReport.Areas.User.ViewModels;
+using BodyReport.Resources;
 using Message;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -130,6 +131,21 @@ namespace BodyReport.Framework
                 }
             }
             return sbError.ToString();
+        }
+
+        public static TrainingDay TransformViewModelToTrainingDay(TrainingDayViewModel viewModel)
+        {
+            TrainingDay trainingDay = new TrainingDay();
+
+            trainingDay.UserId = viewModel.UserId;
+            trainingDay.Year = viewModel.Year;
+            trainingDay.WeekOfYear = viewModel.WeekOfYear;
+            trainingDay.DayOfWeek = viewModel.DayOfWeek;
+            trainingDay.TrainingDayId = viewModel.TrainingDayId;
+            trainingDay.BeginHour = viewModel.BeginHour;
+            trainingDay.EndHour = viewModel.EndHour;
+
+            return trainingDay;
         }
     }
 }

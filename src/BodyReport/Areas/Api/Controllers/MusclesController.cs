@@ -8,7 +8,6 @@ using System.Linq;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    
     //[AllowAnonymous]
     [Area("Api")]
     public class MusclesController : Controller

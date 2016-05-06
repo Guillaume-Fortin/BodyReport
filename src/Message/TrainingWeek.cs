@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Message
 {
-	public class TrainingWeekKey : INotifyPropertyChanged
+	public class TrainingWeekKey : NotifyPropertyChanged
     {
         /// <summary>
         /// UserId
@@ -18,7 +18,7 @@ namespace Message
 			set 
 			{ 
 				_userId = value;
-				OnPropertyChanged("UserId");
+				OnPropertyChanged();
 			}
 		}
 
@@ -32,7 +32,7 @@ namespace Message
 			set 
 			{ 
 				_year = value;
-				OnPropertyChanged("Year");
+				OnPropertyChanged();
 			}
 		}
 
@@ -47,37 +47,9 @@ namespace Message
 			set 
 			{ 
 				_weekOfYear = value;
-				OnPropertyChanged("WeekOfYear");
+				OnPropertyChanged();
 			}
 		}
-
-
-		/// <summary>
-		/// Week of year description
-		/// </summary>
-		private string _weekOfYearDescription;
-
-		public string WeekOfYearDescription
-		{
-			get { return _weekOfYearDescription; }
-			set 
-			{ 
-				_weekOfYearDescription = value;
-				OnPropertyChanged("WeekOfYearDescription");
-			}
-		}
-
-		#region INotifyPropertyChanged
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		#endregion
     }
 
     public class TrainingWeek : TrainingWeekKey
@@ -100,7 +72,7 @@ namespace Message
 			set 
 			{ 
 				_userHeight = value;
-				OnPropertyChanged("UserHeight");
+				OnPropertyChanged();
 			}
 		}
         /// <summary>
@@ -113,9 +85,25 @@ namespace Message
 			set 
 			{ 
 				_userWeight = value;
-				OnPropertyChanged("UserWeight");
+				OnPropertyChanged();
 			}
 		}
+        
+        /// <summary>
+        /// Week of year description
+        /// </summary>
+        private string _weekOfYearDescription;
+
+        public string WeekOfYearDescription
+        {
+            get { return _weekOfYearDescription; }
+            set
+            {
+                _weekOfYearDescription = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// User Weight
         /// </summary>

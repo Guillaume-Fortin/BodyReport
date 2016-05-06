@@ -77,7 +77,11 @@ namespace BodyReport.Manager
                     Year = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.Year } },
                     WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.WeekOfYear } },
                 };
-                trainingWeek.TrainingDays = trainingDayManager.FindTrainingDay(trainingDayCriteria, true);
+                var trainingDayScenario = new TrainingDayScenario()
+                {
+                    ManageExercise = true
+                };
+                trainingWeek.TrainingDays = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
             }
         }
 

@@ -72,4 +72,13 @@ namespace Message
         /// </summary>
         public IntegerCriteria TrainingDayId { get; set; }
     }
+
+    public class TrainingDayScenario
+    {
+        public bool ManageExercise { get; set; } = true;
+
+        public TrainingDayScenario()
+        {
+        }
+    }
 }

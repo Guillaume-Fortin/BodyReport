@@ -14,7 +14,6 @@ using Message.WebApi.MultipleParameters;
 namespace BodyReport.Areas.Api.Controllers
 {
 	//[Authorize(Roles = "Admin")]
-	[AllowAnonymous]
 	[Area("Api")]
 	public class TrainingWeeksController : Controller
 	{
