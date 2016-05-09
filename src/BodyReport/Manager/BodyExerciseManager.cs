@@ -49,7 +49,7 @@ namespace BodyReport.Manager
         internal void DeleteBodyExercise(BodyExerciseKey key)
         {
             //Update Translation Name
-            Translation.DeleteInDB(MuscularGroupTransformer.GetTranslationKey(key.Id), _dbContext);
+            Translation.DeleteInDB(BodyExerciseTransformer.GetTranslationKey(key.Id), _dbContext);
 
             _bodyExerciseModule.Delete(key);
         }
