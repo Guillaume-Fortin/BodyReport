@@ -55,4 +55,12 @@ namespace Message
 		en_US,
 		fr_FR
 	}
+
+    public enum TTraceLevel
+    {
+        Info,
+        Debug,
+        Warning,
+        Error
+    }
 }
