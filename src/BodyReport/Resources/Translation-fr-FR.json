@@ -137,5 +137,10 @@
   "INVALID_LOGIN_ATTEMPT": "Impossible de se connecter",
   "YOU_NEED_TO_CONFIRM_YOUR_EMAIL": "Vous devez confirmer votre email",
   "USER_LOGGED_IN": "Utilisateur connecté",
-  "USER_ACCOUNT_LOCKED_OUT": "Compte utilisateur bloqué"
+  "USER_ACCOUNT_LOCKED_OUT": "Compte utilisateur bloqué",
+  "P0_ISNT_SUPPORTED_ON_THIS_DEVICE": "'{0}' n'est pas supporté sur ce périphérique",
+  "SELECT_PICTURE": "Sélectionner image",
+  "TAKE_PHOTO": "Prendre une photo",
+  "DO_YOU_WANT_TAKE_PHOTO_WITH_CAMERA_PI": "Voulez-vous prendre une photo avec la caméra?",
+  "QUESTION": "Question"
 }

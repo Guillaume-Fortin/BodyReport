@@ -702,5 +702,30 @@ namespace Message
         /// </summary>
         [Translation("User account locked out")]
         public const string USER_ACCOUNT_LOCKED_OUT = "USER_ACCOUNT_LOCKED_OUT";
+        // <summary>
+        /// '{0}' isn't supported on this device
+        /// </summary>
+        [Translation("'{0}' isn't supported on this device")]
+        public const string P0_ISNT_SUPPORTED_ON_THIS_DEVICE = "P0_ISNT_SUPPORTED_ON_THIS_DEVICE";
+        // <summary>
+        /// Select picture
+        /// </summary>
+        [Translation("Select picture")]
+        public const string SELECT_PICTURE = "SELECT_PICTURE";
+        // <summary>
+        /// Take photo
+        /// </summary>
+        [Translation("Take photo")]
+        public const string TAKE_PHOTO = "TAKE_PHOTO";
+        // <summary>
+        /// Do you want take a photo with camera ?
+        /// </summary>
+        [Translation("Do you want take a photo with camera ?")]
+        public const string DO_YOU_WANT_TAKE_PHOTO_WITH_CAMERA_PI = "DO_YOU_WANT_TAKE_PHOTO_WITH_CAMERA_PI";
+        /// <summary>
+        /// Question
+        /// </summary>
+        [Translation("Question")]
+        public const string QUESTION = "QUESTION";
     }
 }
