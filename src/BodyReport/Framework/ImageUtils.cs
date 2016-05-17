@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNet.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using System;
 using System.IO;
 
 namespace BodyReport.Framework
@@ -12,12 +14,15 @@ namespace BodyReport.Framework
             {
                 // Treat upload image
                 double fileSizeKo = imageFile.Length / (double)1024;
-                if (fileSizeKo <= 500)
-                { // Accept little file image <= 500ko
+                if (fileSizeKo <= 2000)
+                { // Accept little file image <= 2Mo
                     var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                    if (fileName.EndsWith(".png"))// Accept only png file
+                    switch (imageFile.ContentType)// Accept only png, bmp, jpeg, jpg file
                     {
-                        return true;
+                        case "image/png":
+                        case "image/bmp":
+                        case "image/jpeg":
+                            return true;
                     }
                 }
             }
