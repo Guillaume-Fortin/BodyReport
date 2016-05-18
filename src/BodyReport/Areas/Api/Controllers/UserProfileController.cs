@@ -10,6 +10,9 @@ using System.Security.Claims;
 using BodyReport.Framework;
 using System.IO;
 using Microsoft.AspNet.Hosting;
+using BodyReport.Manager;
+using Message;
+using BodyReport.Services;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -17,13 +20,37 @@ namespace BodyReport.Areas.Api.Controllers
     public class UserProfileController : Controller
     {
         /// <summary>
+        /// Database db context
+        /// </summary>
+        ApplicationDbContext _dbContext = null;
+        /// <summary>
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public UserProfileController(IHostingEnvironment env)
+        public UserProfileController(IHostingEnvironment env, ApplicationDbContext dbContext)
         {
             _env = env;
+            _dbContext = dbContext;
+        }
+
+        //
+        // POST: /UserProfile/GetProfileImageRelativeUrl
+        [HttpPost]
+        public IActionResult GetProfileImageRelativeUrl(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return HttpBadRequest();
+
+            var userProfileService = new UserProfileService(_dbContext, _env);
+            string imageUrl = userProfileService.GetImageUserProfileRelativeURL(userId);
+
+            if (string.IsNullOrWhiteSpace(imageUrl))
+            {
+                return new HttpOkObjectResult(imageUrl);
+            }
+            else
+                return new HttpNotFoundResult();
         }
 
         //
@@ -40,7 +67,10 @@ namespace BodyReport.Areas.Api.Controllers
                 {
                    return HttpBadRequest();
                 }
-                ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userId + ".png");
+                string ext = ImageUtils.GetImageExtension(imageFile);
+                if (string.IsNullOrWhiteSpace(ext))
+                    return HttpBadRequest();
+                ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userId + ext);
                 string imageRelativeUrl = string.Format("images/userprofil/{0}.png", userId);
                 return new HttpOkObjectResult(imageRelativeUrl);
             }

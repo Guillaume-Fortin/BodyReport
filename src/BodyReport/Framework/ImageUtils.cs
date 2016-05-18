@@ -8,7 +8,7 @@ namespace BodyReport.Framework
 {
     public static class ImageUtils
     {
-        public static bool CheckUploadedImageIsCorrect(IFormFile imageFile)
+        public static bool CheckUploadedImageIsCorrect(IFormFile imageFile, string forceExtName=null)
         {
             if (imageFile != null)
             {
@@ -16,12 +16,23 @@ namespace BodyReport.Framework
                 double fileSizeKo = imageFile.Length / (double)1024;
                 if (fileSizeKo <= 2000)
                 { // Accept little file image <= 2Mo
-                    var fileName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                    switch (imageFile.ContentType)// Accept only png, bmp, jpeg, jpg file
+                    if (string.IsNullOrWhiteSpace(forceExtName))
                     {
-                        case "image/png":
-                        case "image/bmp":
-                        case "image/jpeg":
+                        switch (imageFile.ContentType)// Accept only png, bmp, jpeg, jpg file
+                        {
+                            case "image/png":
+                            case "image/bmp":
+                            case "image/jpeg":
+                                return true;
+                        }
+                    }
+                    else
+                    {
+                        if (imageFile.ContentType == "image/png" && forceExtName == "png")
+                            return true;
+                        else if (imageFile.ContentType == "image/bmp" && forceExtName == "bmp")
+                            return true;
+                        else if (imageFile.ContentType == "image/jpeg" && (forceExtName == "jpeg" || forceExtName == "jpg"))
                             return true;
                     }
                 }
@@ -35,10 +46,10 @@ namespace BodyReport.Framework
             {
                 if (!Directory.Exists(rootPath))
                     Directory.CreateDirectory(rootPath);
-                
+
+                DeleteImagesWithDifferentExtension(rootPath, imageName);
+
                 var filePath = Path.Combine(rootPath, imageName);
-                if (File.Exists(filePath))
-                    File.Delete(filePath);
                 imageFile.SaveAsAsync(filePath).Wait();
             }
         }
@@ -53,6 +64,30 @@ namespace BodyReport.Framework
             {
                 return string.Format("/images/{0}/{1}", module, imageName);
             }
+        }
+
+        public static void DeleteImagesWithDifferentExtension(string path, string imageName)
+        {
+            string[] files = Directory.GetFiles(path, Path.GetFileNameWithoutExtension(imageName) + ".*");
+            if(files != null && files.Length > 0)
+            {
+                foreach (var file in files)
+                    File.Delete(file);
+            }
+        }
+
+        public static string GetImageExtension(IFormFile imageFile)
+        {
+            switch (imageFile.ContentType)// Accept only png, bmp, jpeg, jpg file
+            {
+                case "image/png":
+                    return ".png";
+                case "image/bmp":
+                    return ".bmp";
+                case "image/jpeg":
+                    return ".jpg";
+            }
+            return null;
         }
     }
 }

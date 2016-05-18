@@ -109,7 +109,7 @@ namespace BodyReport.Areas.Admin.Controllers
                 {
                     _logger.LogError("Create new Body Exercise fail");
                 }
-                else if (ImageUtils.CheckUploadedImageIsCorrect(imageFile))
+                else if (ImageUtils.CheckUploadedImageIsCorrect(imageFile, "png"))
                 {
                     ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "bodyexercises"), bodyExercise.ImageName);
                 }
@@ -169,7 +169,7 @@ namespace BodyReport.Areas.Admin.Controllers
                     bodyExercise.MuscleId = bodyExerciseViewModel.MuscleId;
                     bodyExercise = manager.UpdateBodyExercise(bodyExercise);
                     //Save a new Image if it's correct
-                    if (ImageUtils.CheckUploadedImageIsCorrect(imageFile))
+                    if (ImageUtils.CheckUploadedImageIsCorrect(imageFile, "png"))
                     {
                         ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "bodyexercises"), bodyExercise.ImageName);
                     }

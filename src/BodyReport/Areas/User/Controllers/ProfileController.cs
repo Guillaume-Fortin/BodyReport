@@ -19,6 +19,7 @@ using System.IO;
 using BodyReport.Areas.User.ViewModels;
 using System.Net.Http;
 using Framework;
+using BodyReport.Services;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -96,7 +97,9 @@ namespace BodyReport.Areas.User.Controllers
                     var countryManager = new CountryManager(_dbContext);
                     var country = countryManager.GetCountry(new CountryKey() { Id = userInfo.CountryId });
                     ViewBag.Country = country == null ? Translation.NOT_SPECIFIED : country.Name;
-                    viewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "userprofil", viewModel.UserId + ".png");
+
+                    var userProfileService = new UserProfileService(_dbContext, _env);
+                    viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
                 }
             }
 
@@ -130,7 +133,9 @@ namespace BodyReport.Areas.User.Controllers
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
                     viewModel.CountryId = userInfo.CountryId;
-                    viewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "userprofil", userInfo.UserId + ".png");
+
+                    var userProfileService = new UserProfileService(_dbContext, _env);
+                    viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
                 }
 
                 ViewBag.Sex = ControllerUtils.CreateSelectSexItemList(viewModel.SexId);
@@ -211,7 +216,10 @@ namespace BodyReport.Areas.User.Controllers
 
                         if (!string.IsNullOrWhiteSpace(userInfo.UserId) && ImageUtils.CheckUploadedImageIsCorrect(imageFile))
                         {
-                            ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userInfo.UserId + ".png");
+                            string ext = ImageUtils.GetImageExtension(imageFile);
+                            if (string.IsNullOrWhiteSpace(ext))
+                                return HttpBadRequest();
+                            ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userInfo.UserId + ext);
                         }
 
                         return RedirectToAction("Index");
