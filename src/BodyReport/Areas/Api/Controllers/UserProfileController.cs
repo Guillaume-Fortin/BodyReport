@@ -35,22 +35,16 @@ namespace BodyReport.Areas.Api.Controllers
         }
 
         //
-        // POST: /UserProfile/GetProfileImageRelativeUrl
-        [HttpPost]
-        public IActionResult GetProfileImageRelativeUrl(string userId)
+        // GET: /UserProfile/GetUserProfileImageRelativeUrl
+        [HttpGet]
+        public IActionResult GetUserProfileImageRelativeUrl(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
                 return HttpBadRequest();
 
             var userProfileService = new UserProfileService(_dbContext, _env);
             string imageUrl = userProfileService.GetImageUserProfileRelativeURL(userId);
-
-            if (string.IsNullOrWhiteSpace(imageUrl))
-            {
-                return new HttpOkObjectResult(imageUrl);
-            }
-            else
-                return new HttpNotFoundResult();
+            return new JsonResult(imageUrl);
         }
 
         //
