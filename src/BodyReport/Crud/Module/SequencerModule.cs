@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -31,7 +32,7 @@ namespace BodyReport.Crud.Module
             
             var sequencerRow = new SequencerRow();
             SequencerTransformer.ToRow(sequencer, sequencerRow);
-            _dbContext.Sequencers.Add(sequencerRow);
+            _dbContext.Sequencer.Add(sequencerRow);
             _dbContext.SaveChanges();
             return SequencerTransformer.ToBean(sequencerRow);
         }
@@ -46,7 +47,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencer.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
             if (sequencerRow != null)
             {
                 return SequencerTransformer.ToBean(sequencerRow);
@@ -64,7 +65,7 @@ namespace BodyReport.Crud.Module
             if (sequencer == null || sequencer.Id == 0)
                 return null;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == sequencer.Id && m.Name == sequencer.Name).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencer.Where(m => m.Id == sequencer.Id && m.Name == sequencer.Name).FirstOrDefault();
             if (sequencerRow == null)
             { // No data in database
                 return Create(sequencer);
@@ -86,10 +87,10 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var sequencerRow = _dbContext.Sequencers.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
+            var sequencerRow = _dbContext.Sequencer.Where(m => m.Id == key.Id && m.Name == key.Name).FirstOrDefault();
             if (sequencerRow != null)
             {
-                _dbContext.Sequencers.Remove(sequencerRow);
+                _dbContext.Sequencer.Remove(sequencerRow);
                 _dbContext.SaveChanges();
             }
         }

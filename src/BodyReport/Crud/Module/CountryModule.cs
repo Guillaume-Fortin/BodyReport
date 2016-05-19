@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -28,7 +29,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var row = _dbContext.Countries.Where(m => m.Id == key.Id).FirstOrDefault();
+            var row = _dbContext.Country.Where(m => m.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
                 return CountryTransformer.ToBean(row);
@@ -43,7 +44,7 @@ namespace BodyReport.Crud.Module
         public List<Country> Find(CriteriaField criteriaField = null)
         {
             List<Country> resultList = null;
-            IQueryable<CountryRow> rowList = _dbContext.Countries;
+            IQueryable<CountryRow> rowList = _dbContext.Country;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
 
             if (rowList != null && rowList.Count() > 0)

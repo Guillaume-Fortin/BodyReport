@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNet.Mvc;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using BodyReport.Framework;
 

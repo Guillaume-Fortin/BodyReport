@@ -1,30 +1,30 @@
 ﻿using System;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Message;
+using Message.WebApi;
+using Message.WebApi.MultipleParameters;
+using BodyReport.Framework.Exceptions;
 using BodyReport.Models;
 using BodyReport.Manager;
-using Message;
-using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.Data.Entity;
-using Message.WebApi;
 using BodyReport.Services;
-using BodyReport.Framework.Exceptions;
-using Message.WebApi.MultipleParameters;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-	//[Authorize(Roles = "Admin")]
 	[Area("Api")]
 	public class TrainingWeeksController : Controller
 	{
-		/// <summary>
-		/// Database db context
-		/// </summary>
-		ApplicationDbContext _dbContext = null;
+        private readonly UserManager<ApplicationUser> _userManager;
+        /// <summary>
+        /// Database db context
+        /// </summary>
+        ApplicationDbContext _dbContext = null;
 		TrainingWeekManager _manager = null;
 
-		public TrainingWeeksController(ApplicationDbContext dbContext)
+		public TrainingWeeksController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
 		{
+            _userManager = userManager;
 			_dbContext = dbContext;
 			_manager = new TrainingWeekManager(_dbContext);
 		}
@@ -36,13 +36,13 @@ namespace BodyReport.Areas.Api.Controllers
             try
             {
                 if (trainingWeekKey == null)
-                    return HttpBadRequest();
+                    return BadRequest();
                 var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, manageDay);
-                return new HttpOkObjectResult(trainingWeek);
+                return new OkObjectResult(trainingWeek);
             }
             catch(Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
 
@@ -53,18 +53,18 @@ namespace BodyReport.Areas.Api.Controllers
             try
             {
                 if (trainingWeekFinder == null)
-                    return HttpBadRequest();
+                    return BadRequest();
 
                 var trainingWeekCriteria = trainingWeekFinder.TrainingWeekCriteria;
                 var trainingWeekScenario = trainingWeekFinder.TrainingWeekScenario;
 
                 if (trainingWeekCriteria == null || trainingWeekCriteria.UserId == null)
-                    return HttpBadRequest();
-                return new HttpOkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteria, trainingWeekScenario));
+                    return BadRequest();
+                return new OkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteria, trainingWeekScenario));
             }
             catch (Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
 
@@ -74,15 +74,15 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                if(trainingWeek == null || trainingWeek.UserId != User.GetUserId())
-                    return HttpBadRequest();
+                if(trainingWeek == null || trainingWeek.UserId != _userManager.GetUserId(User))
+                    return BadRequest();
             
                 var result = _manager.CreateTrainingWeek(trainingWeek);
-                return new HttpOkObjectResult(result);
+                return new OkObjectResult(result);
             }
             catch (Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
 
@@ -92,14 +92,14 @@ namespace BodyReport.Areas.Api.Controllers
 		{
             try
             {
-			    if (trainingWeek == null || trainingWeek.UserId != User.GetUserId ())
-			        return HttpBadRequest();
+			    if (trainingWeek == null || trainingWeek.UserId != _userManager.GetUserId(User))
+			        return BadRequest();
                 var result = _manager.UpdateTrainingWeek(trainingWeek);
-			    return new HttpOkObjectResult(result);
+			    return new OkObjectResult(result);
             }
             catch (Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
 
@@ -110,15 +110,15 @@ namespace BodyReport.Areas.Api.Controllers
             try
             {
                 if (trainingWeekKey == null )
-                    return HttpBadRequest();
+                    return BadRequest();
             
-                if (trainingWeekKey.UserId != User.GetUserId() || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
-                    return HttpBadRequest();
+                if (trainingWeekKey.UserId != _userManager.GetUserId(User) || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
+                    return BadRequest();
             
                 var trainingWeekManager = new TrainingWeekManager(_dbContext);
                 var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
                 if (trainingWeek == null)
-                    return HttpNotFound();
+                    return NotFound();
 
                 using (var transaction = _dbContext.Database.BeginTransaction())
                 {
@@ -134,11 +134,11 @@ namespace BodyReport.Areas.Api.Controllers
                         throw exception;
                     }
                 }
-                return new HttpOkResult();
+                return new OkResult();
             }
             catch (Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
 
@@ -147,20 +147,20 @@ namespace BodyReport.Areas.Api.Controllers
         public IActionResult Copy([FromBody]CopyTrainingWeek copyTrainingWeek)
         {
             if (copyTrainingWeek == null)
-                return HttpBadRequest();
+                return BadRequest();
 
             try
             {
                 var service = new TrainingWeekService(_dbContext);
                 TrainingWeek trainingWeek;
-                if (!service.CopyTrainingWeek(User.GetUserId(), copyTrainingWeek, out trainingWeek))
-                    return new HttpOkResult();
+                if (!service.CopyTrainingWeek(_userManager.GetUserId(User), copyTrainingWeek, out trainingWeek))
+                    return new OkResult();
 
-                return new HttpOkObjectResult(trainingWeek);
+                return new OkObjectResult(trainingWeek);
             }
             catch (Exception exception) when (exception is ErrorException || exception is Exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
     }

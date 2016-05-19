@@ -1,5 +1,6 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using BodyReport.Resources;
 using Message;

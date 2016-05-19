@@ -1,25 +1,19 @@
-﻿using BodyReport.Framework;
-using BodyReport.Models;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using System.Security.Claims;
-using BodyReport.Manager;
-using Message;
-using Microsoft.AspNet.Mvc.Rendering;
-using BodyReport.Resources;
-using Microsoft.AspNet.Http;
 using System.IO;
-using BodyReport.Areas.User.ViewModels;
-using System.Net.Http;
+using Message;
 using Framework;
+using BodyReport.Areas.User.ViewModels;
 using BodyReport.Services;
+using BodyReport.Framework;
+using BodyReport.Models;
+using BodyReport.Manager;
+using BodyReport.Resources;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -32,6 +26,14 @@ namespace BodyReport.Areas.User.Controllers
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(ProfileController));
         /// <summary>
+        /// SignInManager Identity
+        /// </summary>
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        /// <summary>
+        /// UserManager Identity
+        /// </summary>
+        private readonly UserManager<ApplicationUser> _userManager;
+        /// <summary>
         /// Database db context
         /// </summary>
         ApplicationDbContext _dbContext = null;
@@ -40,8 +42,13 @@ namespace BodyReport.Areas.User.Controllers
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public ProfileController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public ProfileController(SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext,
+            IHostingEnvironment env)
         {
+            _signInManager = signInManager;
+            _userManager = userManager;
             _dbContext = dbContext;
             _env = env;
         }
@@ -51,9 +58,9 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Index(string userId)
         {
-            string userIdViewer = User.GetUserId();
+            string userIdViewer = _userManager.GetUserId(User);
             if(userId == null)
-                userId = User.GetUserId();
+                userId = _userManager.GetUserId(User);
             var userManager = new UserManager(_dbContext);
             var user = userManager.GetUser(new UserKey() { Id = userId });
 
@@ -114,12 +121,12 @@ namespace BodyReport.Areas.User.Controllers
         public IActionResult Edit()
         {
             var userManager = new UserManager(_dbContext);
-            var user = userManager.GetUser(new UserKey() { Id = User.GetUserId() });
+            var user = userManager.GetUser(new UserKey() { Id = _userManager.GetUserId(User) });
 
             if (user != null)
             {
                 var userInfoManager = new UserInfoManager(_dbContext);
-                var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
+                var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
 
                 var viewModel = new UserProfilViewModel();
                 viewModel.UserId = user.Id;
@@ -157,9 +164,9 @@ namespace BodyReport.Areas.User.Controllers
         {
             var countryManager = new CountryManager(_dbContext);
             int sexId = 0, countryId = 0;
-            if (ModelState.IsValid && User.IsSignedIn() && viewModel != null)
+            if (ModelState.IsValid && _signInManager.IsSignedIn(User) && viewModel != null)
             {
-                if (viewModel.UserId == User.GetUserId())
+                if (viewModel.UserId == _userManager.GetUserId(User))
                 {
                     if (viewModel.CountryId == 0) // not specified
                     {
@@ -218,7 +225,7 @@ namespace BodyReport.Areas.User.Controllers
                         {
                             string ext = ImageUtils.GetImageExtension(imageFile);
                             if (string.IsNullOrWhiteSpace(ext))
-                                return HttpBadRequest();
+                                return BadRequest();
                             ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userInfo.UserId + ext);
                         }
 

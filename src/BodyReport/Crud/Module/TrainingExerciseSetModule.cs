@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -33,7 +34,7 @@ namespace BodyReport.Crud.Module
 
             var row = new TrainingExerciseSetRow();
             TrainingExerciseSetTransformer.ToRow(trainingExerciseSet, row);
-            _dbContext.TrainingExerciseSets.Add(row);
+            _dbContext.TrainingExerciseSet.Add(row);
             _dbContext.SaveChanges();
             return TrainingExerciseSetTransformer.ToBean(row);
         }
@@ -49,7 +50,7 @@ namespace BodyReport.Crud.Module
                 key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0 || key.Id == 0)
                 return null;
 
-            var row = _dbContext.TrainingExerciseSets.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                               t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
                                                               t.TrainingDayId == key.TrainingDayId && 
                                                               t.TrainingExerciseId == key.TrainingExerciseId && t.Id == key.Id).FirstOrDefault();
@@ -67,7 +68,7 @@ namespace BodyReport.Crud.Module
         public List<TrainingExerciseSet> Find(CriteriaField criteriaField = null)
         {
             List<TrainingExerciseSet> resultList = null;
-            IQueryable<TrainingExerciseSetRow> rowList = _dbContext.TrainingExerciseSets;
+            IQueryable<TrainingExerciseSetRow> rowList = _dbContext.TrainingExerciseSet;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
             rowList = rowList.OrderBy(t => t.TrainingExerciseId);
 
@@ -95,7 +96,7 @@ namespace BodyReport.Crud.Module
                 trainingExerciseSet.TrainingExerciseId == 0 || trainingExerciseSet.Id == 0)
                 return null;
 
-            var row = _dbContext.TrainingExerciseSets.Where(t => t.UserId == trainingExerciseSet.UserId &&
+            var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == trainingExerciseSet.UserId &&
                                                                         t.Year == trainingExerciseSet.Year &&
                                                                         t.WeekOfYear == trainingExerciseSet.WeekOfYear &&
                                                                         t.DayOfWeek == trainingExerciseSet.DayOfWeek &&
@@ -124,13 +125,13 @@ namespace BodyReport.Crud.Module
                 key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0 || key.Id == 0)
                 return;
 
-            var row = _dbContext.TrainingExerciseSets.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                  t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
                                                                  t.TrainingDayId == key.TrainingDayId && t.TrainingExerciseId == key.TrainingExerciseId &&
                                                                  t.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.TrainingExerciseSets.Remove(row);
+                _dbContext.TrainingExerciseSet.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

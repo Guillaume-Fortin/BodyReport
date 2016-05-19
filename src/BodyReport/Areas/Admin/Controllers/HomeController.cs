@@ -1,18 +1,10 @@
-﻿using BodyReport.Crud.Transformer;
+﻿using BodyReport.Data;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Models;
-using BodyReport.Resources;
-using BodyReport.ViewModels.Admin;
-using Message;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.IO;
 
 namespace BodyReport.Controllers
 {

@@ -1,4 +1,5 @@
-﻿using BodyReport.Manager;
+﻿using BodyReport.Data;
+using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
 using System;
@@ -14,12 +15,25 @@ namespace BodyReport.Services
 
         public TrainingDayService(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
+        }
+
+        public ApplicationDbContext DbContext
+        {
+            get
+            {
+                return _dbContext;
+            }
+
+            set
+            {
+                _dbContext = value;
+            }
         }
 
         public TrainingDay CreateTrainingDay(TrainingDay trainingDay)
         {
-            var trainingDayManager = new TrainingDayManager(_dbContext);
+            var trainingDayManager = new TrainingDayManager(DbContext);
             
             var trainingDayCriteria = new TrainingDayCriteria()
             {

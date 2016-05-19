@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -30,7 +31,7 @@ namespace BodyReport.Crud.Module
             
             var row = new UserInfoRow();
             UserInfoTransformer.ToRow(userInfo, row);
-            _dbContext.UserInfos.Add(row);
+            _dbContext.UserInfo.Add(row);
             _dbContext.SaveChanges();
             return UserInfoTransformer.ToBean(row);
         }
@@ -45,7 +46,7 @@ namespace BodyReport.Crud.Module
             if (key == null || string.IsNullOrWhiteSpace(key.UserId))
                 return null;
 
-            var row = _dbContext.UserInfos.Where(m => m.UserId == key.UserId).FirstOrDefault();
+            var row = _dbContext.UserInfo.Where(m => m.UserId == key.UserId).FirstOrDefault();
             if (row != null)
             {
                 return UserInfoTransformer.ToBean(row);
@@ -60,7 +61,7 @@ namespace BodyReport.Crud.Module
         public List<UserInfo> Find(CriteriaField criteriaField = null)
         {
             List<UserInfo> resultList = null;
-            IQueryable<UserInfoRow> rowList = _dbContext.UserInfos;
+            IQueryable<UserInfoRow> rowList = _dbContext.UserInfo;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
 
             if (rowList != null && rowList.Count() > 0)
@@ -84,7 +85,7 @@ namespace BodyReport.Crud.Module
             if (userInfo == null || string.IsNullOrWhiteSpace(userInfo.UserId))
                 return null;
 
-            var row = _dbContext.UserInfos.Where(m => m.UserId == userInfo.UserId).FirstOrDefault();
+            var row = _dbContext.UserInfo.Where(m => m.UserId == userInfo.UserId).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(userInfo);
@@ -106,10 +107,10 @@ namespace BodyReport.Crud.Module
             if (key == null || string.IsNullOrWhiteSpace(key.UserId))
                 return;
 
-            var row = _dbContext.UserInfos.Where(m => m.UserId == key.UserId).FirstOrDefault();
+            var row = _dbContext.UserInfo.Where(m => m.UserId == key.UserId).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.UserInfos.Remove(row);
+                _dbContext.UserInfo.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

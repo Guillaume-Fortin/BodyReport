@@ -1,24 +1,21 @@
-﻿using BodyReport.Models;
-using Message.WebApi;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using BodyReport.Framework;
+﻿using System;
 using System.IO;
-using Microsoft.AspNet.Hosting;
-using BodyReport.Manager;
-using Message;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Message.WebApi;
+using BodyReport.Framework;
+using BodyReport.Models;
 using BodyReport.Services;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
     public class UserProfileController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
         /// <summary>
         /// Database db context
         /// </summary>
@@ -28,8 +25,9 @@ namespace BodyReport.Areas.Api.Controllers
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public UserProfileController(IHostingEnvironment env, ApplicationDbContext dbContext)
+        public UserProfileController(UserManager<ApplicationUser> userManager, IHostingEnvironment env, ApplicationDbContext dbContext)
         {
+            _userManager = userManager;
             _env = env;
             _dbContext = dbContext;
         }
@@ -40,7 +38,7 @@ namespace BodyReport.Areas.Api.Controllers
         public IActionResult GetUserProfileImageRelativeUrl(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                return HttpBadRequest();
+                return BadRequest();
 
             var userProfileService = new UserProfileService(_dbContext, _env);
             string imageUrl = userProfileService.GetImageUserProfileRelativeURL(userId);
@@ -54,23 +52,23 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                string userId = User.GetUserId();
+                string userId = _userManager.GetUserId(User);
                 if (string.IsNullOrWhiteSpace(userId))
-                    return HttpBadRequest();
+                    return BadRequest();
                 else if (!ImageUtils.CheckUploadedImageIsCorrect(imageFile))
                 {
-                   return HttpBadRequest();
+                   return BadRequest();
                 }
                 string ext = ImageUtils.GetImageExtension(imageFile);
                 if (string.IsNullOrWhiteSpace(ext))
-                    return HttpBadRequest();
+                    return BadRequest();
                 ImageUtils.SaveImage(imageFile, Path.Combine(_env.WebRootPath, "images", "userprofil"), userId + ext);
                 string imageRelativeUrl = string.Format("images/userprofil/{0}.png", userId);
-                return new HttpOkObjectResult(imageRelativeUrl);
+                return new OkObjectResult(imageRelativeUrl);
             }
             catch (Exception exception)
             {
-                return HttpBadRequest(new WebApiException("Error", exception));
+                return BadRequest(new WebApiException("Error", exception));
             }
         }
     }

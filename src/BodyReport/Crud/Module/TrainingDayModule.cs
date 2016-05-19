@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -32,7 +33,7 @@ namespace BodyReport.Crud.Module
 
             var row = new TrainingDayRow();
             TrainingDayTransformer.ToRow(trainingJournalDay, row);
-            _dbContext.TrainingDays.Add(row);
+            _dbContext.TrainingDay.Add(row);
             _dbContext.SaveChanges();
             return TrainingDayTransformer.ToBean(row);
         }
@@ -48,7 +49,7 @@ namespace BodyReport.Crud.Module
                 key.Year == 0 || key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
                 return null;
 
-            var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId &&
+            var row = _dbContext.TrainingDay.Where(t => t.UserId == key.UserId &&
                                                                 t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear &&
                                                                 t.DayOfWeek == key.DayOfWeek &&
@@ -67,7 +68,7 @@ namespace BodyReport.Crud.Module
         public List<TrainingDay> Find(CriteriaField criteriaField = null)
         {
             List<TrainingDay> resultList = null;
-            IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDays;
+            IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDay;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
             rowList = rowList.OrderBy(t => t.DayOfWeek).OrderBy(t => t.BeginHour);
 
@@ -94,7 +95,7 @@ namespace BodyReport.Crud.Module
                 trainingJournalDay.DayOfWeek < 0 || trainingJournalDay.DayOfWeek > 6 || trainingJournalDay.TrainingDayId == 0)
                 return null;
 
-            var trainingJournalRow = _dbContext.TrainingDays.Where(t=>t.UserId == trainingJournalDay.UserId &&
+            var trainingJournalRow = _dbContext.TrainingDay.Where(t=>t.UserId == trainingJournalDay.UserId &&
                                                                              t.Year == trainingJournalDay.Year &&
                                                                              t.WeekOfYear == trainingJournalDay.WeekOfYear &&
                                                                              t.DayOfWeek == trainingJournalDay.DayOfWeek &&
@@ -121,12 +122,12 @@ namespace BodyReport.Crud.Module
                 key.WeekOfYear == 0 || key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingDayId == 0)
                 return;
 
-            var row = _dbContext.TrainingDays.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingDay.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
                                                                 t.TrainingDayId == key.TrainingDayId).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.TrainingDays.Remove(row);
+                _dbContext.TrainingDay.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

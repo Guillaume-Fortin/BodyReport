@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BodyReport.Models;
 using BodyReport.Services;
-using Microsoft.AspNet.Localization;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 using BodyReport.Framework;
 using Framework;
 using BodyReport.Resources;
 using System.IO;
-using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.StaticFiles;
-using Microsoft.AspNet.Http;
 using BodyReport.Models.Initializer;
-using Microsoft.AspNet.Authentication.Cookies;
-using Microsoft.AspNet.Identity;
 using Message;
+using Microsoft.AspNetCore.Hosting;
+using BodyReport.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 
 namespace BodyReport
 {
@@ -39,7 +37,8 @@ namespace BodyReport
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
@@ -65,23 +64,31 @@ namespace BodyReport
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            var entityFramework = services.AddEntityFramework();
-
+            var entityFramework =  services.AddDbContext<ApplicationDbContext>();
+            
             if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.PostgreSQL)
             {
-                entityFramework = entityFramework.AddNpgsql().AddDbContext<ApplicationDbContext>(options =>
+                entityFramework = entityFramework.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(WebAppConfiguration.DatabaseConnectionString));
             }
             else if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.SqlServer)
             {
-                entityFramework = entityFramework.AddSqlServer().AddDbContext<ApplicationDbContext>(options =>
+                entityFramework = entityFramework.AddEntityFrameworkSqlServer().AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(WebAppConfiguration.DatabaseConnectionString));
             }
             else
                 _logger.LogError("Unknown database connection type");
-
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+            
+            //Configure identity policies
+            // Add Identity services to the services container.
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                o => {
+                    o.Password.RequireDigit = false;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireUppercase = false;
+                    o.Password.RequireNonAlphanumeric = false;
+                    o.Password.RequiredLength = 6;
+                }).AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             //Link my own Localizer
@@ -92,7 +99,7 @@ namespace BodyReport
             services.Configure<IdentityOptions>(options =>
             {
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(10);
-                options.Cookies.ApplicationCookie.LoginPath = new Microsoft.AspNet.Http.PathString("/Site/Account/Login");
+                options.Cookies.ApplicationCookie.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Site/Account/Login");
                 options.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents
                 {
                     OnRedirectToAccessDenied = ctx => {
@@ -130,22 +137,10 @@ namespace BodyReport
             */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
-
-
+            
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-
-            //Configure identity policies
-            // Add Identity services to the services container.
-            services.AddIdentity<ApplicationUser, IdentityRole>(
-                o => {
-                    o.Password.RequireDigit = false;
-                    o.Password.RequireLowercase = false;
-                    o.Password.RequireUppercase = false;
-                    o.Password.RequireNonLetterOrDigit = false;
-                    o.Password.RequiredLength = 6;
-                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -165,7 +160,7 @@ namespace BodyReport
                 app.UseExceptionHandler("/Site/Home/Error");
 
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
-                try
+                /*try
                 {
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
                         .CreateScope())
@@ -174,13 +169,11 @@ namespace BodyReport
                              .Database.Migrate();
                     }
                 }
-                catch { }
+                catch { }*/
             }
 
             DefineLocalization(app);
-
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
+            
             app.UseStaticFiles();
             
             app.UseStaticFiles(new StaticFileOptions()
@@ -222,15 +215,13 @@ namespace BodyReport
             var requestLocalizationOptions = new RequestLocalizationOptions
             {
                 SupportedCultures = cultureInfos,
-                SupportedUICultures = uiCultureInfos
+                SupportedUICultures = uiCultureInfos,
+                DefaultRequestCulture = new RequestCulture(Translation.SupportedCultureNames[0])
             };
 
-            app.UseRequestLocalization(requestLocalizationOptions, defaultRequestCulture: new RequestCulture(Translation.SupportedCultureNames[0]));
+            app.UseRequestLocalization(requestLocalizationOptions);
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
-
+        
         /// <summary>
         /// Create or Update JSON translation files for web application
         /// </summary>

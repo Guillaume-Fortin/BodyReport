@@ -1,9 +1,9 @@
-﻿using BodyReport.Framework;
-using BodyReport.Models;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using BodyReport.Framework;
+using BodyReport.Models;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.User.Controllers
 {

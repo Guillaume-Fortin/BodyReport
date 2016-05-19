@@ -1,12 +1,9 @@
-﻿using BodyReport.Manager;
+﻿using BodyReport.Data;
+using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
-using Microsoft.AspNet.Hosting;
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BodyReport.Services
 {

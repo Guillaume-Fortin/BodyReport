@@ -99,7 +99,7 @@ namespace Framework
             LoadTranslation(filePath, out translationList);
             if (translationList == null)
                 translationList = new Dictionary<string, string>();
-
+            
             var fieldInfos = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             
             foreach (FieldInfo fieldInfo in fieldInfos)

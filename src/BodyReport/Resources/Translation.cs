@@ -1,4 +1,5 @@
-﻿using BodyReport.Framework;
+﻿using BodyReport.Data;
+using BodyReport.Framework;
 using BodyReport.Models;
 using Message;
 using Microsoft.Extensions.Localization;
@@ -67,10 +68,10 @@ namespace BodyReport.Resources
             localizer.RemoveTranslationInDictionnary("DB_" + key);
 
             int currentCultureId = GetCurrentCultureId();
-            var rows = dbContext.Translations.Where(t => t.Key.ToLower() == key.ToLower());
+            var rows = dbContext.Translation.Where(t => t.Key.ToLower() == key.ToLower());
             foreach (TranslationRow row in rows)
             {
-                dbContext.Translations.Remove(row);
+                dbContext.Translation.Remove(row);
             }
             dbContext.SaveChanges();
         }
@@ -88,14 +89,14 @@ namespace BodyReport.Resources
                 currentCultureId = GetCurrentCultureId();
             else
                 currentCultureId = cultureId;
-            TranslationRow row = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).FirstOrDefault();
+            TranslationRow row = dbContext.Translation.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).FirstOrDefault();
             if(row == null)
             {
                 row = new TranslationRow();
                 row.CultureId = currentCultureId;
                 row.Key = key;
                 row.Value = value;
-                dbContext.Translations.Add(row);
+                dbContext.Translation.Add(row);
             }
             else
                 row.Value = value;
@@ -123,7 +124,7 @@ namespace BodyReport.Resources
                     if (dbContext == null)
                         dbContext = new ApplicationDbContext();
                     int currentCultureId = GetCurrentCultureId();
-                    string value = dbContext.Translations.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).Select(t => t.Value).FirstOrDefault();
+                    string value = dbContext.Translation.Where(t => t.CultureId == currentCultureId && t.Key.ToLower() == key.ToLower()).Select(t => t.Value).FirstOrDefault();
                     if (value != null)
                         result = value;
                     else

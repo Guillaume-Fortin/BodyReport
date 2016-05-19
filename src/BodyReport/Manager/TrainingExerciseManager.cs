@@ -1,9 +1,10 @@
 ﻿using BodyReport.Crud.Module;
+using BodyReport.Data;
 using BodyReport.Models;
 using Framework;
 using Message;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Storage;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

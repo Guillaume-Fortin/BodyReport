@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
@@ -49,7 +50,7 @@ namespace BodyReport.Crud.Module
 
             var row = new MuscleRow();
             MuscleTransformer.ToRow(muscle, row);
-            _dbContext.Muscles.Add(row);
+            _dbContext.Muscle.Add(row);
             _dbContext.SaveChanges();
             
             return MuscleTransformer.ToBean(row);
@@ -65,7 +66,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var row = _dbContext.Muscles.Where(m => m.Id == key.Id).FirstOrDefault();
+            var row = _dbContext.Muscle.Where(m => m.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
                 return MuscleTransformer.ToBean(row);
@@ -80,7 +81,7 @@ namespace BodyReport.Crud.Module
         public List<Muscle> Find(CriteriaField criteriaField = null)
         {
             List<Muscle> resultList = null;
-            IQueryable<MuscleRow> rowList = _dbContext.Muscles;
+            IQueryable<MuscleRow> rowList = _dbContext.Muscle;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
 
             if (rowList != null && rowList.Count() > 0)
@@ -104,7 +105,7 @@ namespace BodyReport.Crud.Module
             if (muscle == null || muscle.Id == 0)
                 return null;
 
-            var row = _dbContext.Muscles.Where(m => m.Id == muscle.Id).FirstOrDefault();
+            var row = _dbContext.Muscle.Where(m => m.Id == muscle.Id).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(muscle);
@@ -127,10 +128,10 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var row = _dbContext.Muscles.Where(m => m.Id == key.Id).FirstOrDefault();
+            var row = _dbContext.Muscle.Where(m => m.Id == key.Id).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.Muscles.Remove(row);
+                _dbContext.Muscle.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

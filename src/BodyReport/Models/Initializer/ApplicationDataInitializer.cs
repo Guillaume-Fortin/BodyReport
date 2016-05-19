@@ -1,5 +1,6 @@
-﻿using BodyReport.Framework;
-using Microsoft.AspNet.Hosting;
+﻿using BodyReport.Data;
+using BodyReport.Framework;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -115,7 +116,7 @@ namespace BodyReport.Models.Initializer
                 {
                     splitLine = countryLine.Split(';');
                     countryId = int.Parse(splitLine[0]);
-                    var countryRow = _context.Countries.Where(c => c.Id == countryId).FirstOrDefault();
+                    var countryRow = _context.Country.Where(c => c.Id == countryId).FirstOrDefault();
                     if (countryRow == null)
                     {
                         countryRow = new CountryRow()
@@ -124,7 +125,7 @@ namespace BodyReport.Models.Initializer
                             ShortName = splitLine[1],
                             Name = splitLine[2]
                         };
-                        _context.Countries.Add(countryRow);
+                        _context.Country.Add(countryRow);
                     }
                 }
                 _context.SaveChanges();
@@ -158,13 +159,13 @@ namespace BodyReport.Models.Initializer
                     rowCount = 0;
                     duplicateCityZipCodes.Clear();
                     cityShortName = Path.GetFileNameWithoutExtension(dataFilePath);
-                    country = _context.Countries.Where(c => c.ShortName == cityShortName).FirstOrDefault();
+                    country = _context.Country.Where(c => c.ShortName == cityShortName).FirstOrDefault();
                     if (country == null)
                     {
                         _logger.LogInformation(string.Format("country not found : {0}", cityShortName));
                         continue;
                     }
-                    if (_context.Cities.Where(c => c.CountryId == country.Id).Count() == 0)
+                    if (_context.City.Where(c => c.CountryId == country.Id).Count() == 0)
                     {
                         _logger.LogInformation(string.Format("Begin of Populate {0} cities in database", cityShortName));
                         using (var fileStream = File.OpenRead(dataFilePath))
@@ -203,7 +204,7 @@ namespace BodyReport.Models.Initializer
                                             rowCount++;
                                             if (rowCount % 5000 == 0) //Commit all 500 row
                                             {
-                                                _context.Cities.AddRange(cities);
+                                                _context.City.AddRange(cities);
                                                 _context.SaveChanges();
                                                 cities.Clear();
                                             }   
@@ -213,7 +214,7 @@ namespace BodyReport.Models.Initializer
                                 //Security save change
                                 if (cities.Count > 0)
                                 {
-                                    _context.Cities.AddRange(cities);
+                                    _context.City.AddRange(cities);
                                     _context.SaveChanges();
                                     cities.Clear();
                                 }

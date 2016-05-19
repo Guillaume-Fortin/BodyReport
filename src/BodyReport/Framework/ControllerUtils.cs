@@ -1,13 +1,12 @@
 ﻿using BodyReport.Areas.User.ViewModels;
 using BodyReport.Resources;
 using Message;
-using Microsoft.AspNet.Mvc.ModelBinding;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BodyReport.Framework
 {

@@ -16,7 +16,7 @@
 <form asp-route-area="User" asp-controller="Profile" asp-action="Edit" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
     <h4>@Translation.MODIFY.</h4>
     <hr />
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <div asp-validation-summary="All" class="text-danger"></div>
     <input asp-for="UserId" hidden="hidden"/>
     <div class="form-group">
         <label asp-for="Name" class="col-md-2 control-label"></label>

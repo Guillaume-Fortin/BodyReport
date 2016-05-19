@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
@@ -46,7 +47,7 @@ namespace BodyReport.Crud.Module
 
             var bodyExerciseRow = new BodyExerciseRow();
             BodyExerciseTransformer.ToRow(bodyExercise, bodyExerciseRow);
-            _dbContext.BodyExercises.Add(bodyExerciseRow);
+            _dbContext.BodyExercise.Add(bodyExerciseRow);
             _dbContext.SaveChanges();
             return BodyExerciseTransformer.ToBean(bodyExerciseRow);
         }
@@ -61,7 +62,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var bodyExerciseRow = _dbContext.BodyExercises.Where(m => m.Id == key.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == key.Id).FirstOrDefault();
             if (bodyExerciseRow != null)
             {
                 return BodyExerciseTransformer.ToBean(bodyExerciseRow);
@@ -76,7 +77,7 @@ namespace BodyReport.Crud.Module
         public List<BodyExercise> Find(CriteriaField criteriaField = null)
         {
             List<BodyExercise> resultList = null;
-            IQueryable<BodyExerciseRow> muscularGroupRowList = _dbContext.BodyExercises;
+            IQueryable<BodyExerciseRow> muscularGroupRowList = _dbContext.BodyExercise;
             CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, criteriaField);
 
             if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
@@ -100,7 +101,7 @@ namespace BodyReport.Crud.Module
             if (bodyExercise == null || bodyExercise.Id == 0)
                 return null;
 
-            var bodyExerciseRow = _dbContext.BodyExercises.Where(m => m.Id == bodyExercise.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == bodyExercise.Id).FirstOrDefault();
             if (bodyExerciseRow == null)
             { // No data in database
                 return Create(bodyExercise);
@@ -122,10 +123,10 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var bodyExerciseRow = _dbContext.BodyExercises.Where(m => m.Id == key.Id).FirstOrDefault();
+            var bodyExerciseRow = _dbContext.BodyExercise.Where(m => m.Id == key.Id).FirstOrDefault();
             if (bodyExerciseRow != null)
             {
-                _dbContext.BodyExercises.Remove(bodyExerciseRow);
+                _dbContext.BodyExercise.Remove(bodyExerciseRow);
                 _dbContext.SaveChanges();
             }
         }

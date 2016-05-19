@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Data.Entity.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
 using BodyReport.Framework;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using BodyReport.Models;
 
-namespace BodyReport.Models
+namespace BodyReport.Data
 {
     /// <summary>
     /// Read https://github.com/aspnet/EntityFramework/wiki/Configuring-a-DbContext
@@ -25,13 +20,14 @@ namespace BodyReport.Models
         {
         }
 
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
@@ -123,17 +119,17 @@ namespace BodyReport.Models
                 _logger.LogError("Unknown database connection type");
         }
 
-        public DbSet<TranslationRow> Translations { get; set; }
-        public DbSet<MuscularGroupRow> MuscularGroups { get; set; }
-        public DbSet<SequencerRow> Sequencers { get; set; }
-        public DbSet<BodyExerciseRow> BodyExercises { get; set; }
-        public DbSet<MuscleRow> Muscles { get; set; }
-        public DbSet<UserInfoRow> UserInfos { get; set; }
-        public DbSet<CityRow> Cities { get; set; }
-        public DbSet<CountryRow> Countries { get; set; }
-        public DbSet<TrainingWeekRow> TrainingWeeks { get; set; }
-        public DbSet<TrainingDayRow> TrainingDays { get; set; }
-        public DbSet<TrainingExerciseRow> TrainingExercises { get; set; }
-        public DbSet<TrainingExerciseSetRow> TrainingExerciseSets { get; set; }
+        public DbSet<TranslationRow> Translation { get; set; }
+        public DbSet<MuscularGroupRow> MuscularGroup { get; set; }
+        public DbSet<SequencerRow> Sequencer { get; set; }
+        public DbSet<BodyExerciseRow> BodyExercise { get; set; }
+        public DbSet<MuscleRow> Muscle { get; set; }
+        public DbSet<UserInfoRow> UserInfo { get; set; }
+        public DbSet<CityRow> City { get; set; }
+        public DbSet<CountryRow> Country { get; set; }
+        public DbSet<TrainingWeekRow> TrainingWeek { get; set; }
+        public DbSet<TrainingDayRow> TrainingDay { get; set; }
+        public DbSet<TrainingExerciseRow> TrainingExercise { get; set; }
+        public DbSet<TrainingExerciseSetRow> TrainingExerciseSet { get; set; }
     }
 }

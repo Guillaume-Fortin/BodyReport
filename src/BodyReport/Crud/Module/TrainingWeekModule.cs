@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -31,7 +32,7 @@ namespace BodyReport.Crud.Module
 
             var row = new TrainingWeekRow();
             TrainingWeekTransformer.ToRow(trainingJournal, row);
-            _dbContext.TrainingWeeks.Add(row);
+            _dbContext.TrainingWeek.Add(row);
             _dbContext.SaveChanges();
             return TrainingWeekTransformer.ToBean(row);
         }
@@ -47,7 +48,7 @@ namespace BodyReport.Crud.Module
                 key.Year == 0 || key.WeekOfYear == 0)
                 return null;
 
-            var row = _dbContext.TrainingWeeks.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingWeek.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                 t.WeekOfYear == key.WeekOfYear).FirstOrDefault();
             if (row != null)
             {
@@ -63,7 +64,7 @@ namespace BodyReport.Crud.Module
         public List<TrainingWeek> Find(CriteriaField criteriaField = null)
         {
             List<TrainingWeek> resultList = null;
-            IQueryable<TrainingWeekRow> rowList = _dbContext.TrainingWeeks;
+            IQueryable<TrainingWeekRow> rowList = _dbContext.TrainingWeek;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
             rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
@@ -89,7 +90,7 @@ namespace BodyReport.Crud.Module
                 trainingJournal.Year == 0 || trainingJournal.WeekOfYear == 0)
                 return null;
 
-            var trainingJournalRow = _dbContext.TrainingWeeks.Where(t => t.UserId == trainingJournal.UserId && t.Year == trainingJournal.Year &&
+            var trainingJournalRow = _dbContext.TrainingWeek.Where(t => t.UserId == trainingJournal.UserId && t.Year == trainingJournal.Year &&
                                                                             t.WeekOfYear == trainingJournal.WeekOfYear).FirstOrDefault();
             if (trainingJournalRow == null)
             { // No data in database
@@ -112,11 +113,11 @@ namespace BodyReport.Crud.Module
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0)
                 return;
 
-            var row = _dbContext.TrainingWeeks.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            var row = _dbContext.TrainingWeek.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                              t.WeekOfYear == key.WeekOfYear).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.TrainingWeeks.Remove(row);
+                _dbContext.TrainingWeek.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

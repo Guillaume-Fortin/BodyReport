@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
-using System;
+﻿using BodyReport.Framework.Extensions;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 
 namespace BodyReport.Framework

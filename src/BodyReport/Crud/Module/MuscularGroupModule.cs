@@ -1,11 +1,10 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BodyReport.Crud.Module
 {
@@ -49,7 +48,7 @@ namespace BodyReport.Crud.Module
 
             var muscularGroupRow = new MuscularGroupRow();
             MuscularGroupTransformer.ToRow(muscularGroup, muscularGroupRow);
-            _dbContext.MuscularGroups.Add(muscularGroupRow);
+            _dbContext.MuscularGroup.Add(muscularGroupRow);
             _dbContext.SaveChanges();
             return MuscularGroupTransformer.ToBean(muscularGroupRow);
         }
@@ -64,7 +63,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return null;
 
-            var muscularGroupRow = _dbContext.MuscularGroups.Where(m => m.Id == key.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == key.Id).FirstOrDefault();
             if (muscularGroupRow != null)
             {
                 return MuscularGroupTransformer.ToBean(muscularGroupRow);
@@ -79,7 +78,7 @@ namespace BodyReport.Crud.Module
         public List<MuscularGroup> Find()
         {
             List<MuscularGroup> resultList = null;
-            var muscularGroupRowList = _dbContext.MuscularGroups;
+            var muscularGroupRowList = _dbContext.MuscularGroup;
             if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
             {
                 resultList = new List<MuscularGroup>();
@@ -101,7 +100,7 @@ namespace BodyReport.Crud.Module
             if (muscularGroup == null || muscularGroup.Id == 0)
                 return null;
 
-            var muscularGroupRow = _dbContext.MuscularGroups.Where(m => m.Id == muscularGroup.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == muscularGroup.Id).FirstOrDefault();
             if (muscularGroupRow == null)
             { // No data in database
                 return Create(muscularGroup);
@@ -123,10 +122,10 @@ namespace BodyReport.Crud.Module
             if (key == null || key.Id == 0)
                 return;
 
-            var muscularGroupRow = _dbContext.MuscularGroups.Where(m => m.Id == key.Id).FirstOrDefault();
+            var muscularGroupRow = _dbContext.MuscularGroup.Where(m => m.Id == key.Id).FirstOrDefault();
             if (muscularGroupRow != null)
             {
-                _dbContext.MuscularGroups.Remove(muscularGroupRow);
+                _dbContext.MuscularGroup.Remove(muscularGroupRow);
                 _dbContext.SaveChanges();
             }
         }

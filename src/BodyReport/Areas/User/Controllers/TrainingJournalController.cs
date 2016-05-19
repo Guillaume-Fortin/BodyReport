@@ -1,24 +1,22 @@
-﻿using BodyReport.Areas.User.ViewModels;
-using BodyReport.Framework;
-using BodyReport.Manager;
-using BodyReport.Models;
-using Message;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using System.Security.Claims;
 using System.Globalization;
-using BodyReport.Resources;
-using Framework;
-using Microsoft.Data.Entity;
-using BodyReport.Services;
+using System.Linq;
+using Message;
 using Message.WebApi;
+using Framework;
+using BodyReport.Areas.User.ViewModels;
+using BodyReport.Framework;
 using BodyReport.Framework.Exceptions;
+using BodyReport.Manager;
+using BodyReport.Models;
+using BodyReport.Resources;
+using BodyReport.Services;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -31,12 +29,17 @@ namespace BodyReport.Areas.User.Controllers
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(TrainingJournalController));
         /// <summary>
+        /// UserManager Identity
+        /// </summary>
+        UserManager<ApplicationUser> _userManager;
+        /// <summary>
         /// Database db context
         /// </summary>
         ApplicationDbContext _dbContext = null;
 
-        public TrainingJournalController(ApplicationDbContext dbContext, IUrlHelper urlHelper)
+        public TrainingJournalController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
         {
+            _userManager = userManager;
             _dbContext = dbContext;
         }
 
@@ -58,7 +61,7 @@ namespace BodyReport.Areas.User.Controllers
             var viewModel = new List<TrainingWeekViewModel>();
             var trainingWeekManager = new TrainingWeekManager(_dbContext);
 
-            var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { EqualList = new List<string>() { User.GetUserId() } } };
+            var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { EqualList = new List<string>() { _userManager.GetUserId(User) } } };
             var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
             var trainingWeekList = trainingWeekManager.FindTrainingWeek(searchCriteria, scenario);
 
@@ -80,14 +83,14 @@ namespace BodyReport.Areas.User.Controllers
         public IActionResult Create()
         {
             var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
             if (userInfo == null)
                 userInfo = new UserInfo();
 
             DateTime dateTime = DateTime.Now; // TODO Manage Time with world position of user
 
             var trainingWeek = new TrainingWeek();
-            trainingWeek.UserId = User.GetUserId();
+            trainingWeek.UserId = _userManager.GetUserId(User);
             trainingWeek.Year = dateTime.Year;
             trainingWeek.WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             trainingWeek.UserHeight = userInfo.Height;
@@ -105,7 +108,7 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || User.GetUserId() != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || _userManager.GetUserId(User) != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
@@ -159,7 +162,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Edit(string userId, int year, int weekOfYear)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             ViewBag.UserUnit = GetUserUnit(userId);
@@ -185,7 +188,7 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || User.GetUserId() != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || _userManager.GetUserId(User) != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
@@ -225,7 +228,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Copy(string userId, int year, int weekOfYear)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             ViewBag.UserUnit = GetUserUnit(userId);
@@ -286,7 +289,7 @@ namespace BodyReport.Areas.User.Controllers
                         WeekOfYear = viewModel.WeekOfYear
                     };
                     TrainingWeek trainingWeek;
-                    if (!service.CopyTrainingWeek(User.GetUserId(), copyTrainingWeek, out trainingWeek))
+                    if (!service.CopyTrainingWeek(_userManager.GetUserId(User), copyTrainingWeek, out trainingWeek))
                         return View(viewModel);
 
                     return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
@@ -309,7 +312,7 @@ namespace BodyReport.Areas.User.Controllers
             if (confirmation)
             {
                 var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User" });
-                if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || User.GetUserId() != userId)
+                if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
                     return actionResult;
 
                 var trainingWeekManager = new TrainingWeekManager(_dbContext);
@@ -373,7 +376,7 @@ namespace BodyReport.Areas.User.Controllers
                 return RedirectToAction("Index");
 
             //Unit viewer convertion
-            string userIdViewer = User.GetUserId();
+            string userIdViewer = _userManager.GetUserId(User);
             var viewerUnit = GetUserUnit(userIdViewer);
             var userUnit = GetUserUnit(userId);
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
@@ -517,11 +520,11 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult CreateTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = User.GetUserId() });
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
             if (userInfo == null)
                 return RedirectToAction("View", new { userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek });
 
@@ -563,7 +566,7 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || User.GetUserId() != viewModel.UserId)
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || _userManager.GetUserId(User) != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify trainingWeek exist
@@ -603,7 +606,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult EditTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             var trainingDayManager = new TrainingDayManager(_dbContext);
@@ -630,7 +633,7 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || User.GetUserId() != viewModel.UserId)
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || _userManager.GetUserId(User) != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
@@ -684,7 +687,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult DeleteTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, bool confirmation = false)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             if (confirmation)
@@ -733,7 +736,7 @@ namespace BodyReport.Areas.User.Controllers
 
         private bool IncorrectHttpData(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int? trainingExerciseId = null)
         {
-            return string.IsNullOrWhiteSpace(userId) || User.GetUserId() != userId || year == 0 || weekOfYear == 0 ||
+            return string.IsNullOrWhiteSpace(userId) || _userManager.GetUserId(User) != userId || year == 0 || weekOfYear == 0 ||
                 dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || (trainingExerciseId != null && !trainingExerciseId.HasValue);
         }
 
@@ -1134,7 +1137,7 @@ namespace BodyReport.Areas.User.Controllers
             }
             else if ("submit" == buttonType && ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || User.GetUserId() != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || _userManager.GetUserId(User) != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.TrainingExerciseId == 0 ||
                     viewModel.BodyExerciseId == 0 &&
                     (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
@@ -1253,7 +1256,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult DeleteTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int trainingExerciseId, bool confirmation = false)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || trainingExerciseId == 0 || User.GetUserId() != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || trainingExerciseId == 0 || _userManager.GetUserId(User) != userId)
                 return RedirectToAction("Index");
 
             if (confirmation)

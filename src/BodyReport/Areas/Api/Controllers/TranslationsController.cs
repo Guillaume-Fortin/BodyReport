@@ -1,16 +1,12 @@
-﻿using BodyReport.Manager;
-using BodyReport.Models;
-using BodyReport.Resources;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Message;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+using BodyReport.Manager;
+using BodyReport.Models;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    //[Authorize(Roles = "Admin")]
-    //[AllowAnonymous]
     [Area("Api")]
     public class TranslationsController : Controller
     {

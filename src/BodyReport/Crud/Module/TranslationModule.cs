@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
 using Message;
@@ -35,7 +36,7 @@ namespace BodyReport.Crud.Module
             
             var row = new TranslationRow();
             TranslationTransformer.ToRow(translation, row);
-            _dbContext.Translations.Add(row);
+            _dbContext.Translation.Add(row);
             _dbContext.SaveChanges();
 
             return TranslationTransformer.ToBean(row);
@@ -51,7 +52,7 @@ namespace BodyReport.Crud.Module
             if (key == null || key.CultureId < 0 || string.IsNullOrWhiteSpace(key.Key))
                 return null;
 
-            var row = _dbContext.Translations.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
+            var row = _dbContext.Translation.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
             if (row != null)
             {
                 return TranslationTransformer.ToBean(row);
@@ -66,7 +67,7 @@ namespace BodyReport.Crud.Module
         public List<TranslationVal> Find()
         {
             List<TranslationVal> resultList = null;
-            IQueryable<TranslationRow> rowList = _dbContext.Translations;
+            IQueryable<TranslationRow> rowList = _dbContext.Translation;
 
             if (rowList != null && rowList.Count() > 0)
             {
@@ -89,7 +90,7 @@ namespace BodyReport.Crud.Module
             if (translation == null || translation.CultureId < 0 || string.IsNullOrWhiteSpace(translation.Key))
                 return null;
 
-            var row = _dbContext.Translations.Where(m => m.CultureId == translation.CultureId && m.Key == translation.Key).FirstOrDefault();
+            var row = _dbContext.Translation.Where(m => m.CultureId == translation.CultureId && m.Key == translation.Key).FirstOrDefault();
             if (row == null)
             { // No data in database
                 return Create(translation);
@@ -112,10 +113,10 @@ namespace BodyReport.Crud.Module
             if (key == null || key.CultureId < 0 || string.IsNullOrWhiteSpace(key.Key))
                 return;
 
-            var row = _dbContext.Translations.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
+            var row = _dbContext.Translation.Where(m => m.CultureId == key.CultureId && m.Key == key.Key).FirstOrDefault();
             if (row != null)
             {
-                _dbContext.Translations.Remove(row);
+                _dbContext.Translation.Remove(row);
                 _dbContext.SaveChanges();
             }
         }

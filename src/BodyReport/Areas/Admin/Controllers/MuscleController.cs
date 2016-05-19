@@ -1,18 +1,16 @@
-﻿using BodyReport.Crud.Transformer;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using Message;
+using BodyReport.Crud.Transformer;
 using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.ViewModels.Admin;
-using Message;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.Admin.Controllers
 {

@@ -1,4 +1,5 @@
-﻿using BodyReport.Models;
+﻿using BodyReport.Data;
+using BodyReport.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

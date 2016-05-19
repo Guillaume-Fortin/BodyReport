@@ -1,23 +1,20 @@
-﻿using BodyReport.Models;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using BodyReport.Manager;
-using Message;
-using System.Security.Claims;
-using Message.WebApi;
-using BodyReport.Services;
 using System.Text;
-using BodyReport.Areas.Site.ViewModels.Account;
+using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Message;
+using Message.WebApi;
 using BodyReport.Areas.Api.ViewModels;
 using BodyReport.Framework;
-using System.Globalization;
+using BodyReport.Manager;
+using BodyReport.Models;
 using BodyReport.Resources;
+using BodyReport.Services;
+using BodyReport.Data;
 
 namespace BodyReport.Areas1.Api.Controllers
 {
@@ -52,7 +49,7 @@ namespace BodyReport.Areas1.Api.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return new HttpOkResult();
+            return new OkResult();
         }
 
         //
@@ -63,18 +60,18 @@ namespace BodyReport.Areas1.Api.Controllers
         {
             string culture = CultureInfo.CurrentCulture.Name;
             if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(password))
-                return new HttpStatusCodeResult(403);
+                return new StatusCodeResult(403);
 
             //Verify email validate
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
-                return HttpBadRequest(new WebApiException(Translation.INVALID_LOGIN_ATTEMPT));
+                return BadRequest(new WebApiException(Translation.INVALID_LOGIN_ATTEMPT));
             }
             //Add this to check if the email was confirmed.
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
-                return HttpBadRequest(new WebApiException(Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL));
+                return BadRequest(new WebApiException(Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL));
             }
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -84,16 +81,16 @@ namespace BodyReport.Areas1.Api.Controllers
                 user.LastLoginDate = DateTime.Now;
                 await _userManager.UpdateAsync(user);
                 _logger.LogInformation(1, Translation.USER_LOGGED_IN);
-                return new HttpOkResult();
+                return new OkResult();
             }
             if (result.IsLockedOut)
             {
                 _logger.LogWarning(2, Translation.USER_ACCOUNT_LOCKED_OUT);
-                return new HttpStatusCodeResult(403);
+                return new StatusCodeResult(403);
             }
             else
             {
-                return new HttpStatusCodeResult(403);
+                return new StatusCodeResult(403);
             }
         }
 
@@ -104,7 +101,7 @@ namespace BodyReport.Areas1.Api.Controllers
         {
             UserInfo userInfo = null;
             if (string.IsNullOrWhiteSpace(userId))
-                userId = User.GetUserId();
+                userId = _userManager.GetUserId(User);
             var userManager = new UserManager(_dbContext);
             var user = userManager.GetUser(new UserKey() { Id = userId });
 
@@ -112,9 +109,9 @@ namespace BodyReport.Areas1.Api.Controllers
             {
                 var userInfoManager = new UserInfoManager(_dbContext);
                 userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
-                return new HttpOkObjectResult(userInfo);
+                return new OkObjectResult(userInfo);
             }
-            return new HttpNotFoundObjectResult("Oups");
+            return new NotFoundObjectResult("Oups");
         }
 
         //
@@ -125,13 +122,13 @@ namespace BodyReport.Areas1.Api.Controllers
         {
             if (registerAccount == null || string.IsNullOrWhiteSpace(registerAccount.UserName) ||
                 string.IsNullOrWhiteSpace(registerAccount.Email) || string.IsNullOrWhiteSpace(registerAccount.Password))
-                return HttpBadRequest();
+                return BadRequest();
 
             if (ModelState.IsValid)
             {
                 var mailUser = await _userManager.FindByEmailAsync(registerAccount.Email);
                 if (mailUser != null)
-                    return HttpBadRequest(new WebApiException("Email already exist"));
+                    return BadRequest(new WebApiException("Email already exist"));
 
                 var user = new ApplicationUser { UserName = registerAccount.UserName, Email = registerAccount.Email };
                 var result = await _userManager.CreateAsync(user, registerAccount.Password);
@@ -148,17 +145,17 @@ namespace BodyReport.Areas1.Api.Controllers
                         "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     //await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
-                    return new HttpOkObjectResult(true);
+                    return new OkObjectResult(true);
                 }
                 StringBuilder errorMessage = new StringBuilder(); ;
                 foreach (var error in result.Errors)
                 {
                     errorMessage.AppendLine(error.Description);
                 }
-                return HttpBadRequest(new WebApiException(errorMessage.ToString()));
+                return BadRequest(new WebApiException(errorMessage.ToString()));
             }
             else
-                return HttpBadRequest(new WebApiException(ControllerUtils.GetModelStateError(ModelState)));
+                return BadRequest(new WebApiException(ControllerUtils.GetModelStateError(ModelState)));
         }
     
     }

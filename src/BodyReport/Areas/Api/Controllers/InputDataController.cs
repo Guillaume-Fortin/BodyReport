@@ -1,17 +1,10 @@
-﻿using BodyReport.Areas.Api.ViewModels;
-using BodyReport.Framework;
-using BodyReport.Manager;
-using BodyReport.Models;
-using Message;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
+using BodyReport.Areas.Api.ViewModels;
+using BodyReport.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {

@@ -1,8 +1,9 @@
 ﻿using BodyReport.Crud.Module;
+using BodyReport.Data;
 using BodyReport.Models;
 using Framework;
 using Message;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;

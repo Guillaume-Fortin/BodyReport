@@ -1,4 +1,5 @@
 ﻿using BodyReport.Crud.Transformer;
+using BodyReport.Data;
 using BodyReport.Models;
 using Message;
 using System;
@@ -28,7 +29,7 @@ namespace BodyReport.Crud.Module
             if (key == null || (key.CountryId == 0 && string.IsNullOrWhiteSpace(key.ZipCode) && key.Id == 0))
                 return null;
 
-            var rowList = _dbContext.Cities.Where(m=> 1==1);
+            var rowList = _dbContext.City.Where(m=> 1==1);
             if(key.CountryId > 0)
                 rowList = rowList.Where(m => m.CountryId == key.CountryId);
             if(!string.IsNullOrWhiteSpace(key.ZipCode))
@@ -51,7 +52,7 @@ namespace BodyReport.Crud.Module
         public List<City> Find(CriteriaField criteriaField = null)
         {
             List<City> resultList = null;
-            IQueryable<CityRow> rowList = _dbContext.Cities;
+            IQueryable<CityRow> rowList = _dbContext.City;
             CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
 
             if (rowList != null && rowList.Count() > 0)

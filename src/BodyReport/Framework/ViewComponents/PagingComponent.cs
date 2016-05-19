@@ -1,5 +1,5 @@
 ﻿using BodyReport.ViewModels.Framework;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace BodyReport.Framework.ViewComponents
         {
         }
 
-        public IViewComponentResult Invoke(string areaName, string controlerName, string actionName, int currentPage, int pageSize, int totalRecords, Dictionary<string, string> routeValues)
+        public Task<IViewComponentResult> InvokeAsync(string areaName, string controlerName, string actionName, int currentPage, int pageSize, int totalRecords, Dictionary<string, string> routeValues)
         {
             PagingViewModel pagin = new PagingViewModel();
             pagin.CurrentPage = currentPage;
@@ -23,7 +23,7 @@ namespace BodyReport.Framework.ViewComponents
             pagin.ControlerName = controlerName;
             pagin.ActionName = actionName;
             pagin.RouteValues = routeValues;
-            return View(pagin);
+            return Task.FromResult<IViewComponentResult>(View(pagin));
         }
     }
 }

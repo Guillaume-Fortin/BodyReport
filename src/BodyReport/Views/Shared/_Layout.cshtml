@@ -1,4 +1,6 @@
-﻿@using System.Security.Claims
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
 
 <!DOCTYPE html>
 <html>
@@ -37,7 +39,7 @@
                         <li><a asp-route-area="User" asp-controller="Profile" asp-action="Index">@Translation.MY_PROFILE</a></li>
                         @*<li><a asp-route-area="Site" asp-controller="Home" asp-action="About">About</a></li>*@
                         @*<li><a asp-route-area="Site" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
-                        @if (User.IsSignedIn() && User.IsInRole("Admin"))
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
                             <li><a asp-route-area="Admin" asp-controller="Home" asp-action="Index">@Translation.ADMIN</a></li>
                         }
@@ -50,7 +52,7 @@
             @RenderBody()
             <hr />
             <footer>
-                <p>&copy; 2015 - BodyReport</p>
+                <p>&copy; 2016 - BodyReport</p>
             </footer>
         </div>
 
