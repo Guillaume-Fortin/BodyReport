@@ -1,0 +1,34 @@
+﻿<h2>@Translation.ADMIN : Data.</h2>
+
+<form asp-route-area="Api" asp-controller="Datas" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
+    <h4>@Translation.IMPORT.</h4>
+    <hr />
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">@Translation.FILE <br /> @Translation.CHOOSE_FILE</label>
+        <div class="col-md-10">
+            <br />
+            <input type="file" id="dataFile" name="dataFile" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+                <input type="checkbox" checked="checked" value="true" id="insertOnly" name="insertOnly" />
+                <label>@Translation.INSERT_ONLY</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">@Translation.SUBMIT</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

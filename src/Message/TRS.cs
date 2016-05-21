@@ -131,10 +131,15 @@ namespace Message
 		/// </summary>
 		[Translation("Submit")]
 		public const string SUBMIT = "SUBMIT";
-		/// <summary>
-		/// Choose file
+        /// <summary>
+		/// File
 		/// </summary>
-		[Translation("Choose file")]
+		[Translation("File")]
+        public const string FILE = "FILE";
+        /// <summary>
+        /// Choose file
+        /// </summary>
+        [Translation("Choose file")]
 		public const string CHOOSE_FILE = "CHOOSE_FILE";
 		/// <summary>
 		/// Modify
@@ -727,5 +732,15 @@ namespace Message
         /// </summary>
         [Translation("Question")]
         public const string QUESTION = "QUESTION";
+        /// <summary>
+        /// Import
+        /// </summary>
+        [Translation("Import")]
+        public const string IMPORT = "IMPORT";
+        /// <summary>
+        /// Insert only
+        /// </summary>
+        [Translation("Insert only")]
+        public const string INSERT_ONLY = "INSERT_ONLY";
     }
 }

@@ -166,6 +166,7 @@ namespace BodyReport.Resources
         public static string CREATE { get { return Get(TRS.CREATE); } }
         public static string CREATE_NEW { get { return Get(TRS.CREATE_NEW); } }
         public static string SUBMIT { get { return Get(TRS.SUBMIT); } }
+        public static string FILE { get { return Get(TRS.FILE); } }
         public static string CHOOSE_FILE { get { return Get(TRS.CHOOSE_FILE); } }
         public static string MODIFY { get { return Get(TRS.MODIFY); } }
         public static string USER { get { return Get(TRS.USER); } }
@@ -258,5 +259,7 @@ namespace BodyReport.Resources
         public static string YOU_NEED_TO_CONFIRM_YOUR_EMAIL { get { return Get(TRS.YOU_NEED_TO_CONFIRM_YOUR_EMAIL); } }
         public static string USER_LOGGED_IN { get { return Get(TRS.USER_LOGGED_IN); } }
         public static string USER_ACCOUNT_LOCKED_OUT { get { return Get(TRS.USER_ACCOUNT_LOCKED_OUT); } }
+        public static string IMPORT { get { return Get(TRS.IMPORT); } }
+        public static string INSERT_ONLY { get { return Get(TRS.INSERT_ONLY); } }
     }
 }

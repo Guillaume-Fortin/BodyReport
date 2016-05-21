@@ -142,5 +142,8 @@
   "SELECT_PICTURE": "Sélectionner image",
   "TAKE_PHOTO": "Prendre une photo",
   "DO_YOU_WANT_TAKE_PHOTO_WITH_CAMERA_PI": "Voulez-vous prendre une photo avec la caméra?",
-  "QUESTION": "Question"
+  "QUESTION": "Question",
+  "FILE": "Fichier",
+  "IMPORT": "Importer",
+  "INSERT_ONLY": "Insertion seule"
 }
