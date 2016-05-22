@@ -145,5 +145,8 @@
   "QUESTION": "Question",
   "FILE": "Fichier",
   "IMPORT": "Importer",
-  "INSERT_ONLY": "Insertion seule"
+  "INSERT_ONLY": "Insertion seule",
+  "SYNCHRONIZATION": "Synchronisation",
+  "SYNCHRONIZE_DATAS": "Synchroniser les données",
+  "TRANSLATIONS": "Traductions"
 }

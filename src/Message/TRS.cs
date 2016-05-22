@@ -742,5 +742,20 @@ namespace Message
         /// </summary>
         [Translation("Insert only")]
         public const string INSERT_ONLY = "INSERT_ONLY";
+        /// <summary>
+        /// Synchronization
+        /// </summary>
+        [Translation("Synchronization")]
+        public const string SYNCHRONIZATION = "SYNCHRONIZATION";
+        /// <summary>
+        /// Synchronize datas
+        /// </summary>
+        [Translation("Synchronize datas")]
+        public const string SYNCHRONIZE_DATAS = "SYNCHRONIZE_DATAS";
+        /// <summary>
+        /// Translations
+        /// </summary>
+        [Translation("Translations")]
+        public const string TRANSLATIONS = "TRANSLATIONS";
     }
 }

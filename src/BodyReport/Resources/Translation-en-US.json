@@ -147,5 +147,8 @@
   "QUESTION": "Question",
   "FILE": "File",
   "IMPORT": "Import",
-  "INSERT_ONLY": "Insert only"
+  "INSERT_ONLY": "Insert only",
+  "SYNCHRONIZATION": "Synchronization",
+  "SYNCHRONIZE_DATAS": "Synchronize datas",
+  "TRANSLATIONS": "Translations"
 }
