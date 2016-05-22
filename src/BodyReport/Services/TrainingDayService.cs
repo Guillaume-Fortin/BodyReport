@@ -30,7 +30,7 @@ namespace BodyReport.Services
                 _dbContext = value;
             }
         }
-
+        
         public TrainingDay CreateTrainingDay(TrainingDay trainingDay)
         {
             var trainingDayManager = new TrainingDayManager(DbContext);
@@ -56,6 +56,13 @@ namespace BodyReport.Services
             trainingDay.TrainingDayId = trainingDayId;
             // no need transaction, only header
             return trainingDayManager.CreateTrainingDay(trainingDay);
+        }
+
+        public TrainingDay UpdateTrainingDay(TrainingDay trainingDay)
+        {
+            var trainingDayManager = new TrainingDayManager(DbContext);
+            trainingDayManager.DeleteTrainingDay(trainingDay);
+            return trainingDayManager.UpdateTrainingDay(trainingDay);
         }
     }
 }

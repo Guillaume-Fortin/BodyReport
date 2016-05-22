@@ -117,5 +117,52 @@ namespace BodyReport.Areas.Api.Controllers
                 return BadRequest(new WebApiException("Error", exception));
             }
         }
+
+        // Post api/TrainingDays/Update
+        [HttpPost]
+        public IActionResult Update([FromBody]TrainingDay trainingDay)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(trainingDay.UserId) || trainingDay.Year == 0 || trainingDay.WeekOfYear == 0 ||
+                    trainingDay.DayOfWeek < 0 || trainingDay.DayOfWeek > 6 || _userManager.GetUserId(User) != trainingDay.UserId)
+                    return BadRequest();
+
+
+                //Verify valid week of year
+                if (trainingDay.WeekOfYear > 0 && trainingDay.WeekOfYear <= 52)
+                {
+                    //Verify trainingWeek exist
+                    using (var transaction = _dbContext.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            var trainingWeekManager = new TrainingWeekManager(_dbContext);
+
+                            TrainingDayService service = new TrainingDayService(_dbContext);
+                            trainingDay = service.UpdateTrainingDay(trainingDay);
+                            transaction.Commit();
+
+                            if (trainingDay == null)
+                                return BadRequest(new WebApiException(string.Format(Translation.IMPOSSIBLE_TO_UPDATE_P0, Translation.TRAINING_DAY)));
+                            else
+                                return new OkObjectResult(trainingDay);
+                        }
+                        catch (Exception exception)
+                        {
+                            //_logger.LogCritical("Unable to delete training week", exception);
+                            transaction.Rollback();
+                            throw exception;
+                        }
+                    }
+                }
+                else
+                    return BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
     }
 }
