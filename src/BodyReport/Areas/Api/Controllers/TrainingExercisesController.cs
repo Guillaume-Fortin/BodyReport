@@ -41,10 +41,10 @@ namespace BodyReport.Areas.Api.Controllers
                 if (trainingExerciseKey.UserId != _userManager.GetUserId(User) || 
                     string.IsNullOrWhiteSpace(trainingExerciseKey.UserId) || 
                     trainingExerciseKey.Year == 0 || trainingExerciseKey.WeekOfYear == 0 ||
-                    trainingExerciseKey.DayOfWeek == 0 || trainingExerciseKey.TrainingDayId == 0 || 
+                    trainingExerciseKey.DayOfWeek < 0 || trainingExerciseKey.DayOfWeek > 6 || trainingExerciseKey.TrainingDayId == 0 || 
                     trainingExerciseKey.Id == 0)
                     return BadRequest();
-                
+
                 var trainingExercise = _manager.GetTrainingExercise(trainingExerciseKey);
                 if (trainingExercise == null)
                     return NotFound();

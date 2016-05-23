@@ -27,6 +27,16 @@ namespace Message
         /// Training Day Id
         /// </summary>
         public int TrainingDayId { get; set; }
+
+        /// <summary>
+        /// Equals by key
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsEqualByKey(TrainingDayKey key1, TrainingDayKey key2)
+        {
+            return key1.UserId == key2.UserId && key1.Year == key2.Year && key1.WeekOfYear == key2.WeekOfYear &&
+                   key1.DayOfWeek == key2.DayOfWeek && key1.TrainingDayId == key2.TrainingDayId;
+        }
     }
 
     public class TrainingDay : TrainingDayKey
