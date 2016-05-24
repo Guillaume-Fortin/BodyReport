@@ -4,16 +4,52 @@ using System.Linq;
 using Message;
 using System.Reflection;
 using System.Linq.Expressions;
+using Framework;
 
 namespace BodyReport.Crud.Transformer
 {
     public static class CriteriaTransformer
     {
+        public static void CompleteQuery<TEntity, T>(ref IQueryable<TEntity> source, CriteriaList<T> criteriaFieldList) where TEntity : class 
+                                                                                                                         where T : CriteriaField
+        {
+            if (criteriaFieldList == null)
+                return;
+
+            Expression<Func<TEntity, bool>> queryExpression, globalQueryExpression;
+            globalQueryExpression = null;
+            foreach (T criteriaField in criteriaFieldList)
+            {
+                if (criteriaField != null)
+                {
+                    queryExpression = null;
+                    CompleteQueryInternal(ref queryExpression, criteriaField);
+                    if(queryExpression != null)
+                    {
+                        if (globalQueryExpression == null)
+                            globalQueryExpression = queryExpression;
+                        else
+                            globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
+                    }
+                }
+            }
+            if (globalQueryExpression != null)
+                source = source.Where(globalQueryExpression);
+        }
+
         public static void CompleteQuery<TEntity>(ref IQueryable<TEntity> source, CriteriaField criteriaField) where TEntity : class
         {
             if (source == null || criteriaField == null)
                 return;
-            
+
+            Expression<Func<TEntity, bool>> queryExpression = null;
+            CompleteQueryInternal(ref queryExpression, criteriaField);
+            if(queryExpression != null)
+                source = source.Where(queryExpression);
+        }
+        
+        private static void CompleteQueryInternal<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, CriteriaField criteriaField) where TEntity : class
+        {
             var criteriaFieldProperties = criteriaField.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             object value;
@@ -29,7 +65,42 @@ namespace BodyReport.Crud.Transformer
                     if (value == null)
                         continue;
 
-                    CompleteQueryWithCriteria(ref source, fieldName, value);
+                    CompleteQueryWithCriteria(ref queryExpression, fieldName, value);
+                }
+            }
+        }
+        
+        private static void CompleteQueryWithCriteria<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, string fieldName, object criteria) where TEntity : class
+        {
+            var entityType = typeof(TEntity);
+            var entityProperty = entityType.GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public);
+
+            if (entityProperty != null)
+            {
+                var entityParameter = Expression.Parameter(typeof(TEntity), "e");
+                var propertyType = entityProperty.PropertyType;
+
+                var expressionList = new List<Expression>();
+                Expression expression;
+
+                if (criteria is IntegerCriteria)
+                {
+                    IntegerCriteriaTreatment(criteria as IntegerCriteria, expressionList, propertyType, entityParameter, entityProperty);
+                }
+                else if (criteria is StringCriteria)
+                {
+                    StringCriteriaTreatment(criteria as StringCriteria, expressionList, propertyType, entityParameter, entityProperty);
+                }
+
+                expression = StackExpression(expressionList);
+                if (expression != null)
+                {
+                    var lambda = Expression.Lambda(expression, entityParameter) as Expression<Func<TEntity, bool>>;
+
+                    if (queryExpression == null)
+                        queryExpression = lambda;
+                    else
+                        queryExpression = queryExpression.AndAlso(lambda);
                 }
             }
         }
@@ -134,37 +205,6 @@ namespace BodyReport.Crud.Transformer
             ConstantExpression c = Expression.Constant(value, typeof(string));
             MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string), typeof(StringComparison) });
             return Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-        }
-
-        private static void CompleteQueryWithCriteria<TEntity>(ref IQueryable<TEntity> source, string fieldName, object criteria) where TEntity : class
-        {
-            var entityType = typeof(TEntity);
-            var entityProperty = entityType.GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public);
-
-            if (entityProperty != null)
-            {
-                var entityParameter = Expression.Parameter(typeof(TEntity), "e");
-                var propertyType = entityProperty.PropertyType;
-
-                var expressionList = new List<Expression>();
-                Expression expression;
-
-                if (criteria is IntegerCriteria)
-                {
-                    IntegerCriteriaTreatment(criteria as IntegerCriteria, expressionList, propertyType, entityParameter, entityProperty);
-                }
-                else if (criteria is StringCriteria)
-                {
-                    StringCriteriaTreatment(criteria as StringCriteria, expressionList, propertyType, entityParameter, entityProperty);
-                }
-
-                expression = StackExpression(expressionList);
-                if (expression != null)
-                {
-                    var lambda = Expression.Lambda(expression, entityParameter) as Expression<Func<TEntity, bool>>;
-                    source = source.Where(lambda);
-                }
-            }
         }
 
         private static void IntegerCriteriaTreatment(IntegerCriteria criteria, List<Expression> expressionList, Type propertyType,

@@ -9,6 +9,10 @@ namespace Message
     {
     }
 
+    public class CriteriaList<T> : List<T> where T : CriteriaField
+    {
+    }
+
     public class EqualField<T>
     {
         public T Value = default(T);
