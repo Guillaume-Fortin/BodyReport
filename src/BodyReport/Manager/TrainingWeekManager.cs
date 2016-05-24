@@ -84,7 +84,12 @@ namespace BodyReport.Manager
 
         public List<TrainingWeek> FindTrainingWeek(TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
         {
-            List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(trainingWeekCriteria);
+            return FindTrainingWeek(new CriteriaList<TrainingWeekCriteria>() { trainingWeekCriteria }, trainingWeekScenario);
+        }
+
+        public List<TrainingWeek> FindTrainingWeek(CriteriaList<TrainingWeekCriteria> trainingWeekCriteriaList, TrainingWeekScenario trainingWeekScenario)
+        {
+            List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(trainingWeekCriteriaList);
             
             if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {

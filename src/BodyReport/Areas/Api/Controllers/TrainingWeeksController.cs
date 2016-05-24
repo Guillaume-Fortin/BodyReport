@@ -60,12 +60,12 @@ namespace BodyReport.Areas.Api.Controllers
                 if (trainingWeekFinder == null)
                     return BadRequest();
 
-                var trainingWeekCriteria = trainingWeekFinder.TrainingWeekCriteria;
+                var trainingWeekCriteriaList = trainingWeekFinder.TrainingWeekCriteriaList;
                 var trainingWeekScenario = trainingWeekFinder.TrainingWeekScenario;
 
-                if (trainingWeekCriteria == null || trainingWeekCriteria.UserId == null)
+                if (trainingWeekCriteriaList == null)
                     return BadRequest();
-                return new OkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteria, trainingWeekScenario));
+                return new OkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteriaList, trainingWeekScenario));
             }
             catch (Exception exception)
             {

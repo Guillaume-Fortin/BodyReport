@@ -98,7 +98,16 @@ namespace Message
 				OnPropertyChanged();
 			}
 		}
-        
+
+        /// <summary>
+		/// Modification Date
+		/// </summary>
+		public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Week of year description
         /// </summary>

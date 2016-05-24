@@ -7,7 +7,7 @@ namespace Message.WebApi.MultipleParameters
 {
     public class TrainingWeekFinder
     {
-        public TrainingWeekCriteria TrainingWeekCriteria { get; set; }
+        public CriteriaList<TrainingWeekCriteria> TrainingWeekCriteriaList { get; set; }
         public TrainingWeekScenario TrainingWeekScenario { get; set; }
 
         public TrainingWeekFinder()
