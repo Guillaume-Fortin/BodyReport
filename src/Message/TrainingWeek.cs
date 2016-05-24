@@ -50,6 +50,16 @@ namespace Message
 				OnPropertyChanged();
 			}
 		}
+
+
+        /// <summary>
+        /// Equals by key
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsEqualByKey(TrainingWeekKey key1, TrainingWeekKey key2)
+        {
+            return key1.UserId == key2.UserId && key1.Year == key2.Year && key1.WeekOfYear == key2.WeekOfYear;
+        }
     }
 
     public class TrainingWeek : TrainingWeekKey
@@ -130,12 +140,28 @@ namespace Message
 
     public class TrainingWeekScenario
     {
-        public bool ManageTrainingDay { get; set; } = true;
+        private bool _manageTrainingDay;
+        public bool ManageTrainingDay
+        {
+            get
+            {
+                return _manageTrainingDay;
+            }
+            set
+            {
+                _manageTrainingDay = value;
+                if (_manageTrainingDay)
+                    TrainingDayScenario = new TrainingDayScenario();
+                else
+                    TrainingDayScenario = null;
+            }
+        }
 
         public TrainingDayScenario TrainingDayScenario { get; set; }
 
         public TrainingWeekScenario()
         {
+            ManageTrainingDay = true;
         }
     }
 }
