@@ -64,17 +64,19 @@ namespace BodyReport
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            var entityFramework =  services.AddDbContext<ApplicationDbContext>();
-            
+            var sqlLoggerFactory = new LoggerFactory();
+            sqlLoggerFactory.AddConsole(Configuration.GetSection("SqlLogging"));
+
+            var entityFramework = services;
             if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.PostgreSQL)
             {
                 entityFramework = entityFramework.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(options =>
-                    options.UseNpgsql(WebAppConfiguration.DatabaseConnectionString));
+                    options.UseNpgsql(WebAppConfiguration.DatabaseConnectionString).UseLoggerFactory(sqlLoggerFactory));
             }
             else if (WebAppConfiguration.TDataBaseServerType == Message.TDataBaseServerType.SqlServer)
             {
                 entityFramework = entityFramework.AddEntityFrameworkSqlServer().AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(WebAppConfiguration.DatabaseConnectionString));
+                    options.UseSqlServer(WebAppConfiguration.DatabaseConnectionString).UseLoggerFactory(sqlLoggerFactory));
             }
             else
                 _logger.LogError("Unknown database connection type");
