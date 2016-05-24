@@ -44,22 +44,22 @@ namespace BodyReport.Manager
             {
                 var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
-                    UserId = new StringCriteria() { EqualList = new List<string>() { trainingJournalDay.UserId } },
-                    Year = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.Year } },
-                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.WeekOfYear } },
-                    DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.DayOfWeek } },
-                    TrainingDayId = new IntegerCriteria() { EqualList = new List<int>() { trainingJournalDay.TrainingDayId } }
+                    UserId = new StringCriteria() { Equal = trainingJournalDay.UserId },
+                    Year = new IntegerCriteria() { Equal = trainingJournalDay.Year },
+                    WeekOfYear = new IntegerCriteria() { Equal = trainingJournalDay.WeekOfYear },
+                    DayOfWeek = new IntegerCriteria() { Equal = trainingJournalDay.DayOfWeek },
+                    TrainingDayId = new IntegerCriteria() { Equal = trainingJournalDay.TrainingDayId }
                 };
                 var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                 trainingJournalDay.TrainingExercises = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
             }
         }
 
-        internal TrainingDay GetTrainingDay(TrainingDayKey key, bool manageExercise)
+        internal TrainingDay GetTrainingDay(TrainingDayKey key, TrainingDayScenario trainingDayScenario)
         {
             var trainingDay = _trainingDayModule.Get(key);
 
-            if (manageExercise && trainingDay != null)
+            if (trainingDayScenario.ManageExercise && trainingDay != null)
             {
                 CompleteTrainingDayWithExercise(trainingDay);
             }
@@ -67,38 +67,53 @@ namespace BodyReport.Manager
             return trainingDay;
         }
 
-        internal List<TrainingDay> FindTrainingDay(CriteriaField criteriaField, TrainingDayScenario trainingDayScenario)
+        internal List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
         {
-            var trainingDays = _trainingDayModule.Find(criteriaField);
+            var trainingDays = _trainingDayModule.Find(trainingDayCriteria);
 
-            if (trainingDayScenario != null)
+            if (trainingDayScenario != null && trainingDayScenario.ManageExercise && trainingDays != null)
             {
-                if (trainingDayScenario.ManageExercise && trainingDays != null)
+                foreach (var trainingDay in trainingDays)
                 {
-                    foreach (var trainingDay in trainingDays)
-                    {
-                        CompleteTrainingDayWithExercise(trainingDay);
-                    }
+                    CompleteTrainingDayWithExercise(trainingDay);
                 }
             }
 
             return trainingDays;
         }
 
-        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay)
+        internal TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)
         {
             TrainingDay trainingDayResult = null;
             
             trainingDayResult = _trainingDayModule.Update(trainingDay);
 
-            if (trainingDay.TrainingExercises != null)
+            if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
-                trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                 var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                trainingDayResult.TrainingExercises = new List<TrainingExercise>();
-                foreach (var trainingExercise in trainingDay.TrainingExercises)
+
+                var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
-                    trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
+                    UserId = new StringCriteria() { Equal = trainingDay.UserId },
+                    Year = new IntegerCriteria() { Equal = trainingDay.Year },
+                    WeekOfYear = new IntegerCriteria() { Equal = trainingDay.WeekOfYear },
+                    DayOfWeek = new IntegerCriteria() { Equal = trainingDay.DayOfWeek },
+                    TrainingDayId = new IntegerCriteria() { Equal = trainingDay.TrainingDayId }
+                };
+                var trainingExercisesDb = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+                if (trainingExercisesDb != null && trainingExercisesDb.Count > 0)
+                {
+                    foreach(var trainingExerciseDb in trainingExercisesDb)
+                        trainingExerciseManager.DeleteTrainingExercise(trainingExerciseDb);
+                }
+
+                if (trainingDay.TrainingExercises != null)
+                {
+                    trainingDayResult.TrainingExercises = new List<TrainingExercise>();
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
+                    {
+                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
+                    }
                 }
             }
 

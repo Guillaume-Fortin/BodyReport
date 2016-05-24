@@ -28,9 +28,9 @@ namespace BodyReport.Manager
             return _bodyExerciseModule.Get(key);
         }
 
-        public List<BodyExercise> FindBodyExercises(CriteriaField criteriaField = null)
+        public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
-            return _bodyExerciseModule.Find(criteriaField);
+            return _bodyExerciseModule.Find(bodyExerciseCriteria);
         }
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)

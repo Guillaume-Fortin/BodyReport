@@ -24,4 +24,12 @@ namespace Message
         /// </summary>
         public string ImageName { get; set; }
     }
+
+    public class MuscularGroupCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Muscular group Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+    }
 }

@@ -8,7 +8,7 @@ namespace Message
     public class CityKey
     {
         /// <summary>
-        /// Id (Key)
+        /// Country Id (Key)
         /// </summary>
         public int CountryId
         {
@@ -45,5 +45,23 @@ namespace Message
             get;
             set;
         }
+    }
+
+    public class CityCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Country Id
+        /// </summary>
+        public IntegerCriteria CountryId { get; set; }
+
+        /// <summary>
+        /// ZipCode
+        /// </summary>
+        public StringCriteria ZipCode { get; set; }
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
     }
 }

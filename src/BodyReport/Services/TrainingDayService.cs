@@ -37,10 +37,10 @@ namespace BodyReport.Services
             
             var trainingDayCriteria = new TrainingDayCriteria()
             {
-                UserId = new StringCriteria() { EqualList = new List<string>() { trainingDay.UserId } },
-                Year = new IntegerCriteria() { EqualList = new List<int>() { trainingDay.Year } },
-                WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingDay.WeekOfYear } },
-                DayOfWeek = new IntegerCriteria() { EqualList = new List<int>() { trainingDay.DayOfWeek } },
+                UserId = new StringCriteria() { Equal = trainingDay.UserId },
+                Year = new IntegerCriteria() { Equal = trainingDay.Year },
+                WeekOfYear = new IntegerCriteria() { Equal = trainingDay.WeekOfYear },
+                DayOfWeek = new IntegerCriteria() { Equal = trainingDay.DayOfWeek },
             };
             var trainingDayScenario = new TrainingDayScenario()
             {
@@ -58,11 +58,10 @@ namespace BodyReport.Services
             return trainingDayManager.CreateTrainingDay(trainingDay);
         }
 
-        public TrainingDay UpdateTrainingDay(TrainingDay trainingDay)
+        public TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)
         {
             var trainingDayManager = new TrainingDayManager(DbContext);
-            trainingDayManager.DeleteTrainingDay(trainingDay);
-            return trainingDayManager.UpdateTrainingDay(trainingDay);
+            return trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
         }
     }
 }

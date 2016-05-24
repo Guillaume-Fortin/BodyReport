@@ -132,6 +132,8 @@ namespace Message
     {
         public bool ManageTrainingDay { get; set; } = true;
 
+        public TrainingDayScenario TrainingDayScenario { get; set; }
+
         public TrainingWeekScenario()
         {
         }

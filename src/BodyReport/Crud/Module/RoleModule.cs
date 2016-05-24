@@ -79,11 +79,11 @@ namespace BodyReport.Crud.Module
         /// Find IdentityRole in database
         /// </summary>
         /// <returns></returns>
-        public List<Role> Find(CriteriaField criteriaField = null)
+        public List<Role> Find(RoleCriteria roleCriteria = null)
         {
             List<Role> resultList = null;
             IQueryable<IdentityRole> rowList = _dbContext.Roles;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, roleCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

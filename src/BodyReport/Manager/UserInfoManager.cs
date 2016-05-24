@@ -24,9 +24,9 @@ namespace BodyReport.Manager
             return _userInfoModule.Get(key);
         }
 
-        public List<UserInfo> FindUserInfos(CriteriaField criteriaField = null)
+        public List<UserInfo> FindUserInfos(UserInfoCriteria userInfoCriteria = null)
         {
-            return _userInfoModule.Find(criteriaField);
+            return _userInfoModule.Find(userInfoCriteria);
         }
 
         internal void DeleteUserInfo(UserInfoKey key)

@@ -23,9 +23,9 @@ namespace BodyReport.Manager
             return _module.Get(key);
         }
 
-        public List<City> FindCities(CriteriaField criteriaField = null)
+        public List<City> FindCities(CityCriteria cityCriteria = null)
         {
-            return _module.Find(criteriaField);
+            return _module.Find(cityCriteria);
         }
     }
 }

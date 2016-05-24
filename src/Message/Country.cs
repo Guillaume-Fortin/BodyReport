@@ -37,4 +37,12 @@ namespace Message
             set;
         }
     }
+
+    public class CountryCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+    }
 }

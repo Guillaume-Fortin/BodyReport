@@ -184,7 +184,7 @@ namespace BodyReport.Services
                 }
                 else
                 {
-                    expression = Expression.And(expression, exp);
+                    expression = Expression.AndAlso(expression, exp);
                 }
             }
             return expression;

@@ -14,7 +14,7 @@
 
 <div>
     <form asp-route-area="Admin" asp-controller="User" asp-action="Index" method="get" class="form-horizontal" role="form">
-        <h4>@Translation.LIST_OF_USERS.</h4>
+        <h4>@Translation.LIST_OF_USERS. @ViewBag.TotalRecords</h4>
         <hr />
         <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -91,7 +91,7 @@
             </tr>
         }
     </table>
-    @await Component.InvokeAsync("PagingComponent", new { areaName = "Admin", controlerName = "User", actionName = "Index", currentPage = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, totalRecords = ViewBag.TotalRecords, routeValues = pagingRouteValues });
+    @await Component.InvokeAsync("PagingComponent", new { areaName = "Admin", controlerName = "User", actionName = "Index", currentPage = ViewBag.CurrentPage, pageSize = ViewBag.PageSize, totalRecords = ViewBag.TotalRecords, routeValues = pagingRouteValues })
 
 </div>
 @section Scripts {

@@ -23,9 +23,9 @@ namespace BodyReport.Manager
             return _module.Get(key);
         }
 
-        public List<Country> FindCountries(CriteriaField criteriaField = null)
+        public List<Country> FindCountries(CountryCriteria countryCriteria = null)
         {
-            return _module.Find(criteriaField);
+            return _module.Find(countryCriteria);
         }
     }
 }

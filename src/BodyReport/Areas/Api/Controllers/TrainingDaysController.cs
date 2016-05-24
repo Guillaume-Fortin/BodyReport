@@ -33,13 +33,13 @@ namespace BodyReport.Areas.Api.Controllers
 
         // Get api/TrainingDays/Get
         [HttpGet]
-        public IActionResult Get(TrainingDayKey trainingDayKey, bool manageExercise = false)
+        public IActionResult Get(TrainingDayKey trainingDayKey, TrainingDayScenario trainingDayScenario)
         {
             try
             {
-                if (trainingDayKey == null)
+                if (trainingDayKey == null || trainingDayScenario == null)
                     return BadRequest();
-                var trainingday = _manager.GetTrainingDay(trainingDayKey, manageExercise);
+                var trainingday = _manager.GetTrainingDay(trainingDayKey, trainingDayScenario);
                 return new OkObjectResult(trainingday);
             }
             catch (Exception exception)
@@ -90,7 +90,8 @@ namespace BodyReport.Areas.Api.Controllers
                         Year = viewModel.Year,
                         WeekOfYear = viewModel.WeekOfYear
                     };
-                    var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+                    var trainingWeekScenario = new TrainingWeekScenario()  { ManageTrainingDay = false };
+                    var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                     if (trainingWeek == null)
                         return BadRequest(new WebApiException(string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK)));
@@ -120,10 +121,15 @@ namespace BodyReport.Areas.Api.Controllers
 
         // Post api/TrainingDays/Update
         [HttpPost]
-        public IActionResult Update([FromBody]TrainingDay trainingDay)
+        public IActionResult Update([FromBody]TrainingDayWithScenario trainingDayWithScenario)
         {
             try
             {
+                if (trainingDayWithScenario == null || trainingDayWithScenario.TrainingDay == null || trainingDayWithScenario.TrainingDayScenario == null)
+                    return BadRequest();
+
+                var trainingDay = trainingDayWithScenario.TrainingDay;
+                var trainingDayScenario = trainingDayWithScenario.TrainingDayScenario;
                 if (string.IsNullOrWhiteSpace(trainingDay.UserId) || trainingDay.Year == 0 || trainingDay.WeekOfYear == 0 ||
                     trainingDay.DayOfWeek < 0 || trainingDay.DayOfWeek > 6 || _userManager.GetUserId(User) != trainingDay.UserId)
                     return BadRequest();
@@ -137,10 +143,8 @@ namespace BodyReport.Areas.Api.Controllers
                     {
                         try
                         {
-                            var trainingWeekManager = new TrainingWeekManager(_dbContext);
-
                             TrainingDayService service = new TrainingDayService(_dbContext);
-                            trainingDay = service.UpdateTrainingDay(trainingDay);
+                            trainingDay = service.UpdateTrainingDay(trainingDay, trainingDayScenario);
                             transaction.Commit();
 
                             if (trainingDay == null)

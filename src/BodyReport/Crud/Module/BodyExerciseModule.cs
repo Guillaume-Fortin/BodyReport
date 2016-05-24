@@ -74,11 +74,11 @@ namespace BodyReport.Crud.Module
         /// Find body exercises
         /// </summary>
         /// <returns></returns>
-        public List<BodyExercise> Find(CriteriaField criteriaField = null)
+        public List<BodyExercise> Find(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
             List<BodyExercise> resultList = null;
             IQueryable<BodyExerciseRow> muscularGroupRowList = _dbContext.BodyExercise;
-            CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, bodyExerciseCriteria);
 
             if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
             {

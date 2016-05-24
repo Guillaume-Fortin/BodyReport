@@ -39,62 +39,58 @@ namespace BodyReport.Manager
             return trainingWeekResult;
         }
 
-        internal TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek)
+        internal TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek, TrainingWeekScenario trainingWeekScenario)
         {
             TrainingWeek trainingWeekResult = null;
             trainingWeekResult = _trainingWeekModule.Update(trainingWeek);
 
-            if (trainingWeek.TrainingDays != null)
+            if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay && trainingWeek.TrainingDays != null)
             {
                 var trainingDayManager = new TrainingDayManager(_dbContext);
                 trainingWeekResult.TrainingDays = new List<TrainingDay>();
                 foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay));
+                    trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
                 }
             }
             return trainingWeekResult;
         }
 
-        internal TrainingWeek GetTrainingWeek(TrainingWeekKey key, bool manageTrainingDay)
+        internal TrainingWeek GetTrainingWeek(TrainingWeekKey key, TrainingWeekScenario trainingWeekScenario)
         {
             var trainingWeek = _trainingWeekModule.Get(key);
-            if (trainingWeek != null && manageTrainingDay)
+            if (trainingWeek != null && trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {
-                CompleteTrainingWeekWithTrainingDay(trainingWeek);
+                CompleteTrainingWeekWithTrainingDay(trainingWeek, trainingWeekScenario.TrainingDayScenario);
             }
 
             return trainingWeek;
         }
 
-        private void CompleteTrainingWeekWithTrainingDay(TrainingWeek trainingWeek)
+        private void CompleteTrainingWeekWithTrainingDay(TrainingWeek trainingWeek, TrainingDayScenario trainingDayScenario)
         {
             if (trainingWeek != null)
             {
                 var trainingDayManager = new TrainingDayManager(_dbContext);
                 var trainingDayCriteria = new TrainingDayCriteria()
                 {
-                    UserId = new StringCriteria() { EqualList = new List<string>() { trainingWeek.UserId } },
-                    Year = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.Year } },
-                    WeekOfYear = new IntegerCriteria() { EqualList = new List<int>() { trainingWeek.WeekOfYear } },
-                };
-                var trainingDayScenario = new TrainingDayScenario()
-                {
-                    ManageExercise = true
+                    UserId = new StringCriteria() { Equal = trainingWeek.UserId },
+                    Year = new IntegerCriteria() { Equal = trainingWeek.Year },
+                    WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear },
                 };
                 trainingWeek.TrainingDays = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
             }
         }
 
-        public List<TrainingWeek> FindTrainingWeek(CriteriaField criteriaField, TrainingWeekScenario trainingWeekScenario)
+        public List<TrainingWeek> FindTrainingWeek(TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
         {
-            List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(criteriaField);
+            List<TrainingWeek> trainingWeeks = _trainingWeekModule.Find(trainingWeekCriteria);
             
             if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {
                 foreach (TrainingWeek trainingJournal in trainingWeeks)
                 {
-                    CompleteTrainingWeekWithTrainingDay(trainingJournal);
+                    CompleteTrainingWeekWithTrainingDay(trainingJournal, trainingWeekScenario.TrainingDayScenario);
                 }
             }
 
@@ -103,8 +99,12 @@ namespace BodyReport.Manager
 
         internal void DeleteTrainingWeek(TrainingWeekKey key)
         {
-            //TODO manage training Day and TrainingExercise
-            var trainingWeek = GetTrainingWeek(key, true);
+            var trainingWeekScenario = new TrainingWeekScenario()
+            {
+                ManageTrainingDay = true,
+                TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
+            };
+            var trainingWeek = GetTrainingWeek(key, trainingWeekScenario);
             if (trainingWeek != null)
             {
                 _trainingWeekModule.Delete(key);

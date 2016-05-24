@@ -49,11 +49,11 @@ namespace BodyReport.Crud.Module
         /// Find data in database
         /// </summary>
         /// <returns></returns>
-        public List<City> Find(CriteriaField criteriaField = null)
+        public List<City> Find(CityCriteria cityCriteria = null)
         {
             List<City> resultList = null;
             IQueryable<CityRow> rowList = _dbContext.City;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, cityCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

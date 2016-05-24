@@ -68,15 +68,21 @@ namespace BodyReport.Services
             {
                 var trainingWeekManager = new TrainingWeekManager(_dbContext);
                 //check if new trainingWeek exist
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                 var trainingWeekKey = new TrainingWeekKey() { UserId = copyTrainingWeek.UserId, Year = copyTrainingWeek.Year, WeekOfYear = copyTrainingWeek.WeekOfYear };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                 if (trainingWeek != null)
                     throw new ErrorException(string.Format(Translation.P0_ALREADY_EXIST, Translation.TRAINING_WEEK));
 
                 // Check if origin training week exist
+                trainingWeekScenario = new TrainingWeekScenario()
+                {
+                    ManageTrainingDay = true,
+                    TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
+                };
                 trainingWeekKey = new TrainingWeekKey() { UserId = copyTrainingWeek.UserId, Year = copyTrainingWeek.OriginYear, WeekOfYear = copyTrainingWeek.OriginWeekOfYear };
-                trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, true);
+                trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                 if (trainingWeek == null)
                     throw new ErrorException(string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
@@ -89,7 +95,7 @@ namespace BodyReport.Services
                 {
                     try
                     {
-                        trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek);
+                        trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                         transaction.Commit();
                     }
                     catch (Exception exception)

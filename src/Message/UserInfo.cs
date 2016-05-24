@@ -73,4 +73,12 @@ namespace Message
             set;
         }
     }
+
+    public class UserInfoCriteria : CriteriaField
+    {
+        /// <summary>
+        /// User Id
+        /// </summary>
+        public StringCriteria UserId { get; set; }
+    }
 }

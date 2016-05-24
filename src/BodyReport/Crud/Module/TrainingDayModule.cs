@@ -65,11 +65,11 @@ namespace BodyReport.Crud.Module
         /// Find datas
         /// </summary>
         /// <returns></returns>
-        public List<TrainingDay> Find(CriteriaField criteriaField = null)
+        public List<TrainingDay> Find(TrainingDayCriteria trainingDayCriteria = null)
         {
             List<TrainingDay> resultList = null;
             IQueryable<TrainingDayRow> rowList = _dbContext.TrainingDay;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingDayCriteria);
             rowList = rowList.OrderBy(t => t.DayOfWeek).OrderBy(t => t.BeginHour);
 
             if (rowList != null && rowList.Count() > 0)

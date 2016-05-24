@@ -58,11 +58,11 @@ namespace BodyReport.Crud.Module
         /// Find data in database
         /// </summary>
         /// <returns></returns>
-        public List<UserInfo> Find(CriteriaField criteriaField = null)
+        public List<UserInfo> Find(UserInfoCriteria userInfoCriteria = null)
         {
             List<UserInfo> resultList = null;
             IQueryable<UserInfoRow> rowList = _dbContext.UserInfo;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, userInfoCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

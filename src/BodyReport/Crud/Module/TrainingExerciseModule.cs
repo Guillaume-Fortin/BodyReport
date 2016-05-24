@@ -64,11 +64,11 @@ namespace BodyReport.Crud.Module
         /// Find datas
         /// </summary>
         /// <returns></returns>
-        public List<TrainingExercise> Find(CriteriaField criteriaField = null)
+        public List<TrainingExercise> Find(TrainingExerciseCriteria trainingExerciseCriteria = null)
         {
             List<TrainingExercise> resultList = null;
             IQueryable<TrainingExerciseRow> rowList = _dbContext.TrainingExercise;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseCriteria);
             rowList = rowList.OrderBy(t => t.Id);
 
             if (rowList != null && rowList.Count() > 0)

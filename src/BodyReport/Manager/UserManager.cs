@@ -30,9 +30,9 @@ namespace BodyReport.Manager
             return _userModule.Get(key, manageRole);
         }
 
-        public List<User> FindUsers(out int totalRecords, CriteriaField criteriaField = null, bool manageRole = true, int currentRecordIndex = 0, int maxRecord = 0)
+        public List<User> FindUsers(out int totalRecords, UserCriteria userCriteria = null, bool manageRole = true, int currentRecordIndex = 0, int maxRecord = 0)
         {
-            var userList = _userModule.Find(out totalRecords, criteriaField, currentRecordIndex, maxRecord);
+            var userList = _userModule.Find(out totalRecords, userCriteria, currentRecordIndex, maxRecord);
 
             if(userList != null && manageRole)
             {
@@ -41,7 +41,7 @@ namespace BodyReport.Manager
                     if(user.Role == null)
                     {
                         var userRoleCriteria = new UserRoleCriteria();
-                        userRoleCriteria.UserId = new StringCriteria() { EqualList = new List<string>() { user.Id } };
+                        userRoleCriteria.UserId = new StringCriteria() { Equal = user.Id };
                         var userRoleList = _userRoleModule.Find(userRoleCriteria);
                         if (userRoleList != null)
                         {
@@ -70,9 +70,9 @@ namespace BodyReport.Manager
         }
 
         #region manage role
-        public List<Role> FindRoles(CriteriaField criteriaField = null)
+        public List<Role> FindRoles(RoleCriteria roleCriteria = null)
         {
-            return _roleModule.Find(criteriaField);
+            return _roleModule.Find(roleCriteria);
         }
 
         internal Role CreateRole(Role role)

@@ -75,14 +75,16 @@ namespace BodyReport.Crud.Module
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<MuscularGroup> Find()
+        public List<MuscularGroup> Find(MuscularGroupCriteria muscularGroupCriteria = null)
         {
             List<MuscularGroup> resultList = null;
-            var muscularGroupRowList = _dbContext.MuscularGroup;
-            if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
+            IQueryable<MuscularGroupRow> rowList = _dbContext.MuscularGroup;
+            CriteriaTransformer.CompleteQuery(ref rowList, muscularGroupCriteria);
+
+            if (rowList != null && rowList.Count() > 0)
             {
                 resultList = new List<MuscularGroup>();
-                foreach (var muscularGroupRow in muscularGroupRowList)
+                foreach (var muscularGroupRow in rowList)
                 {
                     resultList.Add(MuscularGroupTransformer.ToBean(muscularGroupRow));
                 }

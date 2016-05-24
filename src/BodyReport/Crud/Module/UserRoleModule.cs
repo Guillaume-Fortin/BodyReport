@@ -43,11 +43,11 @@ namespace BodyReport.Crud.Module
         /// Find body exercises
         /// </summary>
         /// <returns></returns>
-        public List<UserRole> Find(CriteriaField criteriaField = null)
+        public List<UserRole> Find(UserRoleCriteria userRoleCriteria = null)
         {
             List<UserRole> resultList = null;
             IQueryable<IdentityUserRole<string>> rowList = _dbContext.UserRoles;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, userRoleCriteria);
 
             if (rowList != null && rowList.Count() > 0)
             {

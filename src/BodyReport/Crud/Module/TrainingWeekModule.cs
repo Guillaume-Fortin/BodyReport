@@ -61,11 +61,11 @@ namespace BodyReport.Crud.Module
         /// Find datas
         /// </summary>
         /// <returns></returns>
-        public List<TrainingWeek> Find(CriteriaField criteriaField = null)
+        public List<TrainingWeek> Find(TrainingWeekCriteria trainingWeekCriteria = null)
         {
             List<TrainingWeek> resultList = null;
             IQueryable<TrainingWeekRow> rowList = _dbContext.TrainingWeek;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingWeekCriteria);
             rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
             if (rowList != null && rowList.Count() > 0)

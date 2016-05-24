@@ -25,4 +25,12 @@ namespace Message
         /// </summary>
         public string NormalizedName { get; set; } = string.Empty;
     }
+
+    public class RoleCriteria : CriteriaField
+    {
+        /// <summary>
+        /// Role Id
+        /// </summary>
+        public IntegerCriteria Id { get; set; }
+    }
 }

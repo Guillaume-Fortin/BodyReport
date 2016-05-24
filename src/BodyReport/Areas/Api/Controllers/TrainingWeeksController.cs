@@ -37,7 +37,12 @@ namespace BodyReport.Areas.Api.Controllers
             {
                 if (trainingWeekKey == null)
                     return BadRequest();
-                var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, manageDay);
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = manageDay };
+                if (manageDay)
+                {
+                    trainingWeekScenario.TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+                }
+                var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
                 return new OkObjectResult(trainingWeek);
             }
             catch(Exception exception)
@@ -88,13 +93,21 @@ namespace BodyReport.Areas.Api.Controllers
 
         // Post api/TrainingWeeks/Update
         [HttpPost]
-        public IActionResult Update([FromBody]TrainingWeek trainingWeek)
+        public IActionResult Update([FromBody]TrainingWeekWithScenario trainingWeekWithScenario)
 		{
             try
             {
-			    if (trainingWeek == null || trainingWeek.UserId != _userManager.GetUserId(User))
+                if (trainingWeekWithScenario == null || trainingWeekWithScenario.TrainingWeek == null ||
+                    trainingWeekWithScenario.TrainingWeekScenario == null)
+                    return BadRequest();
+
+                var trainingWeek = trainingWeekWithScenario.TrainingWeek;
+                var trainingWeekScenario = trainingWeekWithScenario.TrainingWeekScenario;
+
+                if(trainingWeek.UserId != _userManager.GetUserId(User))
 			        return BadRequest();
-                var result = _manager.UpdateTrainingWeek(trainingWeek);
+
+                var result = _manager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
 			    return new OkObjectResult(result);
             }
             catch (Exception exception)
@@ -116,7 +129,8 @@ namespace BodyReport.Areas.Api.Controllers
                     return BadRequest();
             
                 var trainingWeekManager = new TrainingWeekManager(_dbContext);
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, false);
+                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
+                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
                 if (trainingWeek == null)
                     return NotFound();
 

@@ -69,12 +69,12 @@ namespace BodyReport.Crud.Module
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<User> Find(out int totalRecords, CriteriaField criteriaField = null, int currentRecordIndex = 0, int maxRecord = 0)
+        public List<User> Find(out int totalRecords, UserCriteria userCriteria = null, int currentRecordIndex = 0, int maxRecord = 0)
         {
             totalRecords = 0;
             List<User> resultList = null;
             IQueryable<ApplicationUser> rowList = _dbContext.Users;
-            CriteriaTransformer.CompleteQuery(ref rowList, criteriaField);
+            CriteriaTransformer.CompleteQuery(ref rowList, userCriteria);
             rowList = rowList.OrderBy(u => u.UserName);
             
             if (maxRecord > 0)

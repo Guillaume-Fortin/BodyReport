@@ -9,6 +9,16 @@ namespace Message
     {
     }
 
+    public class EqualField<T>
+    {
+        public T Value = default(T);
+
+        public EqualField(T value)
+        {
+            Value = value;
+        }
+    }
+
     public class CriteriaType<T>
     {
         /// <summary>
@@ -17,17 +27,36 @@ namespace Message
         public List<T> EqualList { get; set; } = null;
 
         /// <summary>
-        /// Equals citeria
+        /// NotEquals citeria
         /// </summary>
         public List<T> NotEqualList { get; set; } = null;
     }
 
     public class IntegerCriteria : CriteriaType<int>
     {
+        /// <summary>
+        /// Equal citeria
+        /// </summary>
+        public int? Equal { get; set; } = null;
+
+        /// <summary>
+        /// NotEqual citeria
+        /// </summary>
+        public int? NotEqual { get; set; } = null;
     }
 
     public class StringCriteria : CriteriaType<string>
     {
+        /// <summary>
+        /// Equal citeria
+        /// </summary>
+        public string Equal { get; set; } = null;
+
+        /// <summary>
+        /// NotEqual citeria
+        /// </summary>
+        public string NotEqual { get; set; } = null;
+
         /// <summary>
         /// Ignore case on String comparaison
         /// </summary>

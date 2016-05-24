@@ -34,9 +34,9 @@ namespace BodyReport.Manager
             return _trainingExerciseSetModule.Get(key);
         }
 
-        public List<TrainingExerciseSet> FindTrainingExerciseSet(CriteriaField criteriaField)
+        public List<TrainingExerciseSet> FindTrainingExerciseSet(TrainingExerciseSetCriteria trainingExerciseSetCriteria = null)
         {
-            return _trainingExerciseSetModule.Find(criteriaField);
+            return _trainingExerciseSetModule.Find(trainingExerciseSetCriteria);
         }
 
         public void DeleteTrainingExerciseSet(TrainingExerciseSet trainingExerciseSet)
