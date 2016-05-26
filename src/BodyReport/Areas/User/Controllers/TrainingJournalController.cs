@@ -215,11 +215,7 @@ namespace BodyReport.Areas.User.Controllers
                     }
 
                     //Create data in database. No need transaction, only header
-                    trainingWeekScenario = new TrainingWeekScenario()
-                    {
-                        ManageTrainingDay = true,
-                        TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
-                    };
+                    trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                     trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
 
                     if (trainingWeek == null)
