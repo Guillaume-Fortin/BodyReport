@@ -58,7 +58,7 @@ namespace Framework
                 startOfYear = startOfYear.AddDays(1);
             }
 
-            return startOfYear.AddDays(7 *(week -1));
+            return startOfYear.AddDays(7 * (week - 1));
         }
 
         public static TEnum IntToEnum<TEnum>(int value)
@@ -72,33 +72,42 @@ namespace Framework
                 return (TEnum)(Enum.GetValues(type).GetValue(0));
         }
 
-		// <summary>
-		// Get the name of a static or instance property from a property access lambda.
-		// </summary>
-		// <typeparam name="T">Type of the property</typeparam>
-		// <param name="propertyLambda">lambda expression of the form: '() => Class.Property' or '() => object.Property'</param>
-		// <returns>The name of the property</returns>
-		public static string GetPropertyName<T>(Expression<Func<T>> propertyLambda)
-		{
-			var me = propertyLambda.Body as MemberExpression;
+        // <summary>
+        // Get the name of a static or instance property from a property access lambda.
+        // </summary>
+        // <typeparam name="T">Type of the property</typeparam>
+        // <param name="propertyLambda">lambda expression of the form: '() => Class.Property' or '() => object.Property'</param>
+        // <returns>The name of the property</returns>
+        public static string GetPropertyName<T>(Expression<Func<T>> propertyLambda)
+        {
+            var me = propertyLambda.Body as MemberExpression;
 
-			if (me == null)
-			{
-				throw new ArgumentException("You must pass a lambda of the form: '() => Class.Property' or '() => object.Property'");
-			}
+            if (me == null)
+            {
+                throw new ArgumentException("You must pass a lambda of the form: '() => Class.Property' or '() => object.Property'");
+            }
 
-			return me.Member.Name;
-		}
+            return me.Member.Name;
+        }
 
-		public static bool TryParse(string strValue, out double value)
-		{
-			value = 0;
-			if (string.IsNullOrWhiteSpace (strValue))
-				return false;
-			
-			if(strValue.IndexOf(',') != -1)
-			   strValue = strValue.Replace(',', '.');
-			 return double.TryParse (strValue, NumberStyles.Any, CultureInfo.InvariantCulture, out value);
-		}
+        public static bool TryParse(string strValue, out double value)
+        {
+            value = 0;
+            if (string.IsNullOrWhiteSpace(strValue))
+                return false;
+
+            if (strValue.IndexOf(',') != -1)
+                strValue = strValue.Replace(',', '.');
+            return double.TryParse(strValue, NumberStyles.Any, CultureInfo.InvariantCulture, out value);
+        }
+
+        public static DateTime DateTimeWithoutMs
+        {
+            get
+            {
+                var date = DateTime.Now;
+                return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second);
+            }
+        }
     }
 }

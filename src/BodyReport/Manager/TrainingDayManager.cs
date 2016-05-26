@@ -24,6 +24,7 @@ namespace BodyReport.Manager
         {
             TrainingDay trainingDayResult = null;
             trainingDayResult = _trainingDayModule.Create(trainingDay);
+            SynchroManager.TrainingDayChange(_dbContext, trainingDayResult);
 
             if (trainingDay.TrainingExercises != null)
             {
@@ -87,6 +88,7 @@ namespace BodyReport.Manager
             TrainingDay trainingDayResult = null;
             
             trainingDayResult = _trainingDayModule.Update(trainingDay);
+            SynchroManager.TrainingDayChange(_dbContext, trainingDayResult);
 
             if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
@@ -123,6 +125,7 @@ namespace BodyReport.Manager
         internal void DeleteTrainingDay(TrainingDay trainingDay)
         {
             _trainingDayModule.Delete(trainingDay);
+            SynchroManager.TrainingDayChange(_dbContext, trainingDay, true);
 
             if (trainingDay.TrainingExercises != null)
             {

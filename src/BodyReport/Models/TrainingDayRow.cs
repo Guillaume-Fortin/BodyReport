@@ -38,6 +38,13 @@ namespace BodyReport.Models
         /// End hour
         /// </summary>
         public DateTime EndHour { get; set; }
-        
+        /// <summary>
+        /// Modification Date
+        /// </summary>
+        public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
     }
 }

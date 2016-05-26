@@ -1,4 +1,5 @@
 ﻿using BodyReport.Models;
+using Framework;
 using Message;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace BodyReport.Crud.Transformer
             row.TrainingDayId = bean.TrainingDayId;
             row.BeginHour = bean.BeginHour;
             row.EndHour = bean.EndHour;
+            row.ModificationDate = Utils.DateTimeWithoutMs; // Set modificationDate
         }
 
         internal static TrainingDay ToBean(TrainingDayRow row)
@@ -36,6 +38,7 @@ namespace BodyReport.Crud.Transformer
             bean.TrainingDayId = row.TrainingDayId;
             bean.BeginHour = row.BeginHour;
             bean.EndHour = row.EndHour;
+            bean.ModificationDate = row.ModificationDate;
             return bean;
         }
     }

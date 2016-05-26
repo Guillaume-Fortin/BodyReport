@@ -42,5 +42,13 @@ namespace BodyReport.Models
         /// Rest time (second)
         /// </summary>
         public int RestTime { get; set; }
+        /// <summary>
+		/// Modification Date
+		/// </summary>
+		public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
     }
 }

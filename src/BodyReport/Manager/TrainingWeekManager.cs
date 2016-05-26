@@ -44,13 +44,31 @@ namespace BodyReport.Manager
             TrainingWeek trainingWeekResult = null;
             trainingWeekResult = _trainingWeekModule.Update(trainingWeek);
 
-            if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay && trainingWeek.TrainingDays != null)
+            if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {
                 var trainingDayManager = new TrainingDayManager(_dbContext);
-                trainingWeekResult.TrainingDays = new List<TrainingDay>();
-                foreach (var trainingDay in trainingWeek.TrainingDays)
+                var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+
+                var trainingDayCriteria = new TrainingDayCriteria()
                 {
-                    trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
+                    UserId = new StringCriteria() { Equal = trainingWeek.UserId },
+                    Year = new IntegerCriteria() { Equal = trainingWeek.Year },
+                    WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear }
+                };
+                var trainingDaysDb = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                if (trainingDaysDb != null && trainingDaysDb.Count > 0)
+                {
+                    foreach (var trainingDayDb in trainingDaysDb)
+                        trainingDayManager.DeleteTrainingDay(trainingDayDb);
+                }
+
+                if (trainingWeek.TrainingDays != null)
+                {
+                    trainingWeekResult.TrainingDays = new List<TrainingDay>();
+                    foreach (var trainingDay in trainingWeek.TrainingDays)
+                    {
+                        trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
+                    }
                 }
             }
             return trainingWeekResult;

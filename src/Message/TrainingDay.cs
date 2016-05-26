@@ -50,6 +50,14 @@ namespace Message
         /// </summary>
         public DateTime EndHour { get; set; }
         /// <summary>
+		/// Modification Date
+		/// </summary>
+		public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Training journal day exercises
         /// </summary>
         public List<TrainingExercise> TrainingExercises { get; set; }

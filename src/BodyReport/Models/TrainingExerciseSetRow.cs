@@ -58,5 +58,13 @@ namespace BodyReport.Models
             get;
             set;
         }
+        /// <summary>
+		/// Modification Date
+		/// </summary>
+		public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace BodyReport.Crud.Transformer
             row.UserHeight = bean.UserHeight;
             row.UserWeight = bean.UserWeight;
             row.Unit = (int)bean.Unit;
-            row.ModificationDate = bean.ModificationDate;
+            row.ModificationDate = Utils.DateTimeWithoutMs; // Set modificationDate
         }
 
         internal static TrainingWeek ToBean(TrainingWeekRow row)

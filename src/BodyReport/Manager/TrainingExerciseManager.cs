@@ -37,6 +37,8 @@ namespace BodyReport.Manager
         public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             var result = _trainingDayExerciseModule.Create(trainingExercise);
+            SynchroManager.TrainingExerciseChange(_dbContext, result);
+
             if (result != null && trainingExercise.TrainingExerciseSets != null)
             {
                 TrainingExerciseSet trainingExerciseSet;
@@ -54,6 +56,8 @@ namespace BodyReport.Manager
         public TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem)
         {
             var result = _trainingDayExerciseModule.Update(trainingExercise);
+            SynchroManager.TrainingExerciseChange(_dbContext, result);
+
             if (result != null && trainingExercise.TrainingExerciseSets != null)
             {
                 if(manageDeleteLinkItem)
@@ -134,6 +138,7 @@ namespace BodyReport.Manager
         public void DeleteTrainingExercise(TrainingExercise trainingExercise)
         {
             _trainingDayExerciseModule.Delete(trainingExercise);
+            SynchroManager.TrainingExerciseChange(_dbContext, trainingExercise, true);
 
             if (trainingExercise.TrainingExerciseSets != null)
             {

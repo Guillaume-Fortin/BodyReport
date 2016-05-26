@@ -59,6 +59,14 @@ namespace Message
         /// Weight
         /// </summary>
         public double Weight { get; set; }
+        /// <summary>
+		/// Modification Date
+		/// </summary>
+		public DateTime ModificationDate
+        {
+            get;
+            set;
+        }
     }
 
     public class TrainingExerciseSetCriteria : CriteriaField
