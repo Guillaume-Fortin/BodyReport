@@ -42,5 +42,10 @@ namespace Message
             public const int Min = 4;
             public const int Max = 100;
         }
+        public static class ZipCode
+        {
+            public const int Min = 0;
+            public const int Max = 80;
+        }
     }
 }

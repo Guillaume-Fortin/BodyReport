@@ -95,23 +95,65 @@ namespace BodyReport.Areas1.Api.Controllers
         }
 
         //
-        // GET: /Api/Account/GetUserInfo
+        // GET: /Api/Account/GetUser
         [HttpGet]
-        public IActionResult GetUserInfo(string userId)
+        public IActionResult GetUser(string userId)
         {
-            UserInfo userInfo = null;
             if (string.IsNullOrWhiteSpace(userId))
                 userId = _userManager.GetUserId(User);
             var userManager = new UserManager(_dbContext);
             var user = userManager.GetUser(new UserKey() { Id = userId });
-
             if (user != null)
+                return new OkObjectResult(user);
+            return new NotFoundResult();
+        }
+
+        //
+        // GET: /Api/Account/GetUserInfo
+        [HttpGet]
+        public IActionResult GetUserInfo(string userId)
+        {
+            try
             {
+                UserInfo userInfo = null;
+                if (string.IsNullOrWhiteSpace(userId))
+                    userId = _userManager.GetUserId(User);
+                var userManager = new UserManager(_dbContext);
+                var user = userManager.GetUser(new UserKey() { Id = userId });
+
+                if (user != null)
+                {
+                    var userInfoManager = new UserInfoManager(_dbContext);
+                    userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
+                    return new OkObjectResult(userInfo);
+                }
+                return new NotFoundResult();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
+
+        //
+        // POST: /Api/Account/UpdateUserInfo
+        [HttpPost]
+        public IActionResult UpdateUserInfo([FromBody]UserInfo userInfo)
+        {
+            try
+            {
+                if (userInfo == null || string.IsNullOrWhiteSpace(userInfo.UserId) ||
+                    _userManager.GetUserId(User) != userInfo.UserId)
+                    return BadRequest();
+
                 var userInfoManager = new UserInfoManager(_dbContext);
-                userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
+                userInfo = userInfoManager.UpdateUserInfo(userInfo);
                 return new OkObjectResult(userInfo);
             }
-            return new NotFoundObjectResult("Oups");
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
         //

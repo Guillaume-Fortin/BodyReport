@@ -19,7 +19,7 @@ namespace BodyReport.Crud.Transformer
             row.Name = bean.Name;
         }
 
-        internal static Country ToBean(CountryRow row)
+        public static Country ToBean(CountryRow row)
         {
             if (row == null)
                 return null;
