@@ -43,6 +43,9 @@ namespace BodyReport.Areas.User.ViewModels
         [Display(Name = TRS.COUNTRY, ResourceType = typeof(Translation))]
         public int CountryId { get; set; }
 
+        [Display(Name = TRS.TIME_ZONE, ResourceType = typeof(Translation))]
+        public string TimeZoneName { get; set; }
+
         [Display(Name = TRS.IMAGE, ResourceType = typeof(Translation))]
         public string ImageUrl { get; set; } = string.Empty;
     }

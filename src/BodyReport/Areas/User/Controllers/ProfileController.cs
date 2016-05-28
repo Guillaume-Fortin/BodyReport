@@ -14,6 +14,8 @@ using BodyReport.Models;
 using BodyReport.Manager;
 using BodyReport.Resources;
 using BodyReport.Data;
+using System;
+using System.Collections.Generic;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -105,6 +107,8 @@ namespace BodyReport.Areas.User.Controllers
                     var country = countryManager.GetCountry(new CountryKey() { Id = userInfo.CountryId });
                     ViewBag.Country = country == null ? Translation.NOT_SPECIFIED : country.Name;
 
+                    ViewBag.TimeZoneName = userInfo.TimeZoneName;
+
                     var userProfileService = new UserProfileService(_dbContext, _env);
                     viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
                 }
@@ -140,6 +144,7 @@ namespace BodyReport.Areas.User.Controllers
                     viewModel.Weight = userInfo.Weight;
                     viewModel.ZipCode = userInfo.ZipCode;
                     viewModel.CountryId = userInfo.CountryId;
+                    viewModel.TimeZoneName = userInfo.TimeZoneName;
 
                     var userProfileService = new UserProfileService(_dbContext, _env);
                     viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
@@ -151,6 +156,9 @@ namespace BodyReport.Areas.User.Controllers
                 ViewBag.Countries = ControllerUtils.CreateSelectCountryItemList(countryManager.FindCountries(), viewModel.CountryId);
 
                 ViewBag.Units = ControllerUtils.CreateSelectUnitItemList(viewModel.Unit);
+
+                ViewBag.TimeZones = ControllerUtils.CreateSelectTimeZoneItemList(viewModel.TimeZoneName);
+
                 return View(viewModel);
             }
             
@@ -216,7 +224,8 @@ namespace BodyReport.Areas.User.Controllers
                             Weight = viewModel.Weight,
                             ZipCode = viewModel.ZipCode,
                             CountryId = viewModel.CountryId,
-                            Sex = (TSexType)viewModel.SexId
+                            Sex = (TSexType)viewModel.SexId,
+                            TimeZoneName = viewModel.TimeZoneName,
                         };
 
                         userInfo = userInfoManager.UpdateUserInfo(userInfo);
@@ -237,6 +246,7 @@ namespace BodyReport.Areas.User.Controllers
             ViewBag.Sex = ControllerUtils.CreateSelectSexItemList(sexId);
             ViewBag.Countries = ControllerUtils.CreateSelectCountryItemList(countryManager.FindCountries(), countryId);
             ViewBag.Units = ControllerUtils.CreateSelectUnitItemList(viewModel.Unit);
+            ViewBag.TimeZones = ControllerUtils.CreateSelectTimeZoneItemList(viewModel.TimeZoneName);
             return View(viewModel);
         }
     }

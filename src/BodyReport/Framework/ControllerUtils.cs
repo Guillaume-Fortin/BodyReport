@@ -1,5 +1,6 @@
 ﻿using BodyReport.Areas.User.ViewModels;
 using BodyReport.Resources;
+using Framework;
 using Message;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -115,6 +116,18 @@ namespace BodyReport.Framework
             return result;
         }
 
+        public static List<SelectListItem> CreateSelectTimeZoneItemList(string timeZoneId)
+        {
+            var result = new List<SelectListItem>();
+
+            foreach (var olsonTimeZoneName in TimeZoneMapper.OlsonTimeZoneNames.Distinct())
+            {
+                result.Add(new SelectListItem { Text = olsonTimeZoneName, Value = olsonTimeZoneName, Selected = timeZoneId == olsonTimeZoneName });
+            }
+
+            return result;
+        }
+
         public static string GetModelStateError(ModelStateDictionary modelState)
         {
             StringBuilder sbError = new StringBuilder();
@@ -141,8 +154,8 @@ namespace BodyReport.Framework
             trainingDay.WeekOfYear = viewModel.WeekOfYear;
             trainingDay.DayOfWeek = viewModel.DayOfWeek;
             trainingDay.TrainingDayId = viewModel.TrainingDayId;
-            trainingDay.BeginHour = viewModel.BeginHour;
-            trainingDay.EndHour = viewModel.EndHour;
+            trainingDay.BeginHour = viewModel.BeginHour.ToUniversalTime();
+            trainingDay.EndHour = viewModel.EndHour.ToUniversalTime();
 
             return trainingDay;
         }

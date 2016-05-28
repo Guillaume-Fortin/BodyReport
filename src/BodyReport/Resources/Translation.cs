@@ -261,5 +261,6 @@ namespace BodyReport.Resources
         public static string USER_ACCOUNT_LOCKED_OUT { get { return Get(TRS.USER_ACCOUNT_LOCKED_OUT); } }
         public static string IMPORT { get { return Get(TRS.IMPORT); } }
         public static string INSERT_ONLY { get { return Get(TRS.INSERT_ONLY); } }
+        public static string TIME_ZONE { get { return Get(TRS.TIME_ZONE); } }
     }
 }

@@ -43,14 +43,12 @@ namespace BodyReport.Areas.User.Controllers
             _dbContext = dbContext;
         }
 
-        private DayOfWeek GetCurrentDayOfWeek(int? dayOfWeekSelected)
+        private DayOfWeek GetCurrentDayOfWeek(int? dayOfWeekSelected, TimeZoneInfo timeZoneInfo)
         {
-            DayOfWeek currentDayOfWeek = DateTime.Now.DayOfWeek; // TODO Manage Time with world position of user
-
             if (dayOfWeekSelected.HasValue && dayOfWeekSelected >= 0 && dayOfWeekSelected <= 6)
-                currentDayOfWeek = (DayOfWeek)dayOfWeekSelected.Value; // TODO Manage Time with world position of user
-
-            return currentDayOfWeek;
+                return (DayOfWeek)dayOfWeekSelected.Value; // TODO Manage Time with world position of user
+            else
+                return TimeZoneInfo.ConvertTime(DateTime.Now, timeZoneInfo).DayOfWeek;
         }
 
         //
@@ -87,7 +85,10 @@ namespace BodyReport.Areas.User.Controllers
             if (userInfo == null)
                 userInfo = new UserInfo();
 
-            DateTime dateTime = DateTime.Now; // TODO Manage Time with world position of user
+            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
+            if (timeZoneInfo == null)
+                timeZoneInfo = TimeZoneInfo.Local;
+            DateTime dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timeZoneInfo);
 
             var trainingWeek = new TrainingWeek();
             trainingWeek.UserId = _userManager.GetUserId(User);
@@ -256,7 +257,14 @@ namespace BodyReport.Areas.User.Controllers
             if (trainingWeek == null) // no data found
                 return RedirectToAction("Index");
 
-            DateTime dateTime = DateTime.Now; // TODO Manage Time with world position of user
+            var userInfoManager = new UserInfoManager(_dbContext);
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            if (userInfo == null)
+                userInfo = new UserInfo();
+            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
+            if (timeZoneInfo == null)
+                timeZoneInfo = TimeZoneInfo.Local;
+            DateTime dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timeZoneInfo);
             int nextWeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
 
             if (dateTime.Year == year && nextWeekOfYear == weekOfYear
@@ -372,7 +380,16 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult View(string userId, int year, int weekOfYear, int? dayOfWeekSelected)
         {
-            DayOfWeek currentDayOfWeek = GetCurrentDayOfWeek(dayOfWeekSelected);
+            var userInfoManager = new UserInfoManager(_dbContext);
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
+            if (userInfo == null)
+                userInfo = new UserInfo();
+
+            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
+            if (timeZoneInfo == null)
+                timeZoneInfo = TimeZoneInfo.Local;
+
+            DayOfWeek currentDayOfWeek = GetCurrentDayOfWeek(dayOfWeekSelected, timeZoneInfo);
             if (!dayOfWeekSelected.HasValue)
                 dayOfWeekSelected = (int)currentDayOfWeek;
 
@@ -411,7 +428,7 @@ namespace BodyReport.Areas.User.Controllers
                 trainingDayViewModels = new List<TrainingDayViewModel>();
                 foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    trainingDayViewModels.Add(TransformTrainingDayToViewModel(trainingDay));
+                    trainingDayViewModels.Add(TransformTrainingDayToViewModel(trainingDay, userInfo));
 
                     if (dayOfWeekSelected.HasValue && trainingDay.DayOfWeek == dayOfWeekSelected)
                     { // Get only current
@@ -493,18 +510,25 @@ namespace BodyReport.Areas.User.Controllers
             return trainingJournalVM;
         }
 
-        private TrainingDayViewModel TransformTrainingDayToViewModel(TrainingDay trainingDay)
+        private TrainingDayViewModel TransformTrainingDayToViewModel(TrainingDay trainingDay, UserInfo userInfo)
         {
-            return new TrainingDayViewModel()
+            var result = new TrainingDayViewModel()
             {
                 UserId = trainingDay.UserId,
                 Year = trainingDay.Year,
                 WeekOfYear = trainingDay.WeekOfYear,
                 DayOfWeek = trainingDay.DayOfWeek,
-                TrainingDayId = trainingDay.TrainingDayId,
-                BeginHour = trainingDay.BeginHour,
-                EndHour = trainingDay.EndHour
+                TrainingDayId = trainingDay.TrainingDayId
             };
+
+            //convert date to user timezone
+            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
+            if (timeZoneInfo == null)
+                timeZoneInfo = TimeZoneInfo.Local;
+            result.BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo);
+            result.EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo);
+
+            return result;
         }
 
         private TrainingExerciseViewModel TransformTrainingExerciseToViewModel(BodyExerciseManager bodyExerciseManager, TrainingExercise trainingExercise)
@@ -575,7 +599,7 @@ namespace BodyReport.Areas.User.Controllers
             };
 
             ViewBag.UserUnit = userInfo.Unit;
-            return View(TransformTrainingDayToViewModel(trainingDay));
+            return View(TransformTrainingDayToViewModel(trainingDay, userInfo));
         }
         
         // Create a training day
@@ -645,7 +669,11 @@ namespace BodyReport.Areas.User.Controllers
             if (trainingDay == null) // no data found
                 return RedirectToAction("View", new { userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek });
 
-            return View(TransformTrainingDayToViewModel(trainingDay));
+            var userInfoManager = new UserInfoManager(_dbContext);
+            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            if (userInfo == null)
+                userInfo = new UserInfo();
+            return View(TransformTrainingDayToViewModel(trainingDay, userInfo));
         }
 
         // Edit a training day

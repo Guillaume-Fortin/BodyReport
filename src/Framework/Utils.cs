@@ -46,7 +46,7 @@ namespace Framework
 
         public static DateTime YearWeekToPlanningDateTime(int year, int week)
         {
-            DateTime startOfYear = new DateTime(year, 1, 1);
+            DateTime startOfYear = new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             int daysToRetreiveLasteMondayDay = DayOfWeek.Monday - startOfYear.DayOfWeek;
             //If daysToRetreiveLasteMondayDay == 0, it's first day new planningCalendar
             if (daysToRetreiveLasteMondayDay < 0) //Difference in day (Tuesday to Saturday)
@@ -105,8 +105,8 @@ namespace Framework
         {
             get
             {
-                var date = DateTime.Now;
-                return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second);
+                var date = DateTime.Now.ToUniversalTime();
+                return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             }
         }
     }

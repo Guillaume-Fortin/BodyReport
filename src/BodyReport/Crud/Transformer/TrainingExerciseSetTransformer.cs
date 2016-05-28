@@ -1,4 +1,5 @@
-﻿using BodyReport.Models;
+﻿using BodyReport.Framework;
+using BodyReport.Models;
 using Framework;
 using Message;
 using System;
@@ -26,7 +27,7 @@ namespace BodyReport.Crud.Transformer
             row.NumberOfReps = bean.NumberOfReps;
             row.Weight = bean.Weight;
             row.Unit = (int)bean.Unit;
-            row.ModificationDate = Utils.DateTimeWithoutMs; // Set modificationDate
+            row.ModificationDate = DbUtils.DateToUtc(Utils.DateTimeWithoutMs); // Set modificationDate
         }
 
         internal static TrainingExerciseSet ToBean(TrainingExerciseSetRow row)
@@ -46,7 +47,7 @@ namespace BodyReport.Crud.Transformer
             bean.NumberOfReps = row.NumberOfReps;
             bean.Weight = row.Weight;
             bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
-            bean.ModificationDate = row.ModificationDate;
+            bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
             return bean;
         }
     }

@@ -82,6 +82,10 @@
                             <dd>
                                 @ViewBag.Country
                             </dd>
+                            <dt>@Translation.TIME_ZONE :</dt>
+                            <dd>
+                                @ViewBag.TimeZoneName
+                            </dd>
                         </dl>
                     </div>
                     @if(!ViewBag.IsMobileBrowser && !string.IsNullOrWhiteSpace(Model.ImageUrl))

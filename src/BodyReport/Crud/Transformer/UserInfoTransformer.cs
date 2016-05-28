@@ -1,4 +1,5 @@
 ﻿using BodyReport.Models;
+using Framework;
 using Message;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,11 @@ namespace BodyReport.Crud.Transformer
             row.Sex = (int)bean.Sex;
             row.ZipCode = bean.ZipCode;
             row.CountryId = bean.CountryId;
+
+            if (string.IsNullOrWhiteSpace(bean.TimeZoneName))
+                row.TimeZoneName = TimeZoneMapper.GetOlsonTimeZoneName(TimeZoneInfo.Local.Id);
+            else
+                row.TimeZoneName = bean.TimeZoneName;
         }
 
         internal static UserInfo ToBean(UserInfoRow row)
@@ -36,6 +42,12 @@ namespace BodyReport.Crud.Transformer
             bean.Sex = (TSexType)row.Sex;
             bean.ZipCode = row.ZipCode;
             bean.CountryId = row.CountryId;
+
+            if (string.IsNullOrWhiteSpace(row.TimeZoneName))
+                bean.TimeZoneName = TimeZoneMapper.GetOlsonTimeZoneName(TimeZoneInfo.Local.Id);
+            else
+                bean.TimeZoneName = row.TimeZoneName;
+
             return bean;
         }
     }

@@ -148,5 +148,6 @@
   "INSERT_ONLY": "Insertion seule",
   "SYNCHRONIZATION": "Synchronisation",
   "SYNCHRONIZE_DATAS": "Synchroniser les données",
-  "TRANSLATIONS": "Traductions"
+  "TRANSLATIONS": "Traductions",
+  "TIME_ZONE": "Fuseau horaire"
 }

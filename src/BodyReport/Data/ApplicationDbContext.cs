@@ -3,6 +3,7 @@ using BodyReport.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using BodyReport.Models;
+using System;
 
 namespace BodyReport.Data
 {
@@ -27,10 +28,11 @@ namespace BodyReport.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+            var defaultDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             //Define translation data table
             var transactionTable = builder.Entity<TranslationRow>().ToTable("Translation");
@@ -60,6 +62,7 @@ namespace BodyReport.Data
             var userInfoTable = builder.Entity<UserInfoRow>().ToTable("UserInfo");
             userInfoTable.Property(p => p.UserId).HasMaxLength(450).ValueGeneratedNever();
             userInfoTable.Property(p => p.ZipCode).HasMaxLength(80).ValueGeneratedNever();
+            userInfoTable.Property(p => p.TimeZoneName).HasMaxLength(100).ValueGeneratedNever();
             userInfoTable.HasKey(s => new { s.UserId });
 
             var cityTable = builder.Entity<CityRow>().ToTable("City");
@@ -79,6 +82,7 @@ namespace BodyReport.Data
             trainingWeekTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
             trainingWeekTable.Property(p => p.Year).ValueGeneratedNever();
             trainingWeekTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
+            trainingWeekTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
             trainingWeekTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear });
 
             var trainingDayTable = builder.Entity<TrainingDayRow>().ToTable("TrainingDay");
@@ -87,6 +91,9 @@ namespace BodyReport.Data
             trainingDayTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
             trainingDayTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
             trainingDayTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
+            trainingDayTable.Property(p => p.BeginHour).HasDefaultValue(defaultDate);
+            trainingDayTable.Property(p => p.EndHour).HasDefaultValue(defaultDate);
+            trainingDayTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
             trainingDayTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId });
 
             var trainingJournalExerciseTable = builder.Entity<TrainingExerciseRow>().ToTable("TrainingExercise");
@@ -96,6 +103,7 @@ namespace BodyReport.Data
             trainingJournalExerciseTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
             trainingJournalExerciseTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
             trainingJournalExerciseTable.Property(p => p.Id).ValueGeneratedNever();
+            trainingJournalExerciseTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
             trainingJournalExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.Id });
 
             var trainingExerciseSetTable = builder.Entity<TrainingExerciseSetRow>().ToTable("TrainingExerciseSet");
@@ -106,6 +114,7 @@ namespace BodyReport.Data
             trainingExerciseSetTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.TrainingExerciseId).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.Id).ValueGeneratedNever();
+            trainingExerciseSetTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
             trainingExerciseSetTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.TrainingExerciseId, t.Id });
         }
 

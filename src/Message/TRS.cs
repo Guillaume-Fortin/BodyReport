@@ -757,5 +757,10 @@ namespace Message
         /// </summary>
         [Translation("Translations")]
         public const string TRANSLATIONS = "TRANSLATIONS";
+        /// <summary>
+        /// Time zone
+        /// </summary>
+        [Translation("Time zone")]
+        public const string TIME_ZONE = "TIME_ZONE";
     }
 }

@@ -69,5 +69,14 @@ namespace BodyReport.Models
             get;
             set;
         }
+
+        /// <summary>
+        /// Olson timezone name
+        /// </summary>
+        public string TimeZoneName
+        {
+            get;
+            set;
+        }
     }
 }

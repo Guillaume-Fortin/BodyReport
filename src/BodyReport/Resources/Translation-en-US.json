@@ -150,5 +150,6 @@
   "INSERT_ONLY": "Insert only",
   "SYNCHRONIZATION": "Synchronization",
   "SYNCHRONIZE_DATAS": "Synchronize datas",
-  "TRANSLATIONS": "Translations"
+  "TRANSLATIONS": "Translations",
+  "TIME_ZONE": "Time zone"
 }
