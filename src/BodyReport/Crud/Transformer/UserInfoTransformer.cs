@@ -24,7 +24,10 @@ namespace BodyReport.Crud.Transformer
             row.CountryId = bean.CountryId;
 
             if (string.IsNullOrWhiteSpace(bean.TimeZoneName))
-                row.TimeZoneName = TimeZoneMapper.GetOlsonTimeZoneName(TimeZoneInfo.Local.Id);
+            {
+                if(string.IsNullOrWhiteSpace(row.TimeZoneName)) // only update if not present
+                    row.TimeZoneName = TimeZoneMapper.GetOlsonTimeZoneName(TimeZoneInfo.Local.Id);
+            }
             else
                 row.TimeZoneName = bean.TimeZoneName;
         }
