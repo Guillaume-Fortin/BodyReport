@@ -51,10 +51,15 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Log In")]
 		public const string LOG_IN = "LOG_IN";
-		/// <summary>
-		/// Create a new account
+        /// <summary>
+		/// Log off
 		/// </summary>
-		[Translation("Create a new account")]
+		[Translation("Log off")]
+        public const string LOG_OFF = "LOG_OFF";
+        /// <summary>
+        /// Create a new account
+        /// </summary>
+        [Translation("Create a new account")]
 		public const string CREATE_NEW_ACCOUNT = "CREATE_NEW_ACCOUNT";
 		/// <summary>
 		/// Register
@@ -762,5 +767,10 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Time zone")]
         public const string TIME_ZONE = "TIME_ZONE";
+        /// <summary>
+        /// Are you sure you want to log off ?
+        /// </summary>
+        [Translation("Are you sure you want to log off ?")]
+        public const string ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI = "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI";
     }
 }

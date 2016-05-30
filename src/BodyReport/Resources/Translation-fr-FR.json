@@ -149,5 +149,7 @@
   "SYNCHRONIZATION": "Synchronisation",
   "SYNCHRONIZE_DATAS": "Synchroniser les données",
   "TRANSLATIONS": "Traductions",
-  "TIME_ZONE": "Fuseau horaire"
+  "TIME_ZONE": "Fuseau horaire",
+  "LOG_OFF": "Déconnexion",
+  "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Êtes-vous sûr de vouloir vous déconnecter?"
 }

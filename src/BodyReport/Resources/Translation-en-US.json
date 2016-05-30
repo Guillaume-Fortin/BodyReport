@@ -151,5 +151,7 @@
   "SYNCHRONIZATION": "Synchronization",
   "SYNCHRONIZE_DATAS": "Synchronize datas",
   "TRANSLATIONS": "Translations",
-  "TIME_ZONE": "Time zone"
+  "TIME_ZONE": "Time zone",
+  "LOG_OFF": "Log off",
+  "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Are you sure you want to log off ?"
 }
