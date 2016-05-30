@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Framework;
+using BodyReport.Framework;
 using Microsoft.Extensions.Logging;
 using BodyReport.Resources;
 

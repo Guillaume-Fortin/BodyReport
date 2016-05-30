@@ -1,7 +1,7 @@
 ﻿using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
-using Message;
+using BodyReport.Message;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 

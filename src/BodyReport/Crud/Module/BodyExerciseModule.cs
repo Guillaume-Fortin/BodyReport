@@ -2,7 +2,7 @@
 using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
-using Message;
+using BodyReport.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;

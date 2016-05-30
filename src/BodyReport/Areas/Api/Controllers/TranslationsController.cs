@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Message;
+using BodyReport.Message;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;

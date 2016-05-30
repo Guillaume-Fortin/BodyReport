@@ -7,9 +7,9 @@ using BodyReport.Models;
 using BodyReport.Manager;
 using BodyReport.Resources;
 using BodyReport.Services;
-using Message;
-using Message.WebApi;
-using Message.WebApi.MultipleParameters;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
+using BodyReport.Message.WebApi.MultipleParameters;
 using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers

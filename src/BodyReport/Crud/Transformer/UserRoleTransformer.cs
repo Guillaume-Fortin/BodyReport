@@ -1,4 +1,4 @@
-﻿using Message;
+﻿using BodyReport.Message;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BodyReport.Crud.Transformer

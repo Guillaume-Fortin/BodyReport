@@ -3,7 +3,7 @@ using BodyReport.Crud.Transformer;
 using BodyReport.Data;
 using BodyReport.Models;
 using BodyReport.Resources;
-using Message;
+using BodyReport.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,8 +2,8 @@
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Resources;
-using Message;
-using Message.WebApi;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;

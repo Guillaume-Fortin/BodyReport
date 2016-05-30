@@ -1,6 +1,6 @@
 ﻿using BodyReport.Data;
 using BodyReport.Services;
-using Message.WebApi;
+using BodyReport.Message.WebApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

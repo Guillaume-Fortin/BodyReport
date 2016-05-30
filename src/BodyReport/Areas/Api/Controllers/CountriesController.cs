@@ -1,6 +1,6 @@
 ﻿using BodyReport.Data;
 using BodyReport.Manager;
-using Message;
+using BodyReport.Message;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

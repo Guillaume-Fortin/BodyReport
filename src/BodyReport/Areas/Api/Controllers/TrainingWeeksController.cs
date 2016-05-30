@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Message;
-using Message.WebApi;
-using Message.WebApi.MultipleParameters;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
+using BodyReport.Message.WebApi.MultipleParameters;
 using BodyReport.Framework.Exceptions;
 using BodyReport.Models;
 using BodyReport.Manager;

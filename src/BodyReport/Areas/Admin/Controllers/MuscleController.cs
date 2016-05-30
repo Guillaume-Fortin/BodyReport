@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using Message;
+using BodyReport.Message;
 using BodyReport.Crud.Transformer;
 using BodyReport.Framework;
 using BodyReport.Manager;

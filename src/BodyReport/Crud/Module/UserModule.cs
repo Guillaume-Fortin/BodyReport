@@ -1,7 +1,7 @@
 ﻿using BodyReport.Crud.Transformer;
 using BodyReport.Data;
 using BodyReport.Models;
-using Message;
+using BodyReport.Message;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

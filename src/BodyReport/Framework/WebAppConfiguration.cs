@@ -1,5 +1,5 @@
-﻿using Framework;
-using Message;
+﻿using BodyReport.Framework;
+using BodyReport.Message;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;

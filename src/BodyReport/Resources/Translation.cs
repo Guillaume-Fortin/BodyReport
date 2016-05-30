@@ -1,7 +1,7 @@
 ﻿using BodyReport.Data;
 using BodyReport.Framework;
 using BodyReport.Models;
-using Message;
+using BodyReport.Message;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;

@@ -1,8 +1,8 @@
 ﻿using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Models;
-using Message;
-using Message.WebApi;
+using BodyReport.Message;
+using BodyReport.Message.WebApi;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Message;
+using BodyReport.Message;
 
 namespace BodyReport.ViewModels.Admin
 {

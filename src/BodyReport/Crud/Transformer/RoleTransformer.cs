@@ -1,4 +1,4 @@
-﻿using Message;
+﻿using BodyReport.Message;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

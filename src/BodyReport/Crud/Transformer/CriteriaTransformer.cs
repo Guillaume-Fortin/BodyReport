@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Message;
+using BodyReport.Message;
 using System.Reflection;
 using System.Linq.Expressions;
-using Framework;
+using BodyReport.Framework;
 
 namespace BodyReport.Crud.Transformer
 {

@@ -39,10 +39,10 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "Framework": "1.0.0-*",
-    "Message": "1.0.0-*",
     "Newtonsoft.Json": "8.0.4-beta1",
-    "MailKit": "1.3.0-beta7"
+    "MailKit": "1.3.0-beta7",
+    "BodyReport.Framework": "1.0.0-*",
+    "BodyReport.Message": "1.0.0-*"
   },
 
   "tools": {

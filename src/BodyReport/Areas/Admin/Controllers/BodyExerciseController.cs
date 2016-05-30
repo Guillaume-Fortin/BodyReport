@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Message;
+using BodyReport.Message;
 using BodyReport.Crud.Transformer;
 using BodyReport.Framework;
 using BodyReport.Manager;

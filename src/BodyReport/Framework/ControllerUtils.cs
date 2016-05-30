@@ -1,7 +1,7 @@
 ﻿using BodyReport.Areas.User.ViewModels;
 using BodyReport.Resources;
-using Framework;
-using Message;
+using BodyReport.Framework;
+using BodyReport.Message;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;

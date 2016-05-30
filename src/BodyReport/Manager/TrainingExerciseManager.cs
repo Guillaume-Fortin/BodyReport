@@ -1,8 +1,8 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Data;
 using BodyReport.Models;
-using Framework;
-using Message;
+using BodyReport.Framework;
+using BodyReport.Message;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
