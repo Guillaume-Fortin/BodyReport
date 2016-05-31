@@ -31,6 +31,15 @@ namespace BodyReport.Message
         /// Id of training exercise
         /// </summary>
         public int Id { get; set; }
+        /// <summary>
+        /// Equals by key
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsEqualByKey(TrainingExerciseKey key1, TrainingExerciseKey key2)
+        {
+            return key1.UserId == key2.UserId && key1.Year == key2.Year && key1.WeekOfYear == key2.WeekOfYear &&
+                   key1.DayOfWeek == key2.DayOfWeek && key1.TrainingDayId == key2.TrainingDayId && key1.Id == key2.Id;
+        }
     }
 
     public class TrainingExercise : TrainingExerciseKey
