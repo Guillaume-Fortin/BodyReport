@@ -38,9 +38,9 @@
     
 
     <div class="form-group">
-        <label asp-for="RestTime" class="col-md-2 control-label"></label>
+        <label asp-for="RestTime" class="col-md-2 control-label">@Translation.REST_TIME (s)</label>
         <div class="col-md-10">
-            <input asp-for="RestTime" class="form-control" type="number" />
+            <input asp-for="RestTime" class="form-control" type="number" /> 
             <span asp-validation-for="RestTime" class="text-danger"></span>
         </div>
     </div>
@@ -50,11 +50,6 @@
         <div class="form-group">
             <label class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @if (Model.Reps.Count < 10)
-                {
-                    <button type="submit" name="buttonType" value="addRep" class="btn btn-default">@Translation.ADD_REPS</button>
-                    <br /><br /><br />
-                }
                 <table class="table">
                     <tr>
                         <th>
@@ -62,8 +57,6 @@
                         </th>
                         <th>
                             @Translation.WEIGHT (@weightUnit)
-                        </th>
-                        <th>
                         </th>
                     </tr>
 
@@ -76,15 +69,27 @@
                         <td>
                             <input asp-for="@Model.Weights[i]" class="form-control" />
                         </td>
+                    </tr>
+
+                    <tr>
                         <td>
-                            @if (i > 0 && i == (Model.Reps.Count - 1))
+                            @if (i == (Model.Reps.Count - 1))
                             {
-                                <button type="submit" name="buttonType" value="delete" class="btn btn-default">@Translation.DELETE</button>
+                                @if (Model.Reps.Count < 10)
+                                {
+                                <button type="submit" name="buttonType" value="addRep" class="btn btn-default">@Translation.ADD_REPS</button>
+                                }
+
+                                @if (i > 0)
+                                {
+                                <button type="submit" name="buttonType" value="delete" class="btn btn-default">@Translation.DELETE_REPS</button>
+                                }
                             }
                         </td>
+                        <td/>
                     </tr>
                     }
-                </table>
+</table>
 </div>
         </div>
     }

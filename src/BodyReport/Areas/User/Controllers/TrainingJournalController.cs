@@ -1084,8 +1084,7 @@ namespace BodyReport.Areas.User.Controllers
             var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
             if (trainingExercise == null)
                 return actionResult;
-
-
+            
             var bodyExerciseManager = new BodyExerciseManager(_dbContext);
 
             var bodyExercise = bodyExerciseManager.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
@@ -1119,9 +1118,9 @@ namespace BodyReport.Areas.User.Controllers
             }
 
             if(viewModel.Reps == null || viewModel.Reps.Count == 0)
-                viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
+                viewModel.Reps = new List<int?>() { 8 };
             if (viewModel.Weights == null || viewModel.Weights.Count == 0)
-                viewModel.Weights = new List<double?>() { 0, 0, 0, 0 };
+                viewModel.Weights = new List<double?>() { 0 };
            
             return View(viewModel);
         }

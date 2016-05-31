@@ -245,6 +245,7 @@ namespace BodyReport.Resources
         public static string REST_TIME { get { return Get(TRS.REST_TIME); } }
         public static string REPS { get { return Get(TRS.REPS); } }
         public static string ADD_REPS { get { return Get(TRS.ADD_REPS); } }
+        public static string DELETE_REPS { get { return Get(TRS.DELETE_REPS); } }
         public static string SETS { get { return Get(TRS.SETS); } }
         public static string VALIDATE { get { return Get(TRS.VALIDATE); } }
         public static string DAY_OF_WEEK { get { return Get(TRS.DAY_OF_WEEK); } }

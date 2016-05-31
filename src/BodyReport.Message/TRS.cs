@@ -592,10 +592,15 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Add reps")]
 		public const string ADD_REPS = "ADD_REPS";
-		// <summary>
-		/// Sets
-		/// </summary>
-		[Translation("Sets")]
+        // <summary>
+        /// Delete reps
+        /// </summary>
+        [Translation("Delete reps")]
+        public const string DELETE_REPS = "DELETE_REPS";
+        // <summary>
+        /// Sets
+        /// </summary>
+        [Translation("Sets")]
 		public const string SETS = "SETS";
 		// <summary>
 		/// Validate
