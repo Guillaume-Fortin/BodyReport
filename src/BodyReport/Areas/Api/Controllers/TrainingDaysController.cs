@@ -14,7 +14,7 @@ using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-	[Area("Api")]
+    [Area("Api")]
     public class TrainingDaysController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -90,7 +90,7 @@ namespace BodyReport.Areas.Api.Controllers
                         Year = viewModel.Year,
                         WeekOfYear = viewModel.WeekOfYear
                     };
-                    var trainingWeekScenario = new TrainingWeekScenario()  { ManageTrainingDay = false };
+                    var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                     var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                     if (trainingWeek == null)
@@ -167,6 +167,32 @@ namespace BodyReport.Areas.Api.Controllers
             {
                 return BadRequest(new WebApiException("Error", exception));
             }
+        }
+
+        // Post api/TrainingDays/SwitchDay
+        [HttpPost]
+        public IActionResult SwitchDay([FromBody]SwitchDayParameter switchDayParameter)
+        {
+            if(switchDayParameter == null || switchDayParameter.TrainingDayKey == null)
+                return BadRequest();
+            try
+            {
+                TrainingDayKey trainingDayKey = switchDayParameter.TrainingDayKey;
+                int switchDayOfWeek = switchDayParameter.SwitchDayOfWeek;
+
+                if (trainingDayKey == null || string.IsNullOrWhiteSpace(trainingDayKey.UserId) ||
+                    trainingDayKey.Year == 0 || trainingDayKey.WeekOfYear == 0 || trainingDayKey.DayOfWeek < 0 || trainingDayKey.DayOfWeek > 6 ||
+                    switchDayOfWeek < 0 || switchDayOfWeek > 6 || _userManager.GetUserId(User) != trainingDayKey.UserId)
+                    return BadRequest();
+
+                var trainingDayService = new TrainingDayService(_dbContext);
+                trainingDayService.SwitchDayOnTrainingDay(trainingDayKey.UserId, trainingDayKey.Year, trainingDayKey.WeekOfYear, trainingDayKey.DayOfWeek, switchDayOfWeek);
+                return new OkResult();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            };
         }
     }
 }
