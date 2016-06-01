@@ -79,7 +79,7 @@
 </div>
 <p>
     <h2>@Translation.TRAINING_DAY.</h2>
-    <div class="btn-group">
+    <div class="btn-group" role="group">
         @foreach (var dayOfWeek in dayOfWeekList)
         {
             string classValue = "btn-default";
@@ -101,8 +101,26 @@
                 classValue += " active";
             }
 
-            <button type="button" onclick="location.href='@Url.Action("View", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeekSelected = (int)dayOfWeek })'" class="btn @classValue">@Translation.Get(((DayOfWeek)dayOfWeek).ToString().ToUpper())</button>
+            <button type="button" role="group" onclick="location.href='@Url.Action("View", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeekSelected = (int)dayOfWeek })'" class="btn @classValue">@Translation.Get(((DayOfWeek)dayOfWeek).ToString().ToUpper())</button>
         }
+        <div class="btn-group" role="group">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                @Translation.SWITCH_TRAINING_DAY
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+               @foreach (var dayOfWeek in dayOfWeekList)
+               {
+                   if (dayOfWeek != ViewBag.CurrentDayOfWeek)
+                   {
+                    <li>
+                        <a href="@Url.Action("SwitchTrainingDay", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeek = (int)ViewBag.CurrentDayOfWeek, dayOfWeekSelected = (int)dayOfWeek })">
+                            @Translation.Get((dayOfWeek).ToString().ToUpper())</a>
+                    </li>
+                   }
+               }
+            </ul>
+        </div>
         </div>
 </p>
 
@@ -121,9 +139,9 @@ else
 {
     @if (ViewBag.Editable)
     {
-    <p>
-        <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE_NEW_PE</a>
-    </p>
+        <p>
+            <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE</a>
+        </p>
     }
 
     @foreach (TrainingDayViewModel trainingDay in currentTrainingDayList)

@@ -152,5 +152,6 @@
   "TIME_ZONE": "Fuseau horaire",
   "LOG_OFF": "Déconnexion",
   "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Êtes-vous sûr de vouloir vous déconnecter?",
-  "DELETE_REPS": "Supprimer répétitions"
+  "DELETE_REPS": "Supprimer répétitions",
+  "SWITCH_TRAINING_DAY": "Changement de jour d'entrainement"
 }

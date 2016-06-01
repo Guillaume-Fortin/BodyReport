@@ -154,5 +154,6 @@
   "TIME_ZONE": "Time zone",
   "LOG_OFF": "Log off",
   "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Are you sure you want to log off ?",
-  "DELETE_REPS": "Delete reps"
+  "DELETE_REPS": "Delete reps",
+  "SWITCH_TRAINING_DAY": "Switch training day"
 }

@@ -263,5 +263,6 @@ namespace BodyReport.Resources
         public static string IMPORT { get { return Get(TRS.IMPORT); } }
         public static string INSERT_ONLY { get { return Get(TRS.INSERT_ONLY); } }
         public static string TIME_ZONE { get { return Get(TRS.TIME_ZONE); } }
+        public static string SWITCH_TRAINING_DAY { get { return Get(TRS.SWITCH_TRAINING_DAY); } }
     }
 }

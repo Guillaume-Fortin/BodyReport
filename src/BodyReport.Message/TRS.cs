@@ -777,5 +777,10 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Are you sure you want to log off ?")]
         public const string ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI = "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI";
+        /// <summary>
+        /// Switch training day
+        /// </summary>
+        [Translation("Switch training day")]
+        public const string SWITCH_TRAINING_DAY = "SWITCH_TRAINING_DAY";
     }
 }
