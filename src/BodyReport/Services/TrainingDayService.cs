@@ -50,6 +50,14 @@ namespace BodyReport.Services
             return _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
         }
 
+        public void DeleteTrainingDay(TrainingDayKey trainingDayKey)
+        {
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+            var trainingDay = _trainingDayManager.GetTrainingDay(trainingDayKey, trainingDayScenario);
+            if(trainingDay != null)
+                _trainingDayManager.DeleteTrainingDay(trainingDay);
+        }
+
         public void DeleteTrainingDay(TrainingDay trainingDay)
         {
             _trainingDayManager.DeleteTrainingDay(trainingDay);
