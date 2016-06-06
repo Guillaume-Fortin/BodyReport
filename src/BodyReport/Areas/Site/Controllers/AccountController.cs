@@ -12,6 +12,9 @@ using BodyReport.Areas.Site.ViewModels.Account;
 using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.Services;
+using BodyReport.Message;
+using BodyReport.Data;
+using BodyReport.Manager;
 
 namespace BodyReport.Areas.Site.Controllers
 {
@@ -19,6 +22,10 @@ namespace BodyReport.Areas.Site.Controllers
     [Area("Site")]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// Database db context
+        /// </summary>
+        ApplicationDbContext _dbContext = null;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -26,12 +33,14 @@ namespace BodyReport.Areas.Site.Controllers
         private readonly ILogger _logger;
 
         public AccountController(
+            ApplicationDbContext dbContext,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
             ILoggerFactory loggerFactory)
         {
+            _dbContext = dbContext;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -167,7 +176,7 @@ namespace BodyReport.Areas.Site.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "Site" });
         }
 
         //
@@ -268,17 +277,34 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View("Error");
             }
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            var applicationUser = await _userManager.FindByIdAsync(userId);
+            if (applicationUser == null)
             {
                 return View("Error");
             }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
+            var result = await _userManager.ConfirmEmailAsync(applicationUser, code);
 
             if(result.Succeeded)
-            { 
+            {
                 // add role to user
-                await _userManager.AddToRoleAsync(user, "user");
+                //await _userManager.AddToRoleAsync(user, "user"); //don't work on rc2???
+                // Verify not exist on id
+                var key = new UserKey() { Id = applicationUser.Id };
+                var manager = new UserManager(_dbContext);
+                var user = manager.GetUser(key);
+                if (user != null)
+                {
+                    //Verify role exist
+                    var roleKey = new RoleKey();
+                    roleKey.Id = "1"; //User
+                    var role = manager.GetRole(roleKey);
+                    if (role != null)
+                    {
+                        user.Role = role;
+                        user = manager.UpdateUser(user);
+                        return RedirectToAction("Index", "Home", new { area = "Site" });
+                    }
+                }
             }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
@@ -498,7 +524,7 @@ namespace BodyReport.Areas.Site.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "Site" });
             }
         }
 

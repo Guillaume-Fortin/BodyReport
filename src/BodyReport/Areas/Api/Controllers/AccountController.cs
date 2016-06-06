@@ -16,7 +16,7 @@ using BodyReport.Resources;
 using BodyReport.Services;
 using BodyReport.Data;
 
-namespace BodyReport.Areas1.Api.Controllers
+namespace BodyReport.Areas.Api.Controllers
 {
     [Authorize]
     [Area("Api")]
