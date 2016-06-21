@@ -80,9 +80,12 @@ namespace BodyReport.Message
 		{
 			get { return _userHeight; }
 			set 
-			{ 
-				_userHeight = value;
-				OnPropertyChanged();
+			{
+                if (_userHeight != value)
+                {
+                    _userHeight = value;
+                    OnPropertyChanged();
+                }
 			}
 		}
         /// <summary>
@@ -93,9 +96,12 @@ namespace BodyReport.Message
 		{
 			get { return _userWeight; }
 			set 
-			{ 
-				_userWeight = value;
-				OnPropertyChanged();
+			{
+                if (_userWeight != value)
+                {
+                    _userWeight = value;
+                    OnPropertyChanged();
+                }
 			}
 		}
 
