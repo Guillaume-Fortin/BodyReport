@@ -158,7 +158,7 @@ namespace BodyReport.Crud.Transformer
         {
             if (typeof(T) != typeof(string))
             {
-                return Expression.Equal(
+                return Expression.NotEqual(
                         Expression.Property(entityParameter, entityProperty),
                         Expression.Constant(value)
                        );
@@ -225,7 +225,7 @@ namespace BodyReport.Crud.Transformer
             }
             if (criteria.NotEqual.HasValue)
             {
-                expressionList.Add(AddEqualExpression(entityParameter, entityProperty, criteria.NotEqual.Value));
+                expressionList.Add(AddNotEqualExpression(entityParameter, entityProperty, criteria.NotEqual.Value));
             }
             if (criteria.NotEqualList != null)
             {
@@ -254,7 +254,7 @@ namespace BodyReport.Crud.Transformer
             }
             if (criteria.NotEqual != null)
             {
-                expressionList.Add(AddEqualStringExpression(entityParameter, entityProperty, criteria.NotEqual, false));
+                expressionList.Add(AddNotEqualStringExpression(entityParameter, entityProperty, criteria.NotEqual, false));
             }
             if (criteria.NotEqualList != null)
             {
