@@ -11,10 +11,12 @@ using BodyReport.Message;
 using BodyReport.Message.WebApi;
 using BodyReport.Message.WebApi.MultipleParameters;
 using BodyReport.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
+    [Authorize]
     public class TrainingDaysController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -162,41 +164,6 @@ namespace BodyReport.Areas.Api.Controllers
                 }
                 else
                     return BadRequest();
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new WebApiException("Error", exception));
-            }
-        }
-
-        // Post api/TrainingDays/Delete
-        [HttpPost]
-        public IActionResult Delete([FromBody]TrainingDayKey trainingDayKey)
-        {
-            try
-            {
-                if (trainingDayKey == null || string.IsNullOrWhiteSpace(trainingDayKey.UserId) ||
-                    trainingDayKey.Year == 0 || trainingDayKey.WeekOfYear == 0 ||
-                    trainingDayKey.DayOfWeek < 0 || trainingDayKey.DayOfWeek > 6 || 
-                    _userManager.GetUserId(User) != trainingDayKey.UserId)
-                    return BadRequest();
-                
-                using (var transaction = _dbContext.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        TrainingDayService service = new TrainingDayService(_dbContext);
-                        service.DeleteTrainingDay(trainingDayKey);
-                        transaction.Commit();
-                        return new OkObjectResult(true);
-                    }
-                    catch (Exception exception)
-                    {
-                        //_logger.LogCritical("Unable to delete training day", exception);
-                        transaction.Rollback();
-                        throw exception;
-                    }
-                }
             }
             catch (Exception exception)
             {

@@ -9,10 +9,12 @@ using BodyReport.Framework;
 using BodyReport.Models;
 using BodyReport.Services;
 using BodyReport.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
+    [Authorize]
     public class UserProfileController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

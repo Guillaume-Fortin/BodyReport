@@ -9,10 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
+    [Authorize]
     public class TrainingExercisesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

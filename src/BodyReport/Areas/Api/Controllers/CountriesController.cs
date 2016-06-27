@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [Area("Api")]
     public class CountriesController : Controller
     {

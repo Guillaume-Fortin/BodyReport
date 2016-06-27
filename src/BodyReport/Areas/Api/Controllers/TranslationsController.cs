@@ -4,10 +4,12 @@ using BodyReport.Message;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
+    [Authorize]
     public class TranslationsController : Controller
     {
         /// <summary>

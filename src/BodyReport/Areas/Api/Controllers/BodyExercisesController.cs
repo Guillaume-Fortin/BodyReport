@@ -9,8 +9,7 @@ using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    //[AllowAnonymous]
+    [Authorize]
     [Area("Api")]
     public class BodyExercisesController : Controller
     {
@@ -42,6 +41,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // POST api/BodyExercises/Post
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public List<BodyExercise> Post([FromBody]List<BodyExercise> bodyExercises)
         {
             List<BodyExercise> results = new List<BodyExercise>();
@@ -57,6 +57,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // DELETE api/BodyExercises/Delete
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public void Delete(BodyExerciseKey key)
         {
             _bodyExerciseManager.DeleteBodyExercise(key);

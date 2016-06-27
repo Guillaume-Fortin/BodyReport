@@ -8,9 +8,8 @@ using BodyReport.Models;
 using BodyReport.Data;
 
 namespace BodyReport.Areas.Api.Controllers
-{
-    [Authorize(Roles = "Admin")]
-    //[AllowAnonymous]
+{    
+    [Authorize]
     [Area("Api")]
     public class MuscularGroupsController : Controller
     {
@@ -42,6 +41,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // POST api/MuscularGroups/Post
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public List<MuscularGroup> Post([FromBody]List<MuscularGroup> muscularGroups)
         {
             List<MuscularGroup> results = new List<MuscularGroup>();
@@ -57,6 +57,7 @@ namespace BodyReport.Areas.Api.Controllers
 
         // DELETE api/MuscularGroups/Delete
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public void Delete(MuscularGroupKey key)
         {
             _manager.DeleteMuscularGroup(key);
