@@ -302,8 +302,21 @@ namespace BodyReport.Areas.Site.Controllers
                     {
                         user.Role = role;
                         user = manager.UpdateUser(user);
-                        return RedirectToAction("Index", "Home", new { area = "Site" });
                     }
+
+                    if (user != null)
+                    {
+                        //Add empty user profil (for correct connect error on mobile application)
+                        var userInfoManager = new UserInfoManager(_dbContext);
+                        var userInfo = new UserInfo()
+                        {
+                            UserId = user.Id,
+                            Unit = TUnitType.Metric
+                        };
+                        userInfoManager.UpdateUserInfo(userInfo);
+                    }
+
+                    return RedirectToAction("Index", "Home", new { area = "Site" });
                 }
             }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
