@@ -9,12 +9,19 @@ using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.FileProviders;
 using BodyReport.Message;
+using Microsoft.Extensions.Logging;
 
 namespace BodyReport.Framework
 {
     public static class TimeZoneMapper
     {
+        private static ILoggerFactory _loggerFactory = new LoggerFactory();
+        private static ILogger _logger = null;
+
         private static List<TimeZoneMap> _timeZoneNames = new List<TimeZoneMap>();
+
+        //Temporary for fix linux timezone
+        private static List<string> _timeZonesNotFound = new List<string>();
 
         static TimeZoneMapper()
         {
@@ -52,7 +59,26 @@ namespace BodyReport.Framework
             if (string.IsNullOrWhiteSpace(windowsTimeZoneName))
                 return null;
 
-            return TimeZoneInfo.FindSystemTimeZoneById(windowsTimeZoneName);
+            lock (_timeZonesNotFound)
+            {
+                if (_timeZonesNotFound.Contains(windowsTimeZoneName))
+                    return null;
+            }
+
+            try
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(windowsTimeZoneName);
+            }
+            catch(Exception except)
+            {
+                _logger.LogInformation("Unable to find timezone", except);
+                lock (_timeZonesNotFound)
+                {
+                    if (!_timeZonesNotFound.Contains(windowsTimeZoneName))
+                        _timeZonesNotFound.Add(windowsTimeZoneName);
+                }
+            }
+            return null;
         }
 
         public static string GetOlsonTimeZoneName(string windowsTimeZoneName)
@@ -66,6 +92,8 @@ namespace BodyReport.Framework
 
         private static void Init()
         {
+            if(_logger == null)
+                _logger = _loggerFactory.CreateLogger(typeof(TimeZoneMapper));
             _timeZoneNames.Clear();
 
             var assembly = typeof(TimeZoneMapper).GetTypeInfo().Assembly;
