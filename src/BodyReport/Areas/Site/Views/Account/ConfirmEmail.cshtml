@@ -1,10 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Confirm Email";
+    ViewData["Title"] = @Translation.EMAIL;
 }
 
 <h2>@ViewData["Title"].</h2>
 <div>
     <p>
-        Thank you for confirming your email. Please <a asp-controller="Account" asp-action="Login">Click here to Log in</a>.
+        @Translation.THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL <a asp-controller="Account" asp-action="Login">@Translation.CLICK_HERE_TO_LOG_IN</a>.
     </p>
 </div>

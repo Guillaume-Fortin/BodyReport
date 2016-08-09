@@ -13,11 +13,13 @@ namespace BodyReport.Areas.Site.ViewModels.Account
         [Required]
         [StringLength(FieldsLength.Email.Max, MinimumLength = FieldsLength.Email.Min, ErrorMessageResourceName = TRS.THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1, ErrorMessageResourceType = typeof(Translation))]
         [EmailAddress]
+        [Display(Name = TRS.EMAIL, ResourceType = typeof(Translation))]
         public string Email { get; set; }
 
         [Required]
         [StringLength(FieldsLength.Password.Max, MinimumLength = FieldsLength.Password.Min, ErrorMessageResourceName = TRS.THE_FIELD_P0_MUST_BE_A_STRING_WITH_A_MINIMUM_LENGTH_OF_P2_AND_A_MAXIMUM_LENGTH_OF_P1, ErrorMessageResourceType = typeof(Translation))]
         [DataType(DataType.Password)]
+        [Display(Name = TRS.PASSWORD, ResourceType = typeof(Translation))]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]

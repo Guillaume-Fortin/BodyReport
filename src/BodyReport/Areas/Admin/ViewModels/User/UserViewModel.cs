@@ -45,5 +45,8 @@ namespace BodyReport.ViewModels.Admin
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
         public virtual DateTime LastLoginDate { get; set; }
+
+        [Display(Name = TRS.EMAIL_CONFIRMED, ResourceType = typeof(Translation))]
+        public bool EmailConfirmed { get; set; }
     }
 }

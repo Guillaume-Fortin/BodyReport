@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BodyReport.Message;
+using BodyReport.Resources;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,11 +17,11 @@ namespace BodyReport.Areas.Site.ViewModels.Account
         public string Code { get; set; }
 
         public string ReturnUrl { get; set; }
-
-        [Display(Name = "Remember this browser?")]
+        
+        [Display(Name = TRS.REMEMBER_THIS_BROWSER_PI, ResourceType = typeof(Translation))]
         public bool RememberBrowser { get; set; }
-
-        [Display(Name = "Remember me?")]
+        
+        [Display(Name = TRS.REMEMBER_ME_PI, ResourceType = typeof(Translation))]
         public bool RememberMe { get; set; }
     }
 }

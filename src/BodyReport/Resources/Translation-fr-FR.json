@@ -153,5 +153,20 @@
   "LOG_OFF": "Déconnexion",
   "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Êtes-vous sûr de vouloir vous déconnecter?",
   "DELETE_REPS": "Supprimer répétitions",
-  "SWITCH_TRAINING_DAY": "Changement de jour d'entrainement"
+  "SWITCH_TRAINING_DAY": "Changement de jour d'entrainement",
+  "RESET_YOUR_PASSWORD": "Réinitialiser votre mot de passe?",
+  "RESET": "Réinitialiser",
+  "REMEMBER_THIS_BROWSER_PI": "Se souvenir de ce navigateur?",
+  "REMEMBER_ME_PI": "Se souvenir de moi?",
+  "THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL": "Merci d'avoir confirmer votre email",
+  "CLICK_HERE_TO_LOG_IN": "Cliquer ici pour se connecter",
+  "ENTER_YOUR_EMAIL": "Entrer votre email",
+  "FORGOT_PASSWORD_CONFIRMATION": "Confirmation de mot de pass oublié",
+  "PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD": "Merci de vérifier votre boîte mail pour réinitialiser votre mot de passe",
+  "LOCKED_OUT": "Banni",
+  "THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER": "Votre compte a été banni. Merci d'essayer plus tard",
+  "RESET_PASSWORD_CONFIRMATION": "Confirmation de réinitialisation de mot de passe",
+  "YOUR_PASSWORD_HAS_BEEN_RESET": "Votre mot de passe a été réinitialisé",
+  "CONFIRM_EMAIL": "Confirmer email",
+  "EMAIL_CONFIRMED": "Email confirmé"
 }

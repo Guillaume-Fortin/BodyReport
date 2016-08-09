@@ -155,5 +155,20 @@
   "LOG_OFF": "Log off",
   "ARE_YOU_SURE_YOU_WANT_TO_LOG_OFF_PI": "Are you sure you want to log off ?",
   "DELETE_REPS": "Delete reps",
-  "SWITCH_TRAINING_DAY": "Switch training day"
+  "SWITCH_TRAINING_DAY": "Switch training day",
+  "RESET_YOUR_PASSWORD": "Reset your password",
+  "RESET": "Reset",
+  "REMEMBER_THIS_BROWSER_PI": "Remember this browser ?",
+  "REMEMBER_ME_PI": "Remember me ?",
+  "THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL": "Thank you for confirming your email",
+  "CLICK_HERE_TO_LOG_IN": "Click here to Log in",
+  "ENTER_YOUR_EMAIL": "Enter your email",
+  "FORGOT_PASSWORD_CONFIRMATION": "Forgot Password Confirmation",
+  "PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD": "Please check your email to reset your password",
+  "LOCKED_OUT": "Locked out",
+  "THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER": "This account has been locked out, please try again later",
+  "RESET_PASSWORD_CONFIRMATION": "Reset password confirmation",
+  "YOUR_PASSWORD_HAS_BEEN_RESET": "Your password has been reset",
+  "CONFIRM_EMAIL": "Confirm email",
+  "EMAIL_CONFIRMED": "Email confirmed"
 }

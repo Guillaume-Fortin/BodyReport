@@ -8,11 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BodyReport.Services;
+using BodyReport.Data;
+using BodyReport.Manager;
+using Microsoft.Extensions.Logging;
 
 namespace BodyReport.Framework
 {
     public static class ControllerUtils
     {
+        private readonly static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(ControllerUtils));
+
         public static List<SelectListItem> CreateSelectRoleItemList(List<Role> roleList, string currentUserId)
         {
             var result = new List<SelectListItem>();
@@ -30,13 +36,13 @@ namespace BodyReport.Framework
             var result = new List<SelectListItem>();
             if (addNotSelectedValue)
                 result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
-            
+
             if (muscularGroupList == null)
                 return result;
-            
+
             muscularGroupList = muscularGroupList.OrderBy(m => m.Name).ToList();
 
-            
+
             foreach (MuscularGroup muscularGroup in muscularGroupList)
             {
                 result.Add(new SelectListItem { Text = muscularGroup.Name, Value = muscularGroup.Id.ToString(), Selected = currentId == muscularGroup.Id });
@@ -57,7 +63,7 @@ namespace BodyReport.Framework
                 return result;
 
             muscleList = muscleList.OrderBy(m => m.Name).ToList();
-           
+
             foreach (Muscle muscle in muscleList)
             {
                 result.Add(new SelectListItem { Text = muscle.Name, Value = muscle.Id.ToString(), Selected = currentId == muscle.Id });
@@ -74,7 +80,7 @@ namespace BodyReport.Framework
                 return result;
 
             bodyExerciseList = bodyExerciseList.OrderBy(m => m.Name).ToList();
-            
+
             if (addNotSelectedValue)
                 result.Add(new SelectListItem { Text = Translation.NOT_SPECIFIED, Value = "0", Selected = currentId == 0 });
 
@@ -137,7 +143,7 @@ namespace BodyReport.Framework
                 {
                     foreach (var error in state.Value.Errors)
                     {
-                        if(error != null && !string.IsNullOrWhiteSpace(error.ErrorMessage))
+                        if (error != null && !string.IsNullOrWhiteSpace(error.ErrorMessage))
                             sbError.AppendLine(error.ErrorMessage);
                     }
                 }
@@ -158,6 +164,32 @@ namespace BodyReport.Framework
             trainingDay.EndHour = viewModel.EndHour.ToUniversalTime();
 
             return trainingDay;
+        }
+
+        public static void SendEmailToAdmin(ApplicationDbContext dbContext, IEmailSender emailSender, string subject, string message)
+        {
+            var manager = new UserManager(dbContext);
+
+            int totalRecords;
+            var users = manager.FindUsers(out totalRecords, null, true);
+            if (users == null)
+                return;
+
+            foreach (var user in users)
+            {
+                //All admin user
+                if (user != null && !string.IsNullOrWhiteSpace(user.Email) && user.Role != null && user.Role.Id == "2")
+                {
+                    try
+                    {
+                        emailSender.SendEmailAsync(user.Email, subject, message);
+                    }
+                    catch (Exception except)
+                    {
+                        _logger.LogError(3, except, "can't send email to admin");
+                    }
+                }
+            }
         }
     }
 }

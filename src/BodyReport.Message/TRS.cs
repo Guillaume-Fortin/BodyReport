@@ -782,5 +782,80 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Switch training day")]
         public const string SWITCH_TRAINING_DAY = "SWITCH_TRAINING_DAY";
+        /// <summary>
+        /// Reset your password
+        /// </summary>
+        [Translation("Reset your password")]
+        public const string RESET_YOUR_PASSWORD = "RESET_YOUR_PASSWORD";
+        /// <summary>
+        /// Reset
+        /// </summary>
+        [Translation("Reset")]
+        public const string RESET = "RESET";
+        /// <summary>
+        /// Remember this browser ?
+        /// </summary>
+        [Translation("Remember this browser ?")]
+        public const string REMEMBER_THIS_BROWSER_PI = "REMEMBER_THIS_BROWSER_PI";
+        /// <summary>
+        /// Remember me ?
+        /// </summary>
+        [Translation("Remember me ?")]
+        public const string REMEMBER_ME_PI = "REMEMBER_ME_PI";
+        /// <summary>
+        /// Thank you for confirming your email
+        /// </summary>
+        [Translation("Thank you for confirming your email")]
+        public const string THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL = "THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL";
+        /// <summary>
+        /// Click here to Log in
+        /// </summary>
+        [Translation("Click here to Log in")]
+        public const string CLICK_HERE_TO_LOG_IN = "CLICK_HERE_TO_LOG_IN";
+        /// <summary>
+        /// Enter your email
+        /// </summary>
+        [Translation("Enter your email")]
+        public const string ENTER_YOUR_EMAIL = "ENTER_YOUR_EMAIL";
+        /// <summary>
+        /// Forgot Password Confirmation
+        /// </summary>
+        [Translation("Forgot Password Confirmation")]
+        public const string FORGOT_PASSWORD_CONFIRMATION = "FORGOT_PASSWORD_CONFIRMATION";
+        /// <summary>
+        /// Please check your email to reset your password
+        /// </summary>
+        [Translation("Please check your email to reset your password")]
+        public const string PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD = "PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD";
+        /// <summary>
+        /// Locked out
+        /// </summary>
+        [Translation("Locked out")]
+        public const string LOCKED_OUT = "LOCKED_OUT";
+        /// <summary>
+        /// This account has been locked out, please try again later
+        /// </summary>
+        [Translation("This account has been locked out, please try again later")]
+        public const string THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER = "THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER";
+        /// <summary>
+        /// Reset password confirmation
+        /// </summary>
+        [Translation("Reset password confirmation")]
+        public const string RESET_PASSWORD_CONFIRMATION = "RESET_PASSWORD_CONFIRMATION";
+        /// <summary>
+        /// Your password has been reset
+        /// </summary>
+        [Translation("Your password has been reset")]
+        public const string YOUR_PASSWORD_HAS_BEEN_RESET = "YOUR_PASSWORD_HAS_BEEN_RESET";
+        /// <summary>
+        /// Confirm email
+        /// </summary>
+        [Translation("Confirm email")]
+        public const string CONFIRM_EMAIL = "CONFIRM_EMAIL";
+        /// <summary>
+        /// Email confirmed
+        /// </summary>
+        [Translation("Email confirmed")]
+        public const string EMAIL_CONFIRMED = "EMAIL_CONFIRMED";
     }
 }

@@ -87,6 +87,12 @@
                     {
                         <a asp-action="Suspend" asp-route-id="@item.Id">@Translation.SUSPEND</a>
                     }
+                    
+                    @if(!item.EmailConfirmed)
+                    {
+                        <br/>
+                    <a asp-action="ConfirmUserEmail" asp-route-id="@item.Id">@Translation.CONFIRM_EMAIL</a>
+                    }
                 </td>
             </tr>
         }

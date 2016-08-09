@@ -264,5 +264,18 @@ namespace BodyReport.Resources
         public static string INSERT_ONLY { get { return Get(TRS.INSERT_ONLY); } }
         public static string TIME_ZONE { get { return Get(TRS.TIME_ZONE); } }
         public static string SWITCH_TRAINING_DAY { get { return Get(TRS.SWITCH_TRAINING_DAY); } }
+        public static string RESET_YOUR_PASSWORD { get { return Get(TRS.RESET_YOUR_PASSWORD); } }
+        public static string RESET { get { return Get(TRS.RESET); } }
+        public static string THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL { get { return Get(TRS.THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL); } }
+        public static string CLICK_HERE_TO_LOG_IN { get { return Get(TRS.CLICK_HERE_TO_LOG_IN); } }
+        public static string ENTER_YOUR_EMAIL { get { return Get(TRS.ENTER_YOUR_EMAIL); } }
+        public static string FORGOT_PASSWORD_CONFIRMATION { get { return Get(TRS.FORGOT_PASSWORD_CONFIRMATION); } }
+        public static string PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD { get { return Get(TRS.PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD); } }
+        public static string LOCKED_OUT { get { return Get(TRS.LOCKED_OUT); } }
+        public static string THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER { get { return Get(TRS.THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER); } }
+        public static string RESET_PASSWORD_CONFIRMATION { get { return Get(TRS.RESET_PASSWORD_CONFIRMATION); } }
+        public static string YOUR_PASSWORD_HAS_BEEN_RESET { get { return Get(TRS.YOUR_PASSWORD_HAS_BEEN_RESET); } }
+        public static string CONFIRM_EMAIL { get { return Get(TRS.CONFIRM_EMAIL); } }
+        public static string EMAIL_CONFIRMED { get { return Get(TRS.EMAIL_CONFIRMED); } }
     }
 }

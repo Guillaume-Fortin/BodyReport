@@ -9,6 +9,10 @@ using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
 using BodyReport.Data;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using BodyReport.Services;
+using System;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
@@ -28,17 +32,27 @@ namespace BodyReport.Areas.Admin.Controllers
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
+        /// <summary>
+        /// IdentityUserManager
+        /// </summary>
+        private readonly UserManager<ApplicationUser> _identityUserManager;
+        /// <summary>
+        /// Email sender
+        /// </summary>
+        private readonly IEmailSender _emailSender;
 
-        public UserController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public UserController(ApplicationDbContext dbContext, IHostingEnvironment env, UserManager<ApplicationUser> identityUserManager, IEmailSender emailSender)
         {
             _dbContext = dbContext;
             _env = env;
+            _identityUserManager = identityUserManager;
+            _emailSender = emailSender;
         }
 
         // manage users
         // GET: /Admin/User/Index
         [HttpGet]
-        public IActionResult Index(SearchUserViewModel searchUserViewModel = null, int currentPage = 1)
+        public async Task<IActionResult> Index(SearchUserViewModel searchUserViewModel = null, int currentPage = 1)
         {
             if (searchUserViewModel == null)
                 searchUserViewModel = new SearchUserViewModel();
@@ -65,8 +79,13 @@ namespace BodyReport.Areas.Admin.Controllers
             var users = manager.FindUsers(out totalRecords, userCriteria, true, currentRecordIndex, pageSize);
             if (users != null)
             {
+                ApplicationUser appUser;
+                bool emailConfirmed;
                 foreach (var user in users)
                 {
+                    appUser = await _identityUserManager.FindByIdAsync(user.Id);
+                    emailConfirmed = appUser != null && appUser.EmailConfirmed;
+
                     userViewModel = new UserViewModel()
                     {
                         Id = user.Id,
@@ -74,7 +93,8 @@ namespace BodyReport.Areas.Admin.Controllers
                         Email = user.Email,
                         RegistrationDate = user.RegistrationDate,
                         LastLoginDate = user.LastLoginDate,
-                        Suspended = user.Suspended
+                        Suspended = user.Suspended,
+                        EmailConfirmed = emailConfirmed
                     };
                     if (user.Role != null)
                     {
@@ -201,6 +221,64 @@ namespace BodyReport.Areas.Admin.Controllers
                 {
                     user.Suspended = false;
                     manager.UpdateUser(user);
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
+        //
+        // GET: /Admin/User/ConfirmUserEmail
+        [HttpGet]
+        public async Task<IActionResult> ConfirmUserEmail(string id)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                var appUser = await _identityUserManager.FindByIdAsync(id);
+                if (appUser != null && !appUser.EmailConfirmed)
+                {
+                    appUser.EmailConfirmed = true;
+                    await _identityUserManager.UpdateAsync(appUser);
+
+                    //Add user role
+                    var manager = new UserManager(_dbContext);
+                    var userKey = new UserKey() { Id = id };
+                    var user = manager.GetUser(userKey);
+                    if (user != null)
+                    {
+                        //Verify role exist
+                        var roleKey = new RoleKey();
+                        roleKey.Id = "1"; //User
+                        var role = manager.GetRole(roleKey);
+                        if (role != null)
+                        {
+                            user.Role = role;
+                            user = manager.UpdateUser(user);
+                        }
+                    }
+
+                    //Add empty user profil (for correct connect error on mobile application)
+                    var userInfoManager = new UserInfoManager(_dbContext);
+                    var userInfoKey = new UserInfoKey() { UserId = id };
+                    var userInfo = userInfoManager.GetUserInfo(userInfoKey);
+                    if (userInfo == null)
+                    {
+                        userInfo = new UserInfo()
+                        {
+                            UserId = id,
+                            Unit = TUnitType.Metric
+                        };
+                        userInfoManager.UpdateUserInfo(userInfo);
+                    }
+
+                    try
+                    {
+                        await _emailSender.SendEmailAsync(appUser.Email, "Account validated",
+                            "Your account validated by admin");
+                    }
+                    catch(Exception except)
+                    {
+                        _logger.LogError(0, except, "can't send email");
+                    }
                 }
             }
             return RedirectToAction("Index");

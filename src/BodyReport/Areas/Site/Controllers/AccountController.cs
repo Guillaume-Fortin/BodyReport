@@ -15,6 +15,7 @@ using BodyReport.Services;
 using BodyReport.Message;
 using BodyReport.Data;
 using BodyReport.Manager;
+using BodyReport.Framework;
 
 namespace BodyReport.Areas.Site.Controllers
 {
@@ -150,15 +151,23 @@ namespace BodyReport.Areas.Site.Controllers
                 {
                     user.RegistrationDate = DateTime.Now;
                     await _userManager.UpdateAsync(user);
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     //await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User created a new account with password.");
+                    _logger.LogInformation(3, "User created a new account with password. USerName : " + user.UserName);
+                    try
+                    {
+                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                        // Send an email with this link
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                            "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    }
+                    catch (Exception except)
+                    {
+                        _logger.LogError(0, except, "Can't send email");
+                    }
+                    //SendEmail to admin
+                    ControllerUtils.SendEmailToAdmin(_dbContext, _emailSender, "BodyReport : New WebSite user", "New user register with website");
                     return RedirectToAction(nameof(AccountController.Login), "Account");
                 }
                 AddErrors(result);
@@ -340,20 +349,27 @@ namespace BodyReport.Areas.Site.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                // Send an email with this link
-                //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                //   "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
-                //return View("ForgotPasswordConfirmation");
+                try
+                {
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                    // Send an email with this link
+                    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                       "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                }
+                catch (Exception except)
+                {
+                    _logger.LogError(0, except, "can't send email");
+                }
+                return View("ForgotPasswordConfirmation");
             }
 
             // If we got this far, something failed, redisplay form
@@ -389,7 +405,7 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View(model);
             }
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -457,7 +473,14 @@ namespace BodyReport.Areas.Site.Controllers
             var message = "Your security code is: " + code;
             if (model.SelectedProvider == "Email")
             {
-                await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
+                try
+                {
+                    await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
+                }
+                catch (Exception except)
+                {
+                    _logger.LogError(0, except, "can't send email");
+                }
             }
             else if (model.SelectedProvider == "Phone")
             {
