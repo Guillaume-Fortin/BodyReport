@@ -191,5 +191,46 @@ namespace BodyReport.Framework
                 }
             }
         }
+
+        public static Tuple<string, TFieldSort> GetSortFieldDirection(string sortFieldAndOrder)
+        {
+            Tuple<string, TFieldSort> result = null;
+            if (sortFieldAndOrder != null && sortFieldAndOrder.Contains('|'))
+            {
+                var splitSort = sortFieldAndOrder.Split('|');
+                if (splitSort.Length == 2 && !string.IsNullOrWhiteSpace(splitSort[0]) && !string.IsNullOrWhiteSpace(splitSort[1]))
+                {
+                    string fieldName = splitSort[0];
+                    string sortOrder = splitSort[1];
+                    if (sortOrder == "asc")
+                        result = new Tuple<string, TFieldSort>(fieldName, TFieldSort.Asc);
+                    else if (sortOrder == "desc")
+                        result = new Tuple<string, TFieldSort>(fieldName, TFieldSort.Desc);
+                    else
+                        result = new Tuple<string, TFieldSort>(fieldName, TFieldSort.None);
+                }
+            }
+            return result;
+        }
+        public static void ManageSortingPossibilities(Dictionary<string, string> sortPossilities, string newSortFieldAndOrder)
+        {
+            if (sortPossilities == null || newSortFieldAndOrder == null || !newSortFieldAndOrder.Contains('|'))
+                return;
+
+            //newSortOrder (format(field|sort direction) Ex : id|asc or id|desc
+            var splitSort = newSortFieldAndOrder.Split('|');
+            if(splitSort.Length == 2 && !string.IsNullOrWhiteSpace(splitSort[0]) && !string.IsNullOrWhiteSpace(splitSort[1]))
+            {
+                string fieldName = splitSort[0];
+                string sortOrder = splitSort[1];
+                if (sortPossilities.ContainsKey(fieldName))
+                {
+                    if (sortOrder == "asc")
+                        sortPossilities[fieldName] = "desc";
+                    else
+                        sortPossilities[fieldName] = "asc";
+                }
+            }
+        }
     }
 }

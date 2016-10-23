@@ -5,8 +5,18 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
+    public class FieldSort
+    {
+        public string Name;
+        public TFieldSort Sort = TFieldSort.None;
+    }
+
     public class CriteriaField
     {
+        /// <summary>
+        /// Sorted Fields Name
+        /// </summary>
+        public List<FieldSort> FieldSortList { get; set; }
     }
 
     public class CriteriaList<T> : List<T> where T : CriteriaField

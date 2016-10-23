@@ -46,7 +46,7 @@ namespace BodyReport.Message
         /// <summary>
         /// User Id
         /// </summary>
-        public IntegerCriteria Id { get; set; }
+        public StringCriteria Id { get; set; }
         /// <summary>
         /// User Name
         /// </summary>

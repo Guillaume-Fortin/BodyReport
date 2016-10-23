@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using BodyReport.Services;
 using System;
+using System.Linq;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
@@ -49,11 +50,36 @@ namespace BodyReport.Areas.Admin.Controllers
             _emailSender = emailSender;
         }
 
+        private void ApplyUserSort(ref UserCriteria userCriteria, string sortOrder)
+        {
+            if (userCriteria == null)
+                userCriteria = new UserCriteria();
+
+            userCriteria.FieldSortList = new List<FieldSort>();
+
+            var sortFieldDirection = ControllerUtils.GetSortFieldDirection(sortOrder);
+            if (sortFieldDirection != null && sortFieldDirection.Item2 != TFieldSort.None) // need sort value
+            {
+                userCriteria.FieldSortList.Add(new FieldSort() { Name = sortFieldDirection.Item1, Sort = sortFieldDirection.Item2 });
+            }
+        }
+        
         // manage users
         // GET: /Admin/User/Index
         [HttpGet]
-        public async Task<IActionResult> Index(SearchUserViewModel searchUserViewModel = null, int currentPage = 1)
+        public async Task<IActionResult> Index(SearchUserViewModel searchUserViewModel = null, int currentPage = 1, string sortOrder = null)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.SortPossibilities = new Dictionary<string, string>()
+            {
+                {"id", "asc"},
+                {"username", "asc"},
+                {"email", "asc"},
+                {"registrationdate", "asc"},
+                {"lastlogindate", "asc"}
+            };
+            ControllerUtils.ManageSortingPossibilities(ViewBag.SortPossibilities, sortOrder);
+
             if (searchUserViewModel == null)
                 searchUserViewModel = new SearchUserViewModel();
 
@@ -68,12 +94,22 @@ namespace BodyReport.Areas.Admin.Controllers
             var manager = new UserManager(_dbContext);
 
             UserCriteria userCriteria = null;
+            if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserId))
+            {
+                if(userCriteria == null)
+                    userCriteria = new UserCriteria();
+                userCriteria.Id = new StringCriteria();
+                userCriteria.Id.StartsWithList = new List<string>() { searchUserViewModel.UserId };
+            }
             if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserName))
             {
-                userCriteria = new UserCriteria();
+                if (userCriteria == null)
+                    userCriteria = new UserCriteria();
                 userCriteria.UserName = new StringCriteria();
                 userCriteria.UserName.StartsWithList = new List<string>() { searchUserViewModel.UserName };
             }
+
+            ApplyUserSort(ref userCriteria, sortOrder);
 
             int totalRecords;
             var users = manager.FindUsers(out totalRecords, userCriteria, true, currentRecordIndex, pageSize);

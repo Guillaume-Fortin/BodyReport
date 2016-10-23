@@ -63,4 +63,11 @@ namespace BodyReport.Message
         Warning,
         Error
     }
+
+    public enum TFieldSort
+    {
+        None,
+        Asc,
+        Desc
+    }
 }

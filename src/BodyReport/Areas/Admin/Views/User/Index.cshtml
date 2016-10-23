@@ -8,6 +8,7 @@
     {
         pagingRouteValues.Add("UserName", Model.UserName);
     }
+    pagingRouteValues.Add("sortOrder", ViewBag.CurrentSort);
 }
 
 <h2>@Translation.ADMIN : @Translation.USERS.</h2>
@@ -17,6 +18,14 @@
         <h4>@Translation.LIST_OF_USERS. @ViewBag.TotalRecords</h4>
         <hr />
         <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="UserId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="UserId" class="form-control" type="text" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+        </div>
 
         <div class="form-group">
             <label asp-for="UserName" class="col-md-2 control-label"></label>
@@ -36,19 +45,19 @@
     <table class="table">
         <tr>
             <th>
-               @Translation.ID
+                @Html.ActionLink(Translation.ID, "Index", new { sortOrder = "id|"+ViewBag.SortPossibilities["id"] })
             </th>
             <th>
-                @Translation.NAME
+                @Html.ActionLink(Translation.NAME, "Index", new { sortOrder = "username|" + ViewBag.SortPossibilities["username"] })
             </th>
             <th>
-               @Translation.EMAIL
+                @Html.ActionLink(Translation.EMAIL, "Index", new { sortOrder = "email|" + ViewBag.SortPossibilities["email"] })
             </th>
             <th>
-                @Translation.REGISTRATION_DATE
+                @Html.ActionLink(Translation.REGISTRATION_DATE, "Index", new { sortOrder = "registrationdate|" + ViewBag.SortPossibilities["registrationdate"] })
             </th>
             <th>
-                @Translation.LAST_LOGIN_DATE
+                @Html.ActionLink(Translation.LAST_LOGIN_DATE, "Index", new { sortOrder = "lastlogindate|" + ViewBag.SortPossibilities["lastlogindate"] })
             </th>
             <th>
                 @Translation.ROLE

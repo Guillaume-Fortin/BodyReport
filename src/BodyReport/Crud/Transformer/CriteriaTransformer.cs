@@ -46,6 +46,8 @@ namespace BodyReport.Crud.Transformer
             CompleteQueryInternal(ref queryExpression, criteriaField);
             if(queryExpression != null)
                 source = source.Where(queryExpression);
+
+            ApplySort(ref source, criteriaField);
         }
         
         private static void CompleteQueryInternal<TEntity>(ref Expression<Func<TEntity, bool>> queryExpression, CriteriaField criteriaField) where TEntity : class
@@ -287,6 +289,70 @@ namespace BodyReport.Crud.Transformer
                         expressionList.Add(AddContainsStringExpression(entityParameter, entityProperty, value, criteria.IgnoreCase));
                 }
             }
+        }
+
+        private static PropertyInfo GetPropertyByName(Type type, string name)
+        {
+            var criteriaFieldProperties = /*obj.GetType()*/type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            foreach (var criteriaFieldProperty in criteriaFieldProperties)
+            {
+                if (criteriaFieldProperty.Name.ToLower() == name.ToLower())
+                {
+                    return criteriaFieldProperty;
+                }
+            }
+            return null;
+        }
+
+        private static IOrderedQueryable<T> ApplyOrder<T>(IQueryable<T> source, string property, string methodName)
+        {
+            var type = typeof(T);
+            var arg = Expression.Parameter(type, "x");
+            Expression expr = arg;
+            
+            var pi = GetPropertyByName(type, property);
+            if (pi != null)
+            {
+                expr = Expression.Property(expr, pi);
+                type = pi.PropertyType;
+
+                var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), type);
+                var lambda = Expression.Lambda(delegateType, expr, arg);
+
+                var result = typeof(Queryable).GetMethods().Single(
+                        method => method.Name == methodName
+                                && method.IsGenericMethodDefinition
+                                && method.GetGenericArguments().Length == 2
+                                && method.GetParameters().Length == 2)
+                        .MakeGenericMethod(typeof(T), type)
+                        .Invoke(null, new object[] { source, lambda });
+                return (IOrderedQueryable<T>)result;
+            }
+            else
+                return null;
+        }
+
+        private static void ApplySort<TEntity>(ref IQueryable<TEntity> source, CriteriaField criteriaField) where TEntity : class
+        {
+            IOrderedQueryable<TEntity> orderedQueryTmp;
+            IOrderedQueryable<TEntity> orderedQuery = null;
+            if (criteriaField != null && criteriaField.FieldSortList != null && criteriaField.FieldSortList.Count > 0)
+            {
+                foreach (FieldSort fieldSort in criteriaField.FieldSortList)
+                {
+                    orderedQueryTmp = null;
+                    if (fieldSort.Sort == TFieldSort.Asc)
+                        orderedQueryTmp = ApplyOrder(orderedQuery == null ? source : orderedQuery, fieldSort.Name, orderedQuery == null ? "OrderBy" : "ThenBy");
+                    else if (fieldSort.Sort == TFieldSort.Desc)
+                        orderedQueryTmp = ApplyOrder(orderedQuery == null ? source : orderedQuery, fieldSort.Name, orderedQuery == null ? "OrderByDescending" : "ThenByDescending");
+
+                    if(orderedQueryTmp != null)
+                        orderedQuery = orderedQueryTmp;
+                }
+            }
+            if (orderedQuery != null)
+                source = orderedQuery;
         }
     }
 }
