@@ -75,8 +75,9 @@ namespace BodyReport.Crud.Module
             List<User> resultList = null;
             IQueryable<ApplicationUser> rowList = _dbContext.Users;
             CriteriaTransformer.CompleteQuery(ref rowList, userCriteria);
-            rowList = rowList.OrderBy(u => u.UserName);
-            
+            if(userCriteria.FieldSortList == null || userCriteria.FieldSortList.Count == 0)
+                rowList = rowList.OrderBy(u => u.UserName);
+
             if (maxRecord > 0)
             {
                 totalRecords = rowList.Count();
