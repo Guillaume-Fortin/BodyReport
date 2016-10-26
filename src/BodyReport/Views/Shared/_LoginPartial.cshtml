@@ -14,6 +14,7 @@
             <li>
                 <button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
             </li>
+            @await Html.PartialAsync("_LanguagePartial")
         </ul>
     </form>
 }
@@ -22,5 +23,7 @@ else
     <ul class="nav navbar-nav navbar-right">
         <li><a asp-route-area="Site" asp-controller="Account" asp-action="Register">@Translation.REGISTER</a></li>
         <li><a asp-route-area="Site" asp-controller="Account" asp-action="Login">@Translation.LOG_IN</a></li>
+
+        @await Html.PartialAsync("_LanguagePartial")
     </ul>
 }

@@ -80,14 +80,17 @@ namespace BodyReport.Framework
                 string culture = CultureInfo.CurrentCulture.Name;
 
                 Dictionary<string, string> translationList = GetCurrentTranslationList();
-                lock(translationList)
+                if (translationList != null)
                 {
-                    if (translationList != null)
+                    lock (translationList)
                     {
-                        if (translationList.ContainsKey(name))
+                        if (translationList != null)
                         {
-                            found = true;
-                            value = translationList[name];
+                            if (translationList.ContainsKey(name))
+                            {
+                                found = true;
+                                value = translationList[name];
+                            }
                         }
                     }
                 }

@@ -80,7 +80,7 @@ namespace BodyReport
             }
             else
                 _logger.LogError("Unknown database connection type");
-            
+
             //Configure identity policies
             // Add Identity services to the services container.
             services.AddIdentity<ApplicationUser, IdentityRole>(
@@ -139,10 +139,15 @@ namespace BodyReport
             */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
-            
+
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                DefineLocalization(options);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -204,6 +209,21 @@ namespace BodyReport
             PopulateDataBase();
         }
 
+        private void DefineLocalization(RequestLocalizationOptions options)
+        {
+            var cultureInfos = new List<CultureInfo>();
+            var uiCultureInfos = new List<CultureInfo>();
+            foreach (string cultureName in Translation.SupportedCultureNames)
+            {
+                cultureInfos.Add(new CultureInfo(cultureName));
+                uiCultureInfos.Add(new CultureInfo(cultureName));
+            }
+
+            options.SupportedCultures = cultureInfos;
+            options.SupportedUICultures = uiCultureInfos;
+            options.DefaultRequestCulture = new RequestCulture(Translation.SupportedCultureNames[0]);
+        }
+
         private void DefineLocalization(IApplicationBuilder app)
         {
             var cultureInfos = new List<CultureInfo>();
@@ -214,13 +234,8 @@ namespace BodyReport
                 uiCultureInfos.Add(new CultureInfo(cultureName));
             }
 
-            var requestLocalizationOptions = new RequestLocalizationOptions
-            {
-                SupportedCultures = cultureInfos,
-                SupportedUICultures = uiCultureInfos,
-                DefaultRequestCulture = new RequestCulture(Translation.SupportedCultureNames[0])
-            };
-
+            var requestLocalizationOptions = new RequestLocalizationOptions();
+            DefineLocalization(requestLocalizationOptions);
             app.UseRequestLocalization(requestLocalizationOptions);
         }
         
