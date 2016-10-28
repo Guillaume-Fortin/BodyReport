@@ -16,6 +16,7 @@ using BodyReport.Message;
 using BodyReport.Data;
 using BodyReport.Manager;
 using BodyReport.Framework;
+using Microsoft.AspNetCore.Localization;
 
 namespace BodyReport.Areas.Site.Controllers
 {
@@ -565,5 +566,18 @@ namespace BodyReport.Areas.Site.Controllers
         }
 
         #endregion
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return Redirect(returnUrl);
+        }
     }
 }

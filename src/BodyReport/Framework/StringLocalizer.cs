@@ -39,10 +39,13 @@ namespace BodyReport.Framework
                 string fileName = string.Format("{0}-{1}.json", _resourceName, _cultureName);
                 if (!_translationDictionary.ContainsKey(_resourcePath + fileName))
                 {
-                    Dictionary<string, string> translationList;
-                    if (TranslationManager.Instance.LoadTranslation(_resourcePath + fileName, out translationList) && translationList != null)
+                    if (_resourcePath != null && _resourcePath.ToLower().StartsWith("resources"))
                     {
-                        _translationDictionary.Add(_resourcePath + fileName, translationList);
+                        Dictionary<string, string> translationList;
+                        if (TranslationManager.Instance.LoadTranslation(_resourcePath + fileName, out translationList) && translationList != null)
+                        {
+                            _translationDictionary.Add(_resourcePath + fileName, translationList);
+                        }
                     }
                 }
             }
