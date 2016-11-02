@@ -14,6 +14,8 @@ using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.ViewModels.Admin;
 using BodyReport.Data;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
@@ -33,11 +35,19 @@ namespace BodyReport.Areas.Admin.Controllers
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
+        //user manager
+        private readonly UserManager<ApplicationUser> _userManager;
+        /// <summary>
+        /// WebApi access
+        /// </summary>
+        IHttpClientPoolManager<IWebApi> _webApi;
 
-        public BodyExerciseController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public BodyExerciseController(ApplicationDbContext dbContext, IHostingEnvironment env, UserManager<ApplicationUser> userManager, IHttpClientPoolManager<IWebApi> webApi)
         {
             _dbContext = dbContext;
             _env = env;
+            _userManager = userManager;
+            _webApi = webApi;
         }
 
         private void DeleteImage(string imageName)
@@ -52,11 +62,16 @@ namespace BodyReport.Areas.Admin.Controllers
         //Manage body exercise
         // GET: /Admin/BodyExercise/Index
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var result = new List<BodyExerciseViewModel>();
-            var muscleManager = new MuscleManager(_dbContext);
-            var muscles = muscleManager.FindMuscles();
+
+            //test
+            string userId = _userManager.GetUserId(HttpContext.User);
+            var muscles = await _webApi.GetAsync<List<Muscle>>(userId, ControllerUtils.GetIdentityUserCookie(HttpContext), "Api/BodyExercises/Find");
+
+            //var muscleManager = new MuscleManager(_dbContext);
+            //var muscles = muscleManager.FindMuscles();
 
             var manager = new BodyExerciseManager(_dbContext);
             var bodyExercises = manager.FindBodyExercises();

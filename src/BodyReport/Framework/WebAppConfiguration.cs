@@ -29,6 +29,21 @@ namespace BodyReport.Framework
             }
         }
 
+        public static string WebServicesUrl
+        {
+            get
+            {
+                return GetStringParameterValue("WebServices:Url");
+            }
+        }
+        public static int WebServicesMaxPoolSize
+        {
+            get
+            {
+                return GetIntParameterValue("WebServices:MaxPoolSize");
+            }
+        }
+
         public static string SmtpServer
         {
             get

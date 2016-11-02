@@ -10,7 +10,6 @@ using BodyReport.Services;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 using BodyReport.Framework;
-using BodyReport.Framework;
 using BodyReport.Resources;
 using System.IO;
 using BodyReport.Models.Initializer;
@@ -143,6 +142,9 @@ namespace BodyReport
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            //Add IHttpClientPoolManager instance service
+            var httpClientPool = new HttpClientPoolManager<IWebApi>(new Uri(WebAppConfiguration.WebServicesUrl), WebAppConfiguration.WebServicesMaxPoolSize);
+            services.AddSingleton<IHttpClientPoolManager<IWebApi>>(httpClientPool);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {

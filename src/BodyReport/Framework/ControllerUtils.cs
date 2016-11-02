@@ -12,6 +12,8 @@ using BodyReport.Services;
 using BodyReport.Data;
 using BodyReport.Manager;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace BodyReport.Framework
 {
@@ -231,6 +233,19 @@ namespace BodyReport.Framework
                         sortPossilities[fieldName] = "asc";
                 }
             }
+        }
+
+        public static Cookie GetIdentityUserCookie(HttpContext httpContext)
+        {
+            if (httpContext != null && httpContext.Request != null && httpContext.Request.Cookies != null)
+            {
+                foreach (var cookie in httpContext.Request.Cookies)
+                {
+                    if (cookie.Key != null && cookie.Key.ToLower() == ".AspNetCore.Identity.Application".ToLower())
+                        return new Cookie(cookie.Key, cookie.Value);
+                }
+            }
+            return null;
         }
     }
 }
