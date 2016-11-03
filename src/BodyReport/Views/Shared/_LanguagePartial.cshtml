@@ -20,5 +20,5 @@
 @foreach (var cultureInfo in LocOptions.Value.SupportedUICultures)
 {
     culture = string.Format("/images/flag_{0}.png", cultureInfo.Name.Replace('-', '_'));
-    <li><a href="/ChangLanguage?culture=@cultureInfo.Name&returnUrl=@Context.Request.GetEncodedUrl()" id="langChangeURl"><img src="@culture" width="30" height="20" /></a></li>
+    <li><a href="/Site/Account/SetLanguage?culture=@cultureInfo.Name&returnUrl=@Context.Request.GetEncodedUrl()" id="langChangeURl"><img src="@culture" width="30" height="20" /></a></li>
 }
