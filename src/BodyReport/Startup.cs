@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using BodyReport.WebApiServices;
 
 namespace BodyReport
 {
@@ -142,9 +143,9 @@ namespace BodyReport
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            //Add IHttpClientPoolManager instance service
-            var httpClientPool = new HttpClientPoolManager<IWebApi>(new Uri(WebAppConfiguration.WebServicesUrl), WebAppConfiguration.WebServicesMaxPoolSize);
-            services.AddSingleton<IHttpClientPoolManager<IWebApi>>(httpClientPool);
+            //Add WebApiWrapper singleton instance
+            var webApiWrapper = new WebApiWrapper(new Uri(WebAppConfiguration.WebServicesUrl), WebAppConfiguration.WebServicesMaxPoolSize);
+            services.AddSingleton(webApiWrapper);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {

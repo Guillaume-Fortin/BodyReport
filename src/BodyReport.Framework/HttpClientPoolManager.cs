@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BodyReport.Framework
@@ -21,10 +22,10 @@ namespace BodyReport.Framework
     /// <summary>
     /// Manage Single instance of HttpClient for userId
     /// </summary>
-    public class HttpClientPoolManager<T> : IHttpClientPoolManager<T>
+    public class HttpClientPoolManager
     {
         private static ILoggerFactory _loggerFactory = new LoggerFactory().AddConsole();
-        private static ILogger _logger = _loggerFactory.CreateLogger(typeof(HttpClientPoolManager<T>));
+        private static ILogger _logger = _loggerFactory.CreateLogger(typeof(HttpClientPoolManager));
 
         private Uri _baseAdress = null;
         private int _maxPoolSize;
@@ -199,6 +200,89 @@ namespace BodyReport.Framework
                     lock(httpClientUser)
                     {
                         if(httpClientUser.LockCount > 0)
+                            httpClientUser.LockCount--;
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+        public async Task<TResultData> PostAsync<TData, TResultData>(string userId, Cookie userIdentityCookie, string relativeUrl, TData postData, bool isAnonymousRequest = false)
+        {
+            TResultData result = default(TResultData);
+            HttpClientUser httpClientUser;
+            lock (_clients)
+            {
+                httpClientUser = CreateOrReuseClient(userId);
+            }
+            if (httpClientUser == null)
+                return result;
+
+            try
+            {
+                lock (httpClientUser)
+                {
+                    httpClientUser.LockCount++;
+                    CreateOrReuseHttpClient(httpClientUser, userIdentityCookie);
+                }
+                
+                string postBody = JsonConvert.SerializeObject(postData, new JsonSerializerSettings { Formatting = Formatting.None });
+                var httpResponse = await httpClientUser.HttpClient.PostAsync(relativeUrl, new StringContent(postBody, Encoding.UTF8, "application/json"));
+
+                if (httpResponse != null)
+                {
+                    if (httpResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
+                        if (!string.IsNullOrEmpty(jsonStringResult))
+                        {
+                            result = JsonConvert.DeserializeObject<TResultData>(jsonStringResult);
+                        }
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.NoContent)
+                    {
+                        result = default(TResultData);
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        throw new HttpException((int)httpResponse.StatusCode, "Ressource not found");
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        throw new HttpException((int)httpResponse.StatusCode, "Ressource forbidden");
+                    }
+                    else if (httpResponse.StatusCode == HttpStatusCode.BadRequest)
+                    {
+                        var jsonStringResult = httpResponse.Content.ReadAsStringAsync().Result;
+                        WebApiException webApiException = ConvertJsonExceptionToWebApiException(jsonStringResult);
+                        if (webApiException != null)
+                            throw webApiException;
+                        throw new HttpException((int)httpResponse.StatusCode, "Bad request");
+                    }
+                    else
+                    {
+                        throw new HttpException((int)httpResponse.StatusCode, "error");
+                    }
+                }
+            }
+            catch (TaskCanceledException timeoutException)
+            {
+                throw new HttpException("Timeout", timeoutException);
+            }
+            catch (Exception exception)
+            {
+                if (exception is HttpException || exception is WebApiException)
+                    throw exception;
+                throw new HttpException("Can't connect to server", exception);
+            }
+            finally
+            {
+                if (httpClientUser != null)
+                {
+                    lock (httpClientUser)
+                    {
+                        if (httpClientUser.LockCount > 0)
                             httpClientUser.LockCount--;
                     }
                 }

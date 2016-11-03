@@ -6,6 +6,8 @@ using BodyReport.Message;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;
+using System;
+using BodyReport.Message.WebApi;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -25,42 +27,114 @@ namespace BodyReport.Areas.Api.Controllers
             _bodyExerciseManager = new BodyExerciseManager(_dbContext);
         }
 
+        // POST api/BodyExercises/Create
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create([FromBody]BodyExercise bodyExercise)
+        {
+            try
+            {
+                BodyExercise result = null;
+                if (bodyExercise != null)
+                {
+                    result = _bodyExerciseManager.CreateBodyExercise(bodyExercise);
+                }
+                return new OkObjectResult(result); // BodyExercise
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
+
         // Get api/BodyExercises/Get
         [HttpGet]
-        public BodyExercise Get(BodyExerciseKey key)
+        public IActionResult Get(BodyExerciseKey key)
         {
-            return _bodyExerciseManager.GetBodyExercise(key);
+            try
+            {
+                var result = _bodyExerciseManager.GetBodyExercise(key);
+                return new OkObjectResult(result); // BodyExercise
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
         // Get api/BodyExercises/Find
         [HttpGet]
-        public List<BodyExercise> Find(BodyExerciseCriteria criteria)
+        public IActionResult Find(BodyExerciseCriteria criteria)
         {
-            return _bodyExerciseManager.FindBodyExercises(criteria);
+            try
+            {
+                var result = _bodyExerciseManager.FindBodyExercises(criteria);
+                return new OkObjectResult(result); // List<BodyExercise>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // POST api/BodyExercises/Post
+        // POST api/BodyExercises/Update
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public List<BodyExercise> Post([FromBody]List<BodyExercise> bodyExercises)
+        public IActionResult Update([FromBody]BodyExercise bodyExercise)
         {
-            List<BodyExercise> results = new List<BodyExercise>();
-            if (bodyExercises != null && bodyExercises.Count() > 0)
+            try
             {
-                foreach (var bodyExercise in bodyExercises)
+                BodyExercise result = null;
+                if (bodyExercise != null)
                 {
-                    results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
+                    result = _bodyExerciseManager.UpdateBodyExercise(bodyExercise);
                 }
+                return new OkObjectResult(result); // BodyExercise
             }
-            return results;
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // DELETE api/BodyExercises/Delete
-        [HttpDelete]
+        // POST api/BodyExercises/UpdateList
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public void Delete(BodyExerciseKey key)
+        public IActionResult UpdateList([FromBody]List<BodyExercise> bodyExercises)
         {
-            _bodyExerciseManager.DeleteBodyExercise(key);
+            try
+            {
+                List<BodyExercise> results = new List<BodyExercise>();
+                if (bodyExercises != null && bodyExercises.Count() > 0)
+                {
+                    foreach (var bodyExercise in bodyExercises)
+                    {
+                        results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
+                    }
+                }
+                return new OkObjectResult(results); // List<BodyExercise>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
+
+        // POST api/BodyExercises/
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete([FromBody]BodyExerciseKey key)
+        {
+            try
+            {
+                _bodyExerciseManager.DeleteBodyExercise(key);
+                return new OkObjectResult(true); // bool
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
     }
 }
