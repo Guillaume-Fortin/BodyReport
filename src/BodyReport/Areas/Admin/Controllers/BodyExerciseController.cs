@@ -9,14 +9,12 @@ using System.Linq;
 using BodyReport.Message;
 using BodyReport.Crud.Transformer;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.ViewModels.Admin;
-using BodyReport.Data;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using BodyReport.WebApiServices;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
@@ -32,12 +30,23 @@ namespace BodyReport.Areas.Admin.Controllers
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
+        /// <summary>
+        /// ServiceLayer BodyExercisesService
+        /// </summary>
+        IBodyExercisesService _bodyExercisesService = null;
+        /// <summary>
+        /// ServiceLayer MusclesService
+        /// </summary>
+        IMusclesService _musclesService = null;
 
-        public BodyExerciseController(ApplicationDbContext dbContext, IHostingEnvironment env,
+        public BodyExerciseController(IHostingEnvironment env,
                                       UserManager<ApplicationUser> userManager,
-                                      WebApiWrapper webApiWrapper) : base(dbContext, userManager, webApiWrapper)
+                                      IBodyExercisesService bodyExercisesService,
+                                      IMusclesService musclesService) : base(userManager)
         {
             _env = env;
+            _bodyExercisesService = bodyExercisesService;
+            _musclesService = musclesService;
         }
 
         private void DeleteImage(string imageName)
@@ -52,11 +61,11 @@ namespace BodyReport.Areas.Admin.Controllers
         //Manage body exercise
         // GET: /Admin/BodyExercise/Index
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var result = new List<BodyExerciseViewModel>();
-            var muscles = await MusclesWS.Find(_webApiWrapper, UserId, UserIdentityCookie);
-            var bodyExercises = await BodyExercisesWS.Find(_webApiWrapper, UserId, UserIdentityCookie);
+            var muscles = _musclesService.FindMuscles();
+            var bodyExercises = _bodyExercisesService.FindBodyExercises();
             if (bodyExercises != null && muscles != null)
             {
                 foreach (var muscle in muscles.OrderBy(t=>t.Name))
@@ -85,21 +94,19 @@ namespace BodyReport.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create(string returnUrl = null)
         {
-            var muscleManager = new MuscleManager(_dbContext);
-            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleManager.FindMuscles(), 0);
-
+            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), 0);
             return View(new BodyExerciseViewModel());
         }
 
         // Create Body Exercise
         // POST: /Admin/Create
         [HttpPost]
-        public async Task<IActionResult> Create(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
+        public IActionResult Create(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
                 var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name, MuscleId = bodyExerciseViewModel.MuscleId };
-                bodyExercise = await BodyExercisesWS.Create(_webApiWrapper, UserId, UserIdentityCookie, bodyExercise);
+                bodyExercise = _bodyExercisesService.CreateBodyExercise(bodyExercise);
                 if (bodyExercise == null || bodyExercise.Id == 0)
                 {
                     _logger.LogError("Create new Body Exercise fail");
@@ -111,9 +118,8 @@ namespace BodyReport.Areas.Admin.Controllers
 
                 return RedirectToAction("Index");
             }
-
-            var muscleManager = new MuscleManager(_dbContext);
-            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleManager.FindMuscles(), 0);
+            
+            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), 0);
 
             return View(bodyExerciseViewModel);
         }
@@ -121,12 +127,12 @@ namespace BodyReport.Areas.Admin.Controllers
         // Edit body exercise
         // GET: /Admin/BodyExercise/Edit
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
             if (id > 0)
             {
                 var key = new BodyExerciseKey() { Id = id };
-                var bodyExercise = await BodyExercisesWS.Get(_webApiWrapper, UserId, UserIdentityCookie, key);
+                var bodyExercise = _bodyExercisesService.GetBodyExercise(key);
                 if (bodyExercise != null)
                 {
                     var bodyExerciseViewModel = new BodyExerciseViewModel();
@@ -135,9 +141,8 @@ namespace BodyReport.Areas.Admin.Controllers
                     bodyExerciseViewModel.MuscleId = bodyExercise.MuscleId;
                     bodyExerciseViewModel.MuscleName = Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId));
                     bodyExerciseViewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName);
-
-                    var muscleManager = new MuscleManager(_dbContext);
-                    ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleManager.FindMuscles(), bodyExercise.MuscleId);
+                    
+                    ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), bodyExercise.MuscleId);
 
                     return View(bodyExerciseViewModel);
                 }
@@ -148,19 +153,19 @@ namespace BodyReport.Areas.Admin.Controllers
         // Edit an Body Exercise
         // POST: /Admin/BodyExercise/Edit
         [HttpPost]
-        public async Task<IActionResult> Edit(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
+        public IActionResult Edit(BodyExerciseViewModel bodyExerciseViewModel, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
                 // Verify not exist on bodyExercise name
                 var key = new BodyExerciseKey() { Id = bodyExerciseViewModel.Id };
-                var bodyExercise = await BodyExercisesWS.Get(_webApiWrapper, UserId, UserIdentityCookie, key);
+                var bodyExercise = _bodyExercisesService.GetBodyExercise(key);
                 if (bodyExercise != null)
                 {
                     string oldImageName = bodyExercise.ImageName;
                     bodyExercise.Name = bodyExerciseViewModel.Name;
                     bodyExercise.MuscleId = bodyExerciseViewModel.MuscleId;
-                    bodyExercise = await BodyExercisesWS.Update(_webApiWrapper, UserId, UserIdentityCookie, bodyExercise);
+                    bodyExercise = _bodyExercisesService.UpdateBodyExercise(bodyExercise);
                     //Save a new Image if it's correct
                     if (ImageUtils.CheckUploadedImageIsCorrect(imageFile, "png"))
                     {
@@ -174,9 +179,8 @@ namespace BodyReport.Areas.Admin.Controllers
             int muscleId = 0;
             if (bodyExerciseViewModel != null)
                 muscleId = bodyExerciseViewModel.MuscleId;
-
-            var muscleManager = new MuscleManager(_dbContext);
-            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleManager.FindMuscles(), muscleId);
+            
+            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), muscleId);
 
             return View(bodyExerciseViewModel);
         }
@@ -184,15 +188,15 @@ namespace BodyReport.Areas.Admin.Controllers
         //Delete Body Exercise
         // GET: /Admin/BodyExercise/Delete
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             if (id > 0)
             {
                 var key = new BodyExerciseKey() { Id = id };
-                var bodyExercise = await BodyExercisesWS.Get(_webApiWrapper, UserId, UserIdentityCookie, key);
+                var bodyExercise = _bodyExercisesService.GetBodyExercise(key);
                 if (bodyExercise != null)
                 {
-                    await BodyExercisesWS.Delete(_webApiWrapper, UserId, UserIdentityCookie, key);
+                    _bodyExercisesService.DeleteBodyExercise(key);
                     DeleteImage(bodyExercise.ImageName);
                 }
             }
