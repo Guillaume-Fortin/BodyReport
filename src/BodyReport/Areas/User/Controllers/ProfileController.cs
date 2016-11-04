@@ -9,13 +9,10 @@ using BodyReport.Message;
 using BodyReport.Framework;
 using BodyReport.Areas.User.ViewModels;
 using BodyReport.Services;
-using BodyReport.Framework;
 using BodyReport.Models;
 using BodyReport.Manager;
 using BodyReport.Resources;
 using BodyReport.Data;
-using System;
-using System.Collections.Generic;
 
 namespace BodyReport.Areas.User.Controllers
 {

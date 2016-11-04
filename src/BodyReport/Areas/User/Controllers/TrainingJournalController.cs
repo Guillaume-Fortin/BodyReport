@@ -10,7 +10,6 @@ using BodyReport.Message;
 using BodyReport.Message.WebApi;
 using BodyReport.Framework;
 using BodyReport.Areas.User.ViewModels;
-using BodyReport.Framework;
 using BodyReport.Framework.Exceptions;
 using BodyReport.Manager;
 using BodyReport.Models;
