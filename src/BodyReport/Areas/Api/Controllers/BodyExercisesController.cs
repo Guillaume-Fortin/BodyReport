@@ -8,6 +8,7 @@ using BodyReport.Models;
 using BodyReport.Data;
 using System;
 using BodyReport.Message.WebApi;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -19,12 +20,15 @@ namespace BodyReport.Areas.Api.Controllers
         /// Database db context
         /// </summary>
         ApplicationDbContext _dbContext = null;
-        BodyExerciseManager _bodyExerciseManager = null;
+        /// <summary>
+        /// ServiceLayer BodyExercisesService
+        /// </summary>
+        IBodyExercisesService _bodyExercisesService = null;
 
-        public BodyExercisesController(ApplicationDbContext dbContext)
+        public BodyExercisesController(ApplicationDbContext dbContext, IBodyExercisesService bodyExercisesService)
         {
             _dbContext = dbContext;
-            _bodyExerciseManager = new BodyExerciseManager(_dbContext);
+            _bodyExercisesService = bodyExercisesService;
         }
 
         // POST api/BodyExercises/Create
@@ -34,11 +38,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                BodyExercise result = null;
-                if (bodyExercise != null)
-                {
-                    result = _bodyExerciseManager.CreateBodyExercise(bodyExercise);
-                }
+                BodyExercise result = _bodyExercisesService.CreateBodyExercise(bodyExercise);
                 return new OkObjectResult(result); // BodyExercise
             }
             catch (Exception exception)
@@ -53,7 +53,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                var result = _bodyExerciseManager.GetBodyExercise(key);
+                var result = _bodyExercisesService.GetBodyExercise(key);
                 return new OkObjectResult(result); // BodyExercise
             }
             catch (Exception exception)
@@ -68,7 +68,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                var result = _bodyExerciseManager.FindBodyExercises(criteria);
+                var result = _bodyExercisesService.FindBodyExercises(criteria);
                 return new OkObjectResult(result); // List<BodyExercise>
             }
             catch (Exception exception)
@@ -84,11 +84,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                BodyExercise result = null;
-                if (bodyExercise != null)
-                {
-                    result = _bodyExerciseManager.UpdateBodyExercise(bodyExercise);
-                }
+                BodyExercise result = _bodyExercisesService.UpdateBodyExercise(bodyExercise);
                 return new OkObjectResult(result); // BodyExercise
             }
             catch (Exception exception)
@@ -104,14 +100,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                List<BodyExercise> results = new List<BodyExercise>();
-                if (bodyExercises != null && bodyExercises.Count() > 0)
-                {
-                    foreach (var bodyExercise in bodyExercises)
-                    {
-                        results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
-                    }
-                }
+                List<BodyExercise> results = _bodyExercisesService.UpdateBodyExerciseList(bodyExercises);
                 return new OkObjectResult(results); // List<BodyExercise>
             }
             catch (Exception exception)
@@ -121,14 +110,13 @@ namespace BodyReport.Areas.Api.Controllers
         }
 
         // POST api/BodyExercises/
-
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete([FromBody]BodyExerciseKey key)
         {
             try
             {
-                _bodyExerciseManager.DeleteBodyExercise(key);
+                _bodyExercisesService.DeleteBodyExercise(key);
                 return new OkObjectResult(true); // bool
             }
             catch (Exception exception)

@@ -23,6 +23,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using BodyReport.WebApiServices;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.ServiceLayers.Services;
 
 namespace BodyReport
 {
@@ -143,9 +145,8 @@ namespace BodyReport
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            //Add WebApiWrapper singleton instance
-            var webApiWrapper = new WebApiWrapper(new Uri(WebAppConfiguration.WebServicesUrl), WebAppConfiguration.WebServicesMaxPoolSize);
-            services.AddSingleton(webApiWrapper);
+
+            ConfigureServiceDataLayer(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -264,6 +265,16 @@ namespace BodyReport
         {
             var dataInitialzer = new ApplicationDataInitializer(new ApplicationDbContext(), _env);
             dataInitialzer.InitializeData();
+        }
+
+        /// <summary>
+        /// Configura Service Data Layer
+        /// </summary>
+        /// <param name="services"></param>
+        private void ConfigureServiceDataLayer(IServiceCollection services)
+        {
+            services.AddTransient<IBodyExercisesService, BodyExercisesService>();
+            services.AddTransient<IMusclesService, MusclesService>();
         }
     }
 }

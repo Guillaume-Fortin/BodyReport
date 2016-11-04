@@ -15,17 +15,9 @@ namespace BodyReport.Framework
     public class MvcController : Controller
     {
         /// <summary>
-        /// Database db context
-        /// </summary>
-        protected ApplicationDbContext _dbContext;
-        /// <summary>
         /// user manager
         /// </summary>
         protected readonly UserManager<ApplicationUser> _userManager;
-        /// <summary>
-        /// Web Api Wrapper
-        /// </summary>
-        protected WebApiWrapper _webApiWrapper;
         /// <summary>
         /// User Id (calculated)
         /// </summary>
@@ -35,11 +27,9 @@ namespace BodyReport.Framework
         /// </summary>
         private Cookie _userIdentityCookie = null;
 
-        public MvcController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, WebApiWrapper webApiWrapper)
+        public MvcController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _webApiWrapper = webApiWrapper;
-            _dbContext = dbContext;
         }
 
         public string UserId
@@ -51,7 +41,7 @@ namespace BodyReport.Framework
                 return _userId;
             }
         }
-
+        
         public Cookie UserIdentityCookie
         {
             get
