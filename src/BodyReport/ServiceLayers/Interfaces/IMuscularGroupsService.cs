@@ -14,5 +14,7 @@ namespace BodyReport.ServiceLayers.Interfaces
         void DeleteMuscularGroup(MuscularGroupKey key);
 
         MuscularGroup UpdateMuscularGroup(MuscularGroup muscularGroup);
+
+        List<MuscularGroup> UpdateMuscularGroupList(List<MuscularGroup> muscularGroups);
     }
 }

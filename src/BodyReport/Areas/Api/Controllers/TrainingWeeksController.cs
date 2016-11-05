@@ -115,9 +115,9 @@ namespace BodyReport.Areas.Api.Controllers
             }
         }
 
-        // Post api/TrainingWeeks/DeleteByKey
+        // Post api/TrainingWeeks/Delete
         [HttpPost]
-        public IActionResult DeleteByKey([FromBody]TrainingWeekKey trainingWeekKey)
+        public IActionResult Delete([FromBody]TrainingWeekKey trainingWeekKey)
         {
             try
             {
@@ -127,26 +127,8 @@ namespace BodyReport.Areas.Api.Controllers
                 if (trainingWeekKey.UserId != SessionUserId || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
                     return BadRequest();
             
-                var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var trainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
-                if (trainingWeek == null)
-                    return NotFound();
-
-                using (var transaction = _dbContext.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _trainingWeeksService.DeleteTrainingWeek(trainingWeek);
-                        transaction.Commit();
-                    }
-                    catch (Exception exception)
-                    {
-                        //_logger.LogCritical("Unable to delete training week", exception);
-                        transaction.Rollback();
-                        throw exception;
-                    }
-                }
-                return new OkResult();
+                 _trainingWeeksService.DeleteTrainingWeek(trainingWeekKey);
+                return new OkObjectResult(true); // bool
             }
             catch (Exception exception)
             {

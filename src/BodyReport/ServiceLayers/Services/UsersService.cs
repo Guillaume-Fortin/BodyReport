@@ -1,13 +1,20 @@
 ﻿using BodyReport.Data;
+using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Message;
 using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace BodyReport.ServiceLayers.Services
 {
     public class UsersService : BodyReportService, IUsersService
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UsersService));
         /// <summary>
         /// User info Manager
         /// </summary>
@@ -27,11 +34,40 @@ namespace BodyReport.ServiceLayers.Services
         }
         public void DeleteUser(UserKey key)
         {
-            _userManager.DeleteUser(key);
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _userManager.DeleteUser(key);
+                    //todo delete user infos, exercise etc.
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to delete user", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
         }
         public User UpdateUser(User user)
         {
-            return _userManager.UpdateUser(user);
+            User result = null;
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result = _userManager.UpdateUser(user);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to update user", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return result;
         }
 
         #region manage role
@@ -42,7 +78,22 @@ namespace BodyReport.ServiceLayers.Services
 
         public Role CreateRole(Role role)
         {
-            return _userManager.CreateRole(role);
+            Role result = null;
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result = _userManager.CreateRole(role);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to create role", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return result;
         }
 
         public Role GetRole(RoleKey key)
@@ -52,12 +103,40 @@ namespace BodyReport.ServiceLayers.Services
 
         public Role UpdateRole(Role role)
         {
-            return _userManager.UpdateRole(role);
+            Role result = null;
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result = _userManager.UpdateRole(role);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to update role", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return result;
         }
 
         public void DeleteRole(RoleKey key)
         {
-            _userManager.DeleteRole(key);
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _userManager.DeleteRole(key);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to delete role", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
         }
         #endregion
     }

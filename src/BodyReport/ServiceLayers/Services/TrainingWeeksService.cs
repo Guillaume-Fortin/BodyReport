@@ -51,7 +51,22 @@ namespace BodyReport.ServiceLayers.Services
 
         public TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek, TrainingWeekScenario trainingWeekScenario)
         {
-            return _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+            TrainingWeek result = null;
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result = _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to update training week", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return result;
         }
 
         public TrainingWeek GetTrainingWeek(TrainingWeekKey key, TrainingWeekScenario trainingWeekScenario)
@@ -71,7 +86,20 @@ namespace BodyReport.ServiceLayers.Services
 
         public void DeleteTrainingWeek(TrainingWeekKey key)
         {
-            _trainingWeekManager.DeleteTrainingWeek(key);
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _trainingWeekManager.DeleteTrainingWeek(key);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to delete training week", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
         }
 
         public bool CopyTrainingWeek(string currentUserId, CopyTrainingWeek copyTrainingWeek, out TrainingWeek newTrainingWeek)

@@ -1,7 +1,9 @@
 ﻿using BodyReport.Data;
+using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Message;
 using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,10 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class UserInfosService : BodyReportService, IUserInfosService
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UserInfosService));
         /// <summary>
         /// User info Manager
         /// </summary>
@@ -28,9 +34,19 @@ namespace BodyReport.ServiceLayers.Services
         public UserInfo UpdateUserInfo(UserInfo userInfo)
         {
             UserInfo result = null;
-            if (userInfo != null)
+            using (var transaction = _dbContext.Database.BeginTransaction())
             {
-                result = _userInfoManager.UpdateUserInfo(userInfo);
+                try
+                {
+                    result = _userInfoManager.UpdateUserInfo(userInfo);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to update user info", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
             }
             return result;
         }

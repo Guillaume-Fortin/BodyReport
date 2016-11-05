@@ -66,7 +66,9 @@ namespace BodyReport.Areas.Api.Controllers
 
                 if (trainingDayCriteria == null || trainingDayCriteria.UserId == null)
                     return BadRequest();
-                return new OkObjectResult(_trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario));
+
+                var result = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                return new OkObjectResult(result); // List<TrainingDay>
             }
             catch (Exception exception)
             {
@@ -140,26 +142,11 @@ namespace BodyReport.Areas.Api.Controllers
                 //Verify valid week of year
                 if (trainingDay.WeekOfYear > 0 && trainingDay.WeekOfYear <= 52)
                 {
-                    //Verify trainingWeek exist
-                    using (var transaction = _dbContext.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            trainingDay = _trainingDaysService.UpdateTrainingDay(trainingDay, trainingDayScenario);
-                            transaction.Commit();
-
-                            if (trainingDay == null)
-                                return BadRequest(new WebApiException(string.Format(Translation.IMPOSSIBLE_TO_UPDATE_P0, Translation.TRAINING_DAY)));
-                            else
-                                return new OkObjectResult(trainingDay);
-                        }
-                        catch (Exception exception)
-                        {
-                            //_logger.LogCritical("Unable to delete training week", exception);
-                            transaction.Rollback();
-                            throw exception;
-                        }
-                    }
+                    trainingDay = _trainingDaysService.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                    if (trainingDay == null)
+                        return BadRequest(new WebApiException(string.Format(Translation.IMPOSSIBLE_TO_UPDATE_P0, Translation.TRAINING_DAY)));
+                    else
+                        return new OkObjectResult(trainingDay);
                 }
                 else
                     return BadRequest();
@@ -187,7 +174,7 @@ namespace BodyReport.Areas.Api.Controllers
                     return BadRequest();
 
                 _trainingDaysService.SwitchDayOnTrainingDay(trainingDayKey.UserId, trainingDayKey.Year, trainingDayKey.WeekOfYear, trainingDayKey.DayOfWeek, switchDayOfWeek);
-                return new OkResult();
+                return new OkObjectResult(true); //bool
             }
             catch (Exception exception)
             {

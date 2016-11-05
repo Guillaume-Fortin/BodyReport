@@ -12,6 +12,6 @@ namespace BodyReport.ServiceLayers.Interfaces
         TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem);
         TrainingExercise GetTrainingExercise(TrainingExerciseKey key);
         List<TrainingExercise> FindTrainingExercise(TrainingExerciseCriteria trainingExerciseCriteria);
-        void DeleteTrainingExercise(TrainingExercise trainingExercise);
+        void DeleteTrainingExercise(TrainingExerciseKey key);
     }
 }

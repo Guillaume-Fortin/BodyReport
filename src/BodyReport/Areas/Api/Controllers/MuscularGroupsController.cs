@@ -6,61 +6,105 @@ using BodyReport.Message;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;
+using BodyReport.Framework;
+using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System;
+using BodyReport.Message.Web;
 
 namespace BodyReport.Areas.Api.Controllers
 {    
     [Authorize]
     [Area("Api")]
-    public class MuscularGroupsController : Controller
+    public class MuscularGroupsController : MvcController
     {
-        /// <summary>
-        /// Database db context
+        // <summary>
+        /// ServiceLayer
         /// </summary>
-        ApplicationDbContext _dbContext = null;
-        MuscularGroupManager _manager = null;
+        IMuscularGroupsService _muscularGroupsService;
 
-        public MuscularGroupsController(ApplicationDbContext dbContext)
+        public MuscularGroupsController(UserManager<ApplicationUser> userManager,
+                                        IMuscularGroupsService muscularGroupsService) : base(userManager)
         {
-            _dbContext = dbContext;
-            _manager = new MuscularGroupManager(_dbContext);
+            _muscularGroupsService = muscularGroupsService;
         }
 
         // Get api/MuscularGroups/Get
         [HttpGet]
-        public MuscularGroup Get(MuscularGroupKey key)
+        public IActionResult Get(MuscularGroupKey key)
         {
-            return _manager.GetMuscularGroup(key);
+            try
+            {
+                var result = _muscularGroupsService.GetMuscularGroup(key);
+                return new OkObjectResult(result); // MuscularGroup
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
         // Get api/MuscularGroups/Find
         [HttpGet]
-        public List<MuscularGroup> Find()
+        public IActionResult Find()
         {
-            return _manager.FindMuscularGroups();
+            try
+            {
+                var result = _muscularGroupsService.FindMuscularGroups();
+                return new OkObjectResult(result); // List<MuscularGroup>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // POST api/MuscularGroups/Post
+        // POST api/MuscularGroups/Update
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public List<MuscularGroup> Post([FromBody]List<MuscularGroup> muscularGroups)
+        public IActionResult Update([FromBody]MuscularGroup muscularGroup)
         {
-            List<MuscularGroup> results = new List<MuscularGroup>();
-            if (muscularGroups != null && muscularGroups.Count() > 0)
+            try
             {
-                foreach (var muscularGroup in muscularGroups)
-                {
-                    results.Add(_manager.UpdateMuscularGroup(muscularGroup));
-                }
+                var result = _muscularGroupsService.UpdateMuscularGroup(muscularGroup);
+                return new OkObjectResult(result); // MuscularGroup
             }
-            return results;
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // DELETE api/MuscularGroups/Delete
-        [HttpDelete]
+        // POST api/MuscularGroups/UpdateList
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public void Delete(MuscularGroupKey key)
+        public IActionResult UpdateList([FromBody]List<MuscularGroup> muscularGroups)
         {
-            _manager.DeleteMuscularGroup(key);
+            try
+            {
+                var result = _muscularGroupsService.UpdateMuscularGroupList(muscularGroups);
+                return new OkObjectResult(result); // List<MuscularGroup>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
+
+        // POST api/MuscularGroups/Delete
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Delete([FromBody]MuscularGroupKey key)
+        {
+            try
+            {
+                _muscularGroupsService.DeleteMuscularGroup(key);
+                return new OkObjectResult(true); // bool
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
     }
 }

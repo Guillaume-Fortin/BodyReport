@@ -274,15 +274,16 @@ namespace BodyReport
         private void ConfigureServiceDataLayer(IServiceCollection services)
         {
             services.AddTransient<IBodyExercisesService, BodyExercisesService>();
-            services.AddTransient<IMusclesService, MusclesService>();
-            services.AddTransient<IUserInfosService, UserInfosService>();
-            services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<ICitiesService, CitiesService>();
             services.AddTransient<ICountriesService, CountriesService>();
-            services.AddTransient<ITrainingWeeksService, TrainingWeeksService>();
+            services.AddTransient<IMusclesService, MusclesService>();
+            services.AddTransient<IMuscularGroupsService, MuscularGroupsService> ();
             services.AddTransient<ITrainingDaysService, TrainingDaysService>();
             services.AddTransient<ITrainingExercisesService, TrainingExercisesService>();
-            services.AddTransient<IMuscularGroupsService, MuscularGroupsService> ();
+            services.AddTransient<ITrainingWeeksService, TrainingWeeksService>();
+            services.AddTransient<ITranslationsService, TranslationsService>();
+            services.AddTransient<IUserInfosService, UserInfosService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
     }
 }

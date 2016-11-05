@@ -34,14 +34,13 @@ namespace BodyReport.Areas.Api.Controllers
         /// </summary>
         private readonly IUserInfosService _userInfosService;
 
-        public AccountController(
-            UserManager<ApplicationUser> userManager,
-            ApplicationDbContext dbContext,
-            SignInManager<ApplicationUser> signInManager,
-            IUsersService usersService,
-            IUserInfosService userInfosService,
-            IEmailSender emailSender, 
-            ILoggerFactory loggerFactory):base(userManager, dbContext)
+        public AccountController(UserManager<ApplicationUser> userManager,
+                                 ApplicationDbContext dbContext,
+                                 SignInManager<ApplicationUser> signInManager,
+                                 IUsersService usersService,
+                                 IUserInfosService userInfosService,
+                                 IEmailSender emailSender, 
+                                 ILoggerFactory loggerFactory) : base(userManager, dbContext)
         {
             _usersService = usersService;
             _userInfosService = userInfosService;

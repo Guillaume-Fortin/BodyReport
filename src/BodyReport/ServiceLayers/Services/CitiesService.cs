@@ -1,7 +1,9 @@
 ﻿using BodyReport.Data;
+using BodyReport.Framework;
 using BodyReport.Manager;
 using BodyReport.Message;
 using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,10 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class CitiesService : BodyReportService, ICitiesService
     {
+        /// <summary>
+        /// Logger
+        /// </summary>
+        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(CitiesService));
         /// <summary>
         /// City Manager
         /// </summary>

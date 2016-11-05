@@ -8,12 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using BodyReport.Framework;
+using BodyReport.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Api")]
-    public class DatasController : Controller
+    public class DatasController : MvcController
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger _logger;
@@ -22,9 +25,9 @@ namespace BodyReport.Areas.Api.Controllers
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public DatasController(
-            ILoggerFactory loggerFactory,
-            IHostingEnvironment env)
+        public DatasController(UserManager<ApplicationUser> userManager,
+                               ILoggerFactory loggerFactory,
+                               IHostingEnvironment env) : base (userManager)
         {
             _loggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger<DatasController>();

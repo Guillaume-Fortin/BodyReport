@@ -5,45 +5,57 @@ using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Framework;
+using BodyReport.Message.Web;
+using System;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
     [Authorize]
-    public class TranslationsController : Controller
+    public class TranslationsController : MvcController
     {
-        /// <summary>
-        /// Database db context
+        // <summary>
+        /// ServiceLayer
         /// </summary>
-        ApplicationDbContext _dbContext = null;
-        TranslationManager _manager = null;
+        ITranslationsService _translationsService;
 
-        public TranslationsController(ApplicationDbContext dbContext)
+        public TranslationsController(UserManager<ApplicationUser> userManager,
+                                      ITranslationsService translationsService) : base(userManager)
         {
-            _dbContext = dbContext;
-            _manager = new TranslationManager(_dbContext);
+            _translationsService = translationsService;
         }
 
         // Get api/Translations/Find
         [HttpGet]
-        public List<TranslationVal> Find()
+        public IActionResult Find()
         {
-            return _manager.FindTranslation();
+            try
+            {
+                var result = _translationsService.FindTranslation();
+                return new OkObjectResult(result); //List<TranslationVal>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // POST api/Translations/Post
+        // POST api/Translations/UpdateList
         [HttpPost]
-        public List<TranslationVal> Post([FromBody]List<TranslationVal> translations)
+        public IActionResult UpdateList([FromBody]List<TranslationVal> translations)
         {
-            List<TranslationVal> results = new List<TranslationVal>();
-            if (translations != null && translations.Count > 0)
+            try
             {
-                foreach (var translation in translations)
-                {
-                    results.Add(_manager.UpdateTranslation(translation));
-                }
+                var result = _translationsService.UpdateTranslationList(translations);
+                return new OkObjectResult(result); //List<TranslationVal>
             }
-            return results;
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
     }
 }

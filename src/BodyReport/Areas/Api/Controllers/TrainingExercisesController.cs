@@ -7,62 +7,44 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using BodyReport.Framework;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
     [Authorize]
-    public class TrainingExercisesController : Controller
+    public class TrainingExercisesController : MvcController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        /// <summary>
-		/// Database db context
-		/// </summary>
-		ApplicationDbContext _dbContext = null;
-        TrainingExerciseManager _manager = null;
+        // <summary>
+        /// ServiceLayer
+        /// </summary>
+        ITrainingExercisesService _trainingExercisesService;
 
-        public TrainingExercisesController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+        public TrainingExercisesController(UserManager<ApplicationUser> userManager,
+                                           ITrainingExercisesService trainingExercisesService) : base(userManager)
         {
-            _userManager = userManager;
-            _dbContext = dbContext;
-            _manager = new TrainingExerciseManager(_dbContext);
+            _trainingExercisesService = trainingExercisesService;
         }
 
-        // Post api/TrainingWeeks/DeleteByKey
+        // Post api/TrainingExercises/Delete
         [HttpPost]
-        public IActionResult DeleteByKey([FromBody]TrainingExerciseKey trainingExerciseKey)
+        public IActionResult Delete([FromBody]TrainingExerciseKey trainingExerciseKey)
         {
             try
             {
                 if (trainingExerciseKey == null)
                     return BadRequest();
 
-                if (trainingExerciseKey.UserId != _userManager.GetUserId(User) || 
-                    string.IsNullOrWhiteSpace(trainingExerciseKey.UserId) || 
+                if (trainingExerciseKey.UserId != SessionUserId ||
+                    string.IsNullOrWhiteSpace(trainingExerciseKey.UserId) ||
                     trainingExerciseKey.Year == 0 || trainingExerciseKey.WeekOfYear == 0 ||
-                    trainingExerciseKey.DayOfWeek < 0 || trainingExerciseKey.DayOfWeek > 6 || trainingExerciseKey.TrainingDayId == 0 || 
+                    trainingExerciseKey.DayOfWeek < 0 || trainingExerciseKey.DayOfWeek > 6 || trainingExerciseKey.TrainingDayId == 0 ||
                     trainingExerciseKey.Id == 0)
                     return BadRequest();
 
-                var trainingExercise = _manager.GetTrainingExercise(trainingExerciseKey);
-                if (trainingExercise == null)
-                    return NotFound();
-
-                using (var transaction = _dbContext.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _manager.DeleteTrainingExercise(trainingExercise);
-                        transaction.Commit();
-                    }
-                    catch (Exception exception)
-                    {
-                        //_logger.LogCritical("Unable to delete training week", exception);
-                        transaction.Rollback();
-                        throw exception;
-                    }
-                }
-                return new OkResult();
+                _trainingExercisesService.DeleteTrainingExercise(trainingExerciseKey);
+                return new OkObjectResult(true); // bool
             }
             catch (Exception exception)
             {

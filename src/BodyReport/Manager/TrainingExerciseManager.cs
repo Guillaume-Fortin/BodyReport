@@ -135,16 +135,20 @@ namespace BodyReport.Manager
             return trainingExercises;
         }
 
-        public void DeleteTrainingExercise(TrainingExercise trainingExercise)
+        public void DeleteTrainingExercise(TrainingExerciseKey key)
         {
-            _trainingDayExerciseModule.Delete(trainingExercise);
-            SynchroManager.TrainingExerciseChange(_dbContext, trainingExercise, true);
-
-            if (trainingExercise.TrainingExerciseSets != null)
+            var trainingExercise = GetTrainingExercise(key);
+            if (trainingExercise != null)
             {
-                foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+                _trainingDayExerciseModule.Delete(trainingExercise);
+                SynchroManager.TrainingExerciseChange(_dbContext, trainingExercise, true);
+
+                if (trainingExercise.TrainingExerciseSets != null)
                 {
-                    _trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
+                    foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
+                    {
+                        _trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
+                    }
                 }
             }
         }

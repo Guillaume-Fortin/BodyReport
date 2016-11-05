@@ -6,60 +6,88 @@ using BodyReport.Message;
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Data;
+using BodyReport.Framework;
+using Microsoft.AspNetCore.Identity;
+using BodyReport.ServiceLayers.Interfaces;
+using System;
+using BodyReport.Message.Web;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
-    public class MusclesController : Controller
+    public class MusclesController : MvcController
     {
-        /// <summary>
-        /// Database db context
+        // <summary>
+        /// ServiceLayer
         /// </summary>
-        ApplicationDbContext _dbContext = null;
-        MuscleManager _manager = null;
+        IMusclesService _musclesService = null;
 
-        public MusclesController(ApplicationDbContext dbContext)
+        public MusclesController(UserManager<ApplicationUser> userManager,
+                                 IMusclesService musclesService) : base(userManager)
         {
-            _dbContext = dbContext;
-            _manager = new MuscleManager(_dbContext);
+            _musclesService = musclesService;
         }
 
         // Get api/Muscle/Get
         [HttpGet]
-        public Muscle Get(MuscleKey key)
+        public IActionResult Get(MuscleKey key)
         {
-            return _manager.GetMuscle(key);
+            try
+            {
+                var result = _musclesService.GetMuscle(key);
+                return new OkObjectResult(result); // Muscle
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
         // Get api/Muscle/Find
         [HttpGet]
-        public List<Muscle> Find(MuscleCriteria criteria)
+        public IActionResult Find(MuscleCriteria criteria)
         {
-            return _manager.FindMuscles(criteria);
+            try
+            {
+                var result = _musclesService.FindMuscles(criteria);
+                return new OkObjectResult(result); // List<Muscle>
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // POST api/Muscle/Post
+        // POST api/Muscle/UpdateList
         [HttpPost]
 		[Authorize(Roles = "Admin")]
-        public List<Muscle> Post([FromBody]List<Muscle> muscles)
+        public IActionResult UpdateList([FromBody]List<Muscle> muscles)
         {
-            List<Muscle> results = new List<Muscle>();
-            if (muscles != null && muscles.Count() > 0)
+            try
             {
-                foreach (var muscle in muscles)
-                {
-                    results.Add(_manager.UpdateMuscle(muscle));
-                }
+                var result = _musclesService.UpdateMuscleList(muscles);
+                return new OkObjectResult(result); // Muscle
             }
-            return results;
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
 
-        // DELETE api/Muscles
-        [HttpDelete]
+        // UPDATE api/Muscles/Delete
+        [HttpPost]
 		[Authorize(Roles = "Admin")]
-        public void Delete(MuscleKey key)
+        public IActionResult Delete([FromBody]MuscleKey key)
         {
-            _manager.DeleteMuscle(key);
+            try
+            {
+                _musclesService.DeleteMuscle(key);
+                return new OkObjectResult(true); // bool
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
         }
     }
 }

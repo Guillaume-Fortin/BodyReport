@@ -6,25 +6,24 @@ using BodyReport.Data;
 using System;
 using BodyReport.Message.Web;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Framework;
+using Microsoft.AspNetCore.Identity;
+using BodyReport.Models;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Authorize]
     [Area("Api")]
-    public class BodyExercisesController : Controller
+    public class BodyExercisesController : MvcController
     {
-        /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
         /// <summary>
         /// ServiceLayer BodyExercisesService
         /// </summary>
         IBodyExercisesService _bodyExercisesService = null;
 
-        public BodyExercisesController(ApplicationDbContext dbContext, IBodyExercisesService bodyExercisesService)
+        public BodyExercisesController(UserManager<ApplicationUser> userManager,
+                                       IBodyExercisesService bodyExercisesService) : base(userManager)
         {
-            _dbContext = dbContext;
             _bodyExercisesService = bodyExercisesService;
         }
 

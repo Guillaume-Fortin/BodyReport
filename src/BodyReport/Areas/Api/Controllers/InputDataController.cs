@@ -5,14 +5,16 @@ using BodyReport.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BodyReport.Data;
+using BodyReport.Framework;
+using Microsoft.AspNetCore.Identity;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Api")]
-    public class InputDataController : Controller
+    public class InputDataController : MvcController
     {
-        public InputDataController(ApplicationDbContext dbContext)
+        public InputDataController(UserManager<ApplicationUser> userManager) : base(userManager)
         {
         }
 
