@@ -17,7 +17,6 @@ namespace BodyReport.ServiceLayers.Services
         BodyExerciseManager _bodyExerciseManager = null;
         public BodyExercisesService(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _dbContext = dbContext;
             _bodyExerciseManager = new BodyExerciseManager(_dbContext);
         }
 

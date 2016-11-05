@@ -7,39 +7,47 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using BodyReport.Areas.Api.ViewModels;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.Services;
 using BodyReport.Data;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Authorize]
     [Area("Api")]
-    public class AccountController : Controller
+    public class AccountController : MvcController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
-        ApplicationDbContext _dbContext = null;
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUsersService _usersService;
+        /// <summary>
+        /// Service layer userInfos
+        /// </summary>
+        private readonly IUserInfosService _userInfosService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext,
             SignInManager<ApplicationUser> signInManager,
+            IUsersService usersService,
+            IUserInfosService userInfosService,
             IEmailSender emailSender, 
-            ILoggerFactory loggerFactory,
-            ApplicationDbContext dbContext)
+            ILoggerFactory loggerFactory):base(userManager, dbContext)
         {
-            _userManager = userManager;
+            _usersService = usersService;
+            _userInfosService = userInfosService;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            _dbContext = dbContext;
         }
 
         //
@@ -63,13 +71,13 @@ namespace BodyReport.Areas.Api.Controllers
                 return new StatusCodeResult(403);
 
             //Verify email validate
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _identityUserManager.FindByNameAsync(userName);
             if (user == null)
             {
                 return BadRequest(new WebApiException(Translation.INVALID_LOGIN_ATTEMPT));
             }
             //Add this to check if the email was confirmed.
-            if (!await _userManager.IsEmailConfirmedAsync(user))
+            if (!await _identityUserManager.IsEmailConfirmedAsync(user))
             {
                 return BadRequest(new WebApiException(Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL));
             }
@@ -79,7 +87,7 @@ namespace BodyReport.Areas.Api.Controllers
             if (result.Succeeded)
             {
                 user.LastLoginDate = DateTime.Now;
-                await _userManager.UpdateAsync(user);
+                await _identityUserManager.UpdateAsync(user);
                 _logger.LogInformation(1, Translation.USER_LOGGED_IN);
                 return new OkResult();
             }
@@ -100,9 +108,8 @@ namespace BodyReport.Areas.Api.Controllers
         public IActionResult GetUser(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                userId = _userManager.GetUserId(User);
-            var userManager = new UserManager(_dbContext);
-            var user = userManager.GetUser(new UserKey() { Id = userId });
+                userId = SessionUserId;
+            var user = _usersService.GetUser(new UserKey() { Id = userId });
             if (user != null)
                 return new OkObjectResult(user);
             return new NotFoundResult();
@@ -117,14 +124,12 @@ namespace BodyReport.Areas.Api.Controllers
             {
                 UserInfo userInfo = null;
                 if (string.IsNullOrWhiteSpace(userId))
-                    userId = _userManager.GetUserId(User);
-                var userManager = new UserManager(_dbContext);
-                var user = userManager.GetUser(new UserKey() { Id = userId });
+                    userId = SessionUserId;
+                var user = _usersService.GetUser(new UserKey() { Id = userId });
 
                 if (user != null)
                 {
-                    var userInfoManager = new UserInfoManager(_dbContext);
-                    userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
+                    userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
                     return new OkObjectResult(userInfo);
                 }
                 return new NotFoundResult();
@@ -143,11 +148,10 @@ namespace BodyReport.Areas.Api.Controllers
             try
             {
                 if (userInfo == null || string.IsNullOrWhiteSpace(userInfo.UserId) ||
-                    _userManager.GetUserId(User) != userInfo.UserId)
+                    SessionUserId != userInfo.UserId)
                     return BadRequest();
-
-                var userInfoManager = new UserInfoManager(_dbContext);
-                userInfo = userInfoManager.UpdateUserInfo(userInfo);
+                
+                userInfo = _userInfosService.UpdateUserInfo(userInfo);
                 return new OkObjectResult(userInfo);
             }
             catch (Exception exception)
@@ -168,22 +172,22 @@ namespace BodyReport.Areas.Api.Controllers
 
             if (ModelState.IsValid)
             {
-                var mailUser = await _userManager.FindByEmailAsync(registerAccount.Email);
+                var mailUser = await _identityUserManager.FindByEmailAsync(registerAccount.Email);
                 if (mailUser != null)
                     return BadRequest(new WebApiException("Email already exist"));
 
                 var user = new ApplicationUser { UserName = registerAccount.UserName, Email = registerAccount.Email };
-                var result = await _userManager.CreateAsync(user, registerAccount.Password);
+                var result = await _identityUserManager.CreateAsync(user, registerAccount.Password);
                 if (result.Succeeded)
                 {
                     user.RegistrationDate = DateTime.Now;
-                    await _userManager.UpdateAsync(user);
+                    await _identityUserManager.UpdateAsync(user);
                     _logger.LogInformation(3, "User created a new account with password.");
                     try
                     {
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                         // Send an email with this link
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await _emailSender.SendEmailAsync(registerAccount.Email, "Confirm your account",
                         "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");

@@ -17,11 +17,15 @@ namespace BodyReport.Framework
         /// <summary>
         /// user manager
         /// </summary>
-        protected readonly UserManager<ApplicationUser> _userManager;
+        protected readonly UserManager<ApplicationUser> _identityUserManager;
+        /// <summary>
+        /// Application db context
+        /// </summary>
+        protected readonly ApplicationDbContext _dbContext = null;
         /// <summary>
         /// User Id (calculated)
         /// </summary>
-        private string _userId = null;
+        private string _sessionUserId = null;
         /// <summary>
         /// UserIdentityCookie (calculated)
         /// </summary>
@@ -29,20 +33,30 @@ namespace BodyReport.Framework
 
         public MvcController(UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
+            _identityUserManager = userManager;
+        }
+        public MvcController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+        {
+            _identityUserManager = userManager;
+            _dbContext = dbContext;
         }
 
-        public string UserId
+        protected string SessionUserId
         {
             get
             {
-                if(_userId == null)
-                    _userId = _userManager.GetUserId(HttpContext.User);
-                return _userId;
+                if(_sessionUserId == null)
+                    _sessionUserId = _identityUserManager.GetUserId(HttpContext.User);
+                return _sessionUserId;
             }
         }
         
-        public Cookie UserIdentityCookie
+        protected Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return _identityUserManager.GetUserAsync(HttpContext.User);
+        }
+
+        protected Cookie UserIdentityCookie
         {
             get
             {

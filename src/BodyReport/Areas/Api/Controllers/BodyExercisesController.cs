@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BodyReport.Message;
-using BodyReport.Manager;
-using BodyReport.Models;
 using BodyReport.Data;
 using System;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Api.Controllers

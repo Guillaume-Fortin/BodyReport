@@ -1,4 +1,4 @@
-﻿using BodyReport.Message.WebApi;
+﻿using BodyReport.Message.Web;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;

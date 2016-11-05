@@ -13,38 +13,41 @@ using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.Services;
 using BodyReport.Message;
-using BodyReport.Data;
-using BodyReport.Manager;
 using BodyReport.Framework;
 using Microsoft.AspNetCore.Localization;
+using BodyReport.Data;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Site.Controllers
 {
     [Authorize]
     [Area("Site")]
-    public class AccountController : Controller
+    public class AccountController : MvcController
     {
-        /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUsersService _usersService;
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUserInfosService _userInfosService;
 
-        public AccountController(
-            ApplicationDbContext dbContext,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender,
-            ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+        public AccountController(ApplicationDbContext dbContext,
+                                 UserManager<ApplicationUser> userManager,
+                                 SignInManager<ApplicationUser> signInManager,
+                                 IUsersService usersService, IUserInfosService userInfosService,
+                                 IEmailSender emailSender,
+                                 ISmsSender smsSender,
+                                 ILoggerFactory loggerFactory) : base(userManager, dbContext)
         {
-            _dbContext = dbContext;
-            _userManager = userManager;
             _signInManager = signInManager;
+            _usersService = usersService;
+            _userInfosService = userInfosService;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -80,14 +83,14 @@ namespace BodyReport.Areas.Site.Controllers
             if (ModelState.IsValid)
             {
                 //Verify email validate
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await _identityUserManager.FindByNameAsync(model.UserName);
                 if (user == null)
                 {
                     ModelState.AddModelError("", Translation.INVALID_LOGIN_ATTEMPT);
                     return View(model);
                 }
                 //Add this to check if the email was confirmed.
-                if (!await _userManager.IsEmailConfirmedAsync(user))
+                if (!await _identityUserManager.IsEmailConfirmedAsync(user))
                 {
                     ModelState.AddModelError("", Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL);
                     return View(model);
@@ -98,7 +101,7 @@ namespace BodyReport.Areas.Site.Controllers
                 if (result.Succeeded)
                 {
                     user.LastLoginDate = DateTime.Now;
-                    await _userManager.UpdateAsync(user);
+                    await _identityUserManager.UpdateAsync(user);
                     _logger.LogInformation(1, Translation.USER_LOGGED_IN);
                     return RedirectToLocal(returnUrl);
                 }
@@ -140,25 +143,25 @@ namespace BodyReport.Areas.Site.Controllers
         {
             if (ModelState.IsValid)
             {
-                var mailUser = await _userManager.FindByEmailAsync(model.Email);
+                var mailUser = await _identityUserManager.FindByEmailAsync(model.Email);
                 if(mailUser != null)
                 {
                     ModelState.AddModelError("", "Email already exist");
                     return View(model);
                 }
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await _identityUserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     user.RegistrationDate = DateTime.Now;
-                    await _userManager.UpdateAsync(user);
+                    await _identityUserManager.UpdateAsync(user);
                     //await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password. USerName : " + user.UserName);
                     try
                     {
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                         // Send an email with this link
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                             "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
@@ -260,10 +263,10 @@ namespace BodyReport.Areas.Site.Controllers
                     return View("ExternalLoginFailure");
                 }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user);
+                var result = await _identityUserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
+                    result = await _identityUserManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
@@ -287,12 +290,12 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View("Error");
             }
-            var applicationUser = await _userManager.FindByIdAsync(userId);
+            var applicationUser = await _identityUserManager.FindByIdAsync(userId);
             if (applicationUser == null)
             {
                 return View("Error");
             }
-            var result = await _userManager.ConfirmEmailAsync(applicationUser, code);
+            var result = await _identityUserManager.ConfirmEmailAsync(applicationUser, code);
 
             if(result.Succeeded)
             {
@@ -300,30 +303,28 @@ namespace BodyReport.Areas.Site.Controllers
                 //await _userManager.AddToRoleAsync(user, "user"); //don't work on rc2???
                 // Verify not exist on id
                 var key = new UserKey() { Id = applicationUser.Id };
-                var manager = new UserManager(_dbContext);
-                var user = manager.GetUser(key);
+                var user = _usersService.GetUser(key);
                 if (user != null)
                 {
                     //Verify role exist
                     var roleKey = new RoleKey();
                     roleKey.Id = "1"; //User
-                    var role = manager.GetRole(roleKey);
+                    var role = _usersService.GetRole(roleKey);
                     if (role != null)
                     {
                         user.Role = role;
-                        user = manager.UpdateUser(user);
+                        user = _usersService.UpdateUser(user);
                     }
 
                     if (user != null)
                     {
                         //Add empty user profil (for correct connect error on mobile application)
-                        var userInfoManager = new UserInfoManager(_dbContext);
                         var userInfo = new UserInfo()
                         {
                             UserId = user.Id,
                             Unit = TUnitType.Metric
                         };
-                        userInfoManager.UpdateUserInfo(userInfo);
+                        _userInfosService.UpdateUserInfo(userInfo);
                     }
 
                     return RedirectToAction("Index", "Home", new { area = "Site" });
@@ -350,8 +351,8 @@ namespace BodyReport.Areas.Site.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                var user = await _identityUserManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _identityUserManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -361,7 +362,7 @@ namespace BodyReport.Areas.Site.Controllers
                 {
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
-                    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var code = await _identityUserManager.GeneratePasswordResetTokenAsync(user);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(model.Email, "Reset Password",
                        "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
@@ -406,13 +407,13 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View(model);
             }
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _identityUserManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
-            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            var result = await _identityUserManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
@@ -441,7 +442,7 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View("Error");
             }
-            var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
+            var userFactors = await _identityUserManager.GetValidTwoFactorProvidersAsync(user);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
@@ -465,7 +466,7 @@ namespace BodyReport.Areas.Site.Controllers
             }
 
             // Generate the token and send it
-            var code = await _userManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
+            var code = await _identityUserManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
             if (string.IsNullOrWhiteSpace(code))
             {
                 return View("Error");
@@ -476,7 +477,7 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 try
                 {
-                    await _emailSender.SendEmailAsync(await _userManager.GetEmailAsync(user), "Security Code", message);
+                    await _emailSender.SendEmailAsync(await _identityUserManager.GetEmailAsync(user), "Security Code", message);
                 }
                 catch (Exception except)
                 {
@@ -485,7 +486,7 @@ namespace BodyReport.Areas.Site.Controllers
             }
             else if (model.SelectedProvider == "Phone")
             {
-                await _smsSender.SendSmsAsync(await _userManager.GetPhoneNumberAsync(user), message);
+                await _smsSender.SendSmsAsync(await _identityUserManager.GetPhoneNumberAsync(user), message);
             }
 
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
@@ -547,12 +548,7 @@ namespace BodyReport.Areas.Site.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-
-        private Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return _userManager.GetUserAsync(HttpContext.User);
-        }
-
+        
         private IActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))

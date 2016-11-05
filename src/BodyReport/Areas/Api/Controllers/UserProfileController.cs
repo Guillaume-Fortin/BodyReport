@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using BodyReport.Framework;
 using BodyReport.Models;
 using BodyReport.Services;

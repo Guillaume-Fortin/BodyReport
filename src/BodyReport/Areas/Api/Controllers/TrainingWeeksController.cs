@@ -2,34 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
-using BodyReport.Message.WebApi.MultipleParameters;
+using BodyReport.Message.Web;
+using BodyReport.Message.Web.MultipleParameters;
 using BodyReport.Framework.Exceptions;
 using BodyReport.Models;
-using BodyReport.Manager;
-using BodyReport.Services;
 using BodyReport.Data;
 using Microsoft.AspNetCore.Authorization;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Framework;
 
 namespace BodyReport.Areas.Api.Controllers
 {
 	[Area("Api")]
     [Authorize]
-	public class TrainingWeeksController : Controller
+	public class TrainingWeeksController : MvcController
 	{
-        private readonly UserManager<ApplicationUser> _userManager;
         /// <summary>
-        /// Database db context
+        /// Service layer TrainingDays
         /// </summary>
-        ApplicationDbContext _dbContext = null;
-		TrainingWeekManager _manager = null;
+        private readonly ITrainingWeeksService _trainingWeeksService;
 
-		public TrainingWeeksController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+        public TrainingWeeksController(UserManager<ApplicationUser> userManager,
+                                       ITrainingWeeksService trainingWeeksService) : base(userManager)
 		{
-            _userManager = userManager;
-			_dbContext = dbContext;
-			_manager = new TrainingWeekManager(_dbContext);
-		}
+            _trainingWeeksService = trainingWeeksService;
+        }
 
         // Get api/TrainingWeeks/Get
         [HttpGet]
@@ -44,7 +41,7 @@ namespace BodyReport.Areas.Api.Controllers
                 {
                     trainingWeekScenario.TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
                 }
-                var trainingWeek = _manager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                var trainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
                 return new OkObjectResult(trainingWeek);
             }
             catch(Exception exception)
@@ -67,7 +64,7 @@ namespace BodyReport.Areas.Api.Controllers
 
                 if (trainingWeekCriteriaList == null)
                     return BadRequest();
-                return new OkObjectResult(_manager.FindTrainingWeek (trainingWeekCriteriaList, trainingWeekScenario));
+                return new OkObjectResult(_trainingWeeksService.FindTrainingWeek (trainingWeekCriteriaList, trainingWeekScenario));
             }
             catch (Exception exception)
             {
@@ -81,10 +78,10 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                if(trainingWeek == null || trainingWeek.UserId != _userManager.GetUserId(User))
+                if(trainingWeek == null || trainingWeek.UserId != SessionUserId)
                     return BadRequest();
             
-                var result = _manager.CreateTrainingWeek(trainingWeek);
+                var result = _trainingWeeksService.CreateTrainingWeek(trainingWeek);
                 return new OkObjectResult(result);
             }
             catch (Exception exception)
@@ -106,10 +103,10 @@ namespace BodyReport.Areas.Api.Controllers
                 var trainingWeek = trainingWeekWithScenario.TrainingWeek;
                 var trainingWeekScenario = trainingWeekWithScenario.TrainingWeekScenario;
 
-                if(trainingWeek.UserId != _userManager.GetUserId(User))
+                if(trainingWeek.UserId != SessionUserId)
 			        return BadRequest();
 
-                var result = _manager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                var result = _trainingWeeksService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
 			    return new OkObjectResult(result);
             }
             catch (Exception exception)
@@ -127,12 +124,11 @@ namespace BodyReport.Areas.Api.Controllers
                 if (trainingWeekKey == null )
                     return BadRequest();
             
-                if (trainingWeekKey.UserId != _userManager.GetUserId(User) || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
+                if (trainingWeekKey.UserId != SessionUserId || string.IsNullOrWhiteSpace(trainingWeekKey.UserId) || trainingWeekKey.Year == 0 || trainingWeekKey.WeekOfYear == 0)
                     return BadRequest();
             
-                var trainingWeekManager = new TrainingWeekManager(_dbContext);
                 var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                var trainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
                 if (trainingWeek == null)
                     return NotFound();
 
@@ -140,7 +136,7 @@ namespace BodyReport.Areas.Api.Controllers
                 {
                     try
                     {
-                        trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                        _trainingWeeksService.DeleteTrainingWeek(trainingWeek);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -167,9 +163,8 @@ namespace BodyReport.Areas.Api.Controllers
 
             try
             {
-                var service = new TrainingWeekService(_dbContext);
                 TrainingWeek trainingWeek;
-                if (!service.CopyTrainingWeek(_userManager.GetUserId(User), copyTrainingWeek, out trainingWeek))
+                if (!_trainingWeeksService.CopyTrainingWeek(SessionUserId, copyTrainingWeek, out trainingWeek))
                     return new OkResult();
 
                 return new OkObjectResult(trainingWeek);

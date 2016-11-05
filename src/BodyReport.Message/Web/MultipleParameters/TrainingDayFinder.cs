@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BodyReport.Message.WebApi.MultipleParameters
+namespace BodyReport.Message.Web.MultipleParameters
 {
     public class TrainingDayFinder
     {

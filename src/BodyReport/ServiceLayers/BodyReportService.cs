@@ -11,7 +11,7 @@ namespace BodyReport.ServiceLayers
         /// <summary>
         /// Database db context
         /// </summary>
-        protected ApplicationDbContext _dbContext = null;
+        protected readonly ApplicationDbContext _dbContext = null;
         public BodyReportService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;

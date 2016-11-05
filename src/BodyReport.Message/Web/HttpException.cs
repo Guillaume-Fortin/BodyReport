@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BodyReport.Message.WebApi
+namespace BodyReport.Message.Web
 {
     public class HttpException : Exception
     {

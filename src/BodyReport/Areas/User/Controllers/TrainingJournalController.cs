@@ -7,39 +7,75 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using BodyReport.Framework;
 using BodyReport.Areas.User.ViewModels;
 using BodyReport.Framework.Exceptions;
-using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Resources;
-using BodyReport.Services;
-using BodyReport.Data;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.User.Controllers
 {
     [Authorize(Roles = "User,Admin")]
     [Area("User")]
-    public class TrainingJournalController : Controller
+    public class TrainingJournalController : MvcController
     {
         /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(TrainingJournalController));
         /// <summary>
-        /// UserManager Identity
+        /// Service layer users
         /// </summary>
-        UserManager<ApplicationUser> _userManager;
+        private readonly IUsersService _usersService;
         /// <summary>
-        /// Database db context
+        /// Service layer userInfos
         /// </summary>
-        ApplicationDbContext _dbContext = null;
+        private readonly IUserInfosService _userInfosService;
+        /// <summary>
+        /// Service layer TrainingWeeks
+        /// </summary>
+        private readonly ITrainingWeeksService _trainingWeeksService;
+        /// <summary>
+        /// Service layer TrainingDays
+        /// </summary>
+        private readonly ITrainingDaysService _trainingDaysService;
+        /// <summary>
+        /// Service layer ITrainingExercises
+        /// </summary>
+        private readonly ITrainingExercisesService _trainingExercisesService;
+        /// <summary>
+        /// Service layer BodyExercises
+        /// </summary>
+        private readonly IBodyExercisesService _bodyExercisesService;
+        /// <summary>
+        /// Service layer muscles
+        /// </summary>
+        private readonly IMusclesService _musclesService;
+        /// <summary>
+        /// Service layer muscularGroups
+        /// </summary>
+        private readonly IMuscularGroupsService _muscularGroupsService;
 
-        public TrainingJournalController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+        public TrainingJournalController(UserManager<ApplicationUser> userManager,
+                                         IUsersService usersService,
+                                         IUserInfosService userInfosService,
+                                         ITrainingWeeksService trainingWeeksService,
+                                         ITrainingDaysService trainingDaysService,
+                                         ITrainingExercisesService trainingExercisesService,
+                                         IBodyExercisesService bodyExercisesService,
+                                         IMusclesService musclesService,
+                                         IMuscularGroupsService muscularGroupsService) : base(userManager)
         {
-            _userManager = userManager;
-            _dbContext = dbContext;
+            _usersService = usersService;
+            _userInfosService = userInfosService;
+            _trainingWeeksService = trainingWeeksService;
+            _trainingDaysService = trainingDaysService;
+            _trainingExercisesService = trainingExercisesService;
+            _bodyExercisesService = bodyExercisesService;
+            _musclesService = musclesService;
+            _muscularGroupsService = muscularGroupsService;
         }
 
         private DayOfWeek GetCurrentDayOfWeek(int? dayOfWeekSelected, TimeZoneInfo timeZoneInfo)
@@ -56,11 +92,10 @@ namespace BodyReport.Areas.User.Controllers
         public IActionResult Index(string userId, int year, int weekOfYear, int? dayOfWeekSelected)
         {
             var viewModel = new List<TrainingWeekViewModel>();
-            var trainingWeekManager = new TrainingWeekManager(_dbContext);
 
-            var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { Equal = _userManager.GetUserId(User) } };
+            var searchCriteria = new TrainingWeekCriteria() { UserId = new StringCriteria() { Equal = SessionUserId } };
             var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-            var trainingWeekList = trainingWeekManager.FindTrainingWeek(searchCriteria, scenario);
+            var trainingWeekList = _trainingWeeksService.FindTrainingWeek(searchCriteria, scenario);
 
             if (trainingWeekList != null)
             {
@@ -79,8 +114,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 userInfo = new UserInfo();
 
@@ -90,7 +124,7 @@ namespace BodyReport.Areas.User.Controllers
             DateTime dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, timeZoneInfo);
 
             var trainingWeek = new TrainingWeek();
-            trainingWeek.UserId = _userManager.GetUserId(User);
+            trainingWeek.UserId = SessionUserId;
             trainingWeek.Year = dateTime.Year;
             trainingWeek.WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
             trainingWeek.UserHeight = userInfo.Height;
@@ -108,19 +142,17 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || _userManager.GetUserId(User) != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.Year == 0 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 && 
                     (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                 {
-                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
                     var trainingWeek = TransformViewModelToTrainingWeek(viewModel);
-
                     var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
                     var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                    var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                    var existTrainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                     if (existTrainingWeek != null)
                     {
@@ -128,22 +160,7 @@ namespace BodyReport.Areas.User.Controllers
                         return View(viewModel);
                     }
 
-                    //Create data in database
-                    using (var transaction = _dbContext.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            trainingWeek = trainingWeekManager.CreateTrainingWeek(trainingWeek);
-                            transaction.Commit();
-                        }
-                        catch (Exception exception)
-                        {
-                            _logger.LogCritical("Unable to create training week", exception);
-                            transaction.Rollback();
-                            throw exception;
-                        }
-                    }   
-
+                    trainingWeek = _trainingWeeksService.CreateTrainingWeek(trainingWeek);
                     if (trainingWeek == null)
                     {
                         ModelState.AddModelError(string.Empty, Translation.IMPOSSIBLE_TO_CREATE_NEW_TRAINING_JOURNAL);
@@ -163,11 +180,10 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Edit(string userId, int year, int weekOfYear)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
             ViewBag.UserUnit = GetUserUnit(userId);
-            var trainingJournalManager = new TrainingWeekManager(_dbContext);
             var key = new TrainingWeekKey()
             {
                 UserId = userId,
@@ -179,7 +195,7 @@ namespace BodyReport.Areas.User.Controllers
                 ManageTrainingDay = true,
                 TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
             };
-            var trainingJournal = trainingJournalManager.GetTrainingWeek(key, trainingWeekScenario);
+            var trainingJournal = _trainingWeeksService.GetTrainingWeek(key, trainingWeekScenario);
             if (trainingJournal == null) // no data found
                 return RedirectToAction("Index");
 
@@ -194,19 +210,17 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || _userManager.GetUserId(User) != viewModel.UserId)
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52 &&
                     (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                 {
-                    var trainingWeekManager = new TrainingWeekManager(_dbContext);
                     var trainingWeek = TransformViewModelToTrainingWeek(viewModel);
-
                     var trainingWeekKey = new TrainingWeekKey() { UserId = trainingWeek.UserId, Year = trainingWeek.Year, WeekOfYear = trainingWeek.WeekOfYear };
                     var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                    var existTrainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                    var existTrainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                     if (existTrainingWeek == null)
                     {
@@ -216,7 +230,7 @@ namespace BodyReport.Areas.User.Controllers
 
                     //Create data in database. No need transaction, only header
                     trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                    trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                    trainingWeek = _trainingWeeksService.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
 
                     if (trainingWeek == null)
                     {
@@ -236,11 +250,10 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult Copy(string userId, int year, int weekOfYear)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
             ViewBag.UserUnit = GetUserUnit(userId);
-            var trainingWeekManager = new TrainingWeekManager(_dbContext);
             var key = new TrainingWeekKey()
             {
                 UserId = userId,
@@ -252,12 +265,11 @@ namespace BodyReport.Areas.User.Controllers
                 ManageTrainingDay = true,
                 TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
             };
-            var trainingWeek = trainingWeekManager.GetTrainingWeek(key, trainingWeekScenario);
+            var trainingWeek = _trainingWeeksService.GetTrainingWeek(key, trainingWeekScenario);
             if (trainingWeek == null) // no data found
                 return RedirectToAction("Index");
-
-            var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 userInfo = new UserInfo();
             var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
@@ -299,7 +311,6 @@ namespace BodyReport.Areas.User.Controllers
 
                 try
                 {
-                    var service = new TrainingWeekService(_dbContext);
                     var copyTrainingWeek = new CopyTrainingWeek()
                     {
                         UserId = viewModel.UserId,
@@ -309,7 +320,7 @@ namespace BodyReport.Areas.User.Controllers
                         WeekOfYear = viewModel.WeekOfYear
                     };
                     TrainingWeek trainingWeek;
-                    if (!service.CopyTrainingWeek(_userManager.GetUserId(User), copyTrainingWeek, out trainingWeek))
+                    if (!_trainingWeeksService.CopyTrainingWeek(SessionUserId, copyTrainingWeek, out trainingWeek))
                         return View(viewModel);
 
                     return RedirectToAction("View", new { userId = trainingWeek.UserId, year = trainingWeek.Year, weekOfYear = trainingWeek.WeekOfYear });
@@ -332,10 +343,9 @@ namespace BodyReport.Areas.User.Controllers
             if (confirmation)
             {
                 var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User" });
-                if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || _userManager.GetUserId(User) != userId)
+                if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || SessionUserId != userId)
                     return actionResult;
-
-                var trainingWeekManager = new TrainingWeekManager(_dbContext);
+                
                 var key = new TrainingWeekKey()
                 {
                     UserId = userId,
@@ -343,7 +353,7 @@ namespace BodyReport.Areas.User.Controllers
                     WeekOfYear = weekOfYear
                 };
                 var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(key, trainingWeekScenario);
+                var trainingWeek = _trainingWeeksService.GetTrainingWeek(key, trainingWeekScenario);
                 if (trainingWeek == null)
                     return actionResult;
 
@@ -351,7 +361,7 @@ namespace BodyReport.Areas.User.Controllers
                 {
                     try
                     {
-                        trainingWeekManager.DeleteTrainingWeek(trainingWeek);
+                        _trainingWeeksService.DeleteTrainingWeek(trainingWeek);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -379,8 +389,7 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult View(string userId, int year, int weekOfYear, int? dayOfWeekSelected)
         {
-            var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = userId });
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
             if (userInfo == null)
                 userInfo = new UserInfo();
 
@@ -391,8 +400,6 @@ namespace BodyReport.Areas.User.Controllers
             DayOfWeek currentDayOfWeek = GetCurrentDayOfWeek(dayOfWeekSelected, timeZoneInfo);
             if (!dayOfWeekSelected.HasValue)
                 dayOfWeekSelected = (int)currentDayOfWeek;
-
-            var trainingWeekManager = new TrainingWeekManager(_dbContext);
 
             var trainingWeekKey = new TrainingWeekKey()
             {
@@ -406,19 +413,18 @@ namespace BodyReport.Areas.User.Controllers
                 ManageTrainingDay = true,
                 TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
             };
-            var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+            var trainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
             if (trainingWeek == null)
                 return RedirectToAction("Index");
 
             //Unit viewer convertion
-            string userIdViewer = _userManager.GetUserId(User);
+            string userIdViewer = SessionUserId;
             var viewerUnit = GetUserUnit(userIdViewer);
             var userUnit = GetUserUnit(userId);
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
             trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, trainingWeek.UserWeight);
             
-            var bodyExerciseManager = new BodyExerciseManager(_dbContext);
             var trainingWeekViewModel = TransformTrainingWeekToViewModel(trainingWeek);
             List<TrainingDayViewModel> trainingDayViewModels = null;
             List<TrainingExerciseViewModel> trainingExerciseViewModels = null;
@@ -445,7 +451,7 @@ namespace BodyReport.Areas.User.Controllers
 
                                 if (trainingExerciseViewModels == null)
                                     trainingExerciseViewModels = new List<TrainingExerciseViewModel>();
-                                trainingExerciseViewModels.Add(TransformTrainingExerciseToViewModel(bodyExerciseManager, trainingExercise));
+                                trainingExerciseViewModels.Add(TransformTrainingExerciseToViewModel(trainingExercise));
                             }
                         }
                     }
@@ -471,9 +477,8 @@ namespace BodyReport.Areas.User.Controllers
                 TrainingDayId = new IntegerCriteria() { Equal = trainingDay.TrainingDayId },
                 UserId = new StringCriteria() { Equal = trainingDay.UserId }
             };
-
-            var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-            return trainingExerciseManager.FindTrainingExercise(criteria);
+            
+            return _trainingExercisesService.FindTrainingExercise(criteria);
         }
 
         private TrainingWeek TransformViewModelToTrainingWeek(TrainingWeekViewModel viewModel)
@@ -500,9 +505,8 @@ namespace BodyReport.Areas.User.Controllers
             trainingJournalVM.UserHeight = trainingWeek.UserHeight;
             trainingJournalVM.UserWeight = trainingWeek.UserWeight;
             trainingJournalVM.Unit = (int)trainingWeek.Unit;
-
-            var userManager = new UserManager(_dbContext);
-            var user = userManager.GetUser(new UserKey() { Id = trainingWeek.UserId });
+            
+            var user = _usersService.GetUser(new UserKey() { Id = trainingWeek.UserId });
             if (user != null)
                 trainingJournalVM.UserName = user.Name;
 
@@ -530,9 +534,9 @@ namespace BodyReport.Areas.User.Controllers
             return result;
         }
 
-        private TrainingExerciseViewModel TransformTrainingExerciseToViewModel(BodyExerciseManager bodyExerciseManager, TrainingExercise trainingExercise)
+        private TrainingExerciseViewModel TransformTrainingExerciseToViewModel(TrainingExercise trainingExercise)
         {
-            var bodyExercise = bodyExerciseManager.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
+            var bodyExercise = _bodyExercisesService.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
 
             var viewModel = new TrainingExerciseViewModel()
             {
@@ -563,15 +567,13 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult CreateTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || SessionUserId != userId)
                 return RedirectToAction("Index");
-
-            var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 return RedirectToAction("View", new { userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek });
-
-            var trainingDayManager = new TrainingDayManager(_dbContext);
+            
             var trainingDayCriteria = new TrainingDayCriteria()
             {
                 UserId = new StringCriteria() { Equal = userId },
@@ -582,7 +584,7 @@ namespace BodyReport.Areas.User.Controllers
             {
                 ManageExercise = false
             };
-            var trainingDayList = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+            var trainingDayList = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
 
             int trainingDayId = 0;
             if (trainingDayList != null && trainingDayList.Count > 0)
@@ -609,11 +611,10 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || _userManager.GetUserId(User) != viewModel.UserId)
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify trainingWeek exist
-                var trainingWeekManager = new TrainingWeekManager(_dbContext);
                 var trainingWeekKey = new TrainingWeekKey()
                 {
                     UserId = viewModel.UserId,
@@ -622,7 +623,7 @@ namespace BodyReport.Areas.User.Controllers
                 };
 
                 var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                var trainingWeek = _trainingWeeksService.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                 if (trainingWeek == null)
                 {
@@ -634,8 +635,7 @@ namespace BodyReport.Areas.User.Controllers
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
                     var trainingDay = ControllerUtils.TransformViewModelToTrainingDay(viewModel);
-                    TrainingDayService service = new TrainingDayService(_dbContext);
-                    trainingDay = service.CreateTrainingDay(trainingDay);
+                    trainingDay = _trainingDaysService.CreateTrainingDay(trainingDay);
                     if (trainingDay != null)
                     {
                         return RedirectToAction("View", new { userId = trainingDay.UserId, year = trainingDay.Year, weekOfYear = trainingDay.WeekOfYear, dayOfWeekSelected = trainingDay.DayOfWeek });
@@ -651,10 +651,9 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult EditTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
-
-            var trainingDayManager = new TrainingDayManager(_dbContext);
+            
             var key = new TrainingDayKey()
             {
                 UserId = userId,
@@ -664,12 +663,11 @@ namespace BodyReport.Areas.User.Controllers
                 TrainingDayId = trainingDayId
             };
             var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
-            var trainingDay = trainingDayManager.GetTrainingDay(key, trainingDayScenario);
+            var trainingDay = _trainingDaysService.GetTrainingDay(key, trainingDayScenario);
             if (trainingDay == null) // no data found
                 return RedirectToAction("View", new { userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeek = dayOfWeek });
-
-            var userInfoManager = new UserInfoManager(_dbContext);
-            var userInfo = userInfoManager.GetUserInfo(new UserInfoKey() { UserId = _userManager.GetUserId(User) });
+            
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 userInfo = new UserInfo();
             return View(TransformTrainingDayToViewModel(trainingDay, userInfo));
@@ -683,15 +681,14 @@ namespace BodyReport.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
-                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || _userManager.GetUserId(User) != viewModel.UserId)
+                    viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
                 //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
                     var trainingDay = ControllerUtils.TransformViewModelToTrainingDay(viewModel);
-
-                    var trainingDayManager = new TrainingDayManager(_dbContext);
+                    
                     var key = new TrainingDayKey()
                     {
                         UserId = trainingDay.UserId,
@@ -701,7 +698,7 @@ namespace BodyReport.Areas.User.Controllers
                         TrainingDayId = trainingDay.TrainingDayId
                     };
                     var trainingDayScenario = new TrainingDayScenario() { ManageExercise = false };
-                    var foundTrainingDay = trainingDayManager.GetTrainingDay(key, trainingDayScenario);
+                    var foundTrainingDay = _trainingDaysService.GetTrainingDay(key, trainingDayScenario);
                     if (foundTrainingDay == null) // no data found
                     {
                         ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_DAY));
@@ -712,7 +709,7 @@ namespace BodyReport.Areas.User.Controllers
                     {
                         try
                         {
-                            trainingDay = trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                            trainingDay = _trainingDaysService.UpdateTrainingDay(trainingDay, trainingDayScenario);
                             transaction.Commit();
                         }
                         catch (Exception exception)
@@ -738,13 +735,12 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult DeleteTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, bool confirmation = false)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
             if (confirmation)
             {
                 var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
-                var trainingDayManager = new TrainingDayManager(_dbContext);
                 var key = new TrainingDayKey()
                 {
                     UserId = userId,
@@ -754,7 +750,7 @@ namespace BodyReport.Areas.User.Controllers
                     TrainingDayId = trainingDayId
                 };
                 var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
-                var trainingDay = trainingDayManager.GetTrainingDay(key, trainingDayScenario);
+                var trainingDay = _trainingDaysService.GetTrainingDay(key, trainingDayScenario);
                 if (trainingDay == null)
                     return actionResult;
 
@@ -763,7 +759,7 @@ namespace BodyReport.Areas.User.Controllers
                 {
                     try
                     {
-                        trainingDayManager.DeleteTrainingDay(trainingDay);
+                        _trainingDaysService.DeleteTrainingDay(trainingDay);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -788,7 +784,7 @@ namespace BodyReport.Areas.User.Controllers
 
         private bool IncorrectHttpData(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int? trainingExerciseId = null)
         {
-            return string.IsNullOrWhiteSpace(userId) || _userManager.GetUserId(User) != userId || year == 0 || weekOfYear == 0 ||
+            return string.IsNullOrWhiteSpace(userId) || SessionUserId != userId || year == 0 || weekOfYear == 0 ||
                 dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || (trainingExerciseId != null && !trainingExerciseId.HasValue);
         }
 
@@ -865,11 +861,10 @@ namespace BodyReport.Areas.User.Controllers
                         ModelState.AddModelError(string.Empty, string.Format(Translation.THE_P0_FIELD_IS_REQUIRED, Translation.BODY_EXERCISES));
                     return View(viewModel);
                 }
-
-                var trainingDayManager = new TrainingDayManager(_dbContext);
+                
                 var trainingDayKey = new TrainingDayKey() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId };
                 var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
-                var trainingDay = trainingDayManager.GetTrainingDay(trainingDayKey, trainingDayScenario);
+                var trainingDay = _trainingDaysService.GetTrainingDay(trainingDayKey, trainingDayScenario);
 
                 if(trainingDay == null)
                 {
@@ -900,7 +895,7 @@ namespace BodyReport.Areas.User.Controllers
                     {
                         try
                         {
-                            trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                            _trainingDaysService.UpdateTrainingDay(trainingDay, trainingDayScenario);
                             transaction.Commit();
                         }
                         catch (Exception exception)
@@ -934,22 +929,19 @@ namespace BodyReport.Areas.User.Controllers
         private void InsertViewBagOnEditTrainingExercise(out List<BodyExercise> bodyExerciseList, int currentMuscularGroupId = 0, int currentMuscleId = 0, int currentBodyExerciseId = 0)
         {
             bodyExerciseList = null;
-            var muscularGroupManager = new MuscularGroupManager(_dbContext);
-            ViewBag.MuscularGroups = ControllerUtils.CreateSelectMuscularGroupItemList(muscularGroupManager.FindMuscularGroups(), currentMuscularGroupId, true);
-
-            var bodyExerciseManager = new BodyExerciseManager(_dbContext);
+            ViewBag.MuscularGroups = ControllerUtils.CreateSelectMuscularGroupItemList(_muscularGroupsService.FindMuscularGroups(), currentMuscularGroupId, true);
+            
             if (currentMuscularGroupId == 0)
             { // All exercises
-                bodyExerciseList = bodyExerciseManager.FindBodyExercises();
+                bodyExerciseList = _bodyExercisesService.FindBodyExercises();
             }
             else
             {
-                var muscleManager = new MuscleManager(_dbContext);
                 var muscleCriteria = new MuscleCriteria()
                 {
                     MuscularGroupId = new IntegerCriteria() { Equal = currentMuscularGroupId }
                 };
-                var muscleList = muscleManager.FindMuscles(muscleCriteria);
+                var muscleList = _musclesService.FindMuscles(muscleCriteria);
                 ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(muscleList, currentMuscleId, true);
 
                 if (currentMuscleId == 0)
@@ -965,10 +957,10 @@ namespace BodyReport.Areas.User.Controllers
                         {
                             MuscleId = new IntegerCriteria() { EqualList = mucleIdList }
                         };
-                        bodyExerciseList = bodyExerciseManager.FindBodyExercises(bodyExerciseCriteria);
+                        bodyExerciseList = _bodyExercisesService.FindBodyExercises(bodyExerciseCriteria);
                     }
                     else //Security
-                        bodyExerciseList = bodyExerciseManager.FindBodyExercises();
+                        bodyExerciseList = _bodyExercisesService.FindBodyExercises();
                 }
                 else
                 {
@@ -976,7 +968,7 @@ namespace BodyReport.Areas.User.Controllers
                     {
                         MuscleId = new IntegerCriteria() { Equal = currentMuscleId }
                     };
-                    bodyExerciseList = bodyExerciseManager.FindBodyExercises(bodyExerciseCriteria);
+                    bodyExerciseList = _bodyExercisesService.FindBodyExercises(bodyExerciseCriteria);
                 }
             }
         }
@@ -1022,7 +1014,6 @@ namespace BodyReport.Areas.User.Controllers
                 return RedirectToAction("Index");
 
             var actionResult = GetViewActionResult(userId, year, weekOfYear, dayOfWeek);
-            var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
 
             if (upward || downward)
             {
@@ -1034,7 +1025,7 @@ namespace BodyReport.Areas.User.Controllers
                     DayOfWeek = new IntegerCriteria() { Equal = dayOfWeek },
                     TrainingDayId = new IntegerCriteria() { Equal = trainingDayId }
                 };
-                var trainingExercises = trainingExerciseManager.FindTrainingExercise(findcriteria);
+                var trainingExercises = _trainingExercisesService.FindTrainingExercise(findcriteria);
                 if (trainingExercises == null || trainingExercises.Count == 0)
                     return actionResult;
 
@@ -1048,12 +1039,12 @@ namespace BodyReport.Areas.User.Controllers
                             return actionResult;
 
                         foreach (var trainingExerciseTmp in trainingExercises)
-                            trainingExerciseManager.DeleteTrainingExercise(trainingExerciseTmp);
+                            _trainingExercisesService.DeleteTrainingExercise(trainingExerciseTmp);
 
                         OrderTrainingExercices(trainingExercises, indexOfCurrentExercice, upward == true);
 
                         foreach (var trainingExerciseTmp in trainingExercises)
-                            trainingExerciseManager.CreateTrainingExercise(trainingExerciseTmp);
+                            _trainingExercisesService.CreateTrainingExercise(trainingExerciseTmp);
 
                         transaction.Commit();
                     }
@@ -1080,13 +1071,11 @@ namespace BodyReport.Areas.User.Controllers
                 TrainingDayId = trainingDayId,
                 Id = trainingExerciseId
             };
-            var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
+            var trainingExercise = _trainingExercisesService.GetTrainingExercise(key);
             if (trainingExercise == null)
                 return actionResult;
-            
-            var bodyExerciseManager = new BodyExerciseManager(_dbContext);
 
-            var bodyExercise = bodyExerciseManager.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
+            var bodyExercise = _bodyExercisesService.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
 
             var viewModel = new TrainingExerciseViewModel();
             viewModel.UserId = userId;
@@ -1189,14 +1178,12 @@ namespace BodyReport.Areas.User.Controllers
             }
             else if ("submit" == buttonType && ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(viewModel.UserId) || _userManager.GetUserId(User) != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
+                if (string.IsNullOrWhiteSpace(viewModel.UserId) || SessionUserId != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.TrainingExerciseId == 0 ||
                     viewModel.BodyExerciseId == 0 &&
                     (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
                     return View(viewModel);
-
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-
+                
                 var key = new TrainingExerciseKey()
                 {
                     UserId = viewModel.UserId,
@@ -1206,7 +1193,7 @@ namespace BodyReport.Areas.User.Controllers
                     TrainingDayId = viewModel.TrainingDayId,
                     Id = viewModel.TrainingExerciseId
                 };
-                var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
+                var trainingExercise = _trainingExercisesService.GetTrainingExercise(key);
                 if (trainingExercise == null)
                 {
                     ModelState.AddModelError(string.Empty, string.Format("{0} {1}", Translation.INVALID_INPUT_2P, Translation.TRAINING_EXERCISE));
@@ -1272,7 +1259,7 @@ namespace BodyReport.Areas.User.Controllers
                     {
                         try
                         {
-                            trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true);
+                            _trainingExercisesService.UpdateTrainingExercise(trainingExercise, true);
                             transaction.Commit();
                         }
                         catch (Exception exception)
@@ -1296,7 +1283,7 @@ namespace BodyReport.Areas.User.Controllers
 
             if(userId != null)
             {
-                var userInfo = new UserInfoManager(_dbContext).GetUserInfo(new UserInfoKey() { UserId = userId });
+                var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
                 if(userInfo != null)
                     result = userInfo.Unit;
             }
@@ -1308,13 +1295,12 @@ namespace BodyReport.Areas.User.Controllers
         [HttpGet]
         public IActionResult DeleteTrainingExercise(string userId, int year, int weekOfYear, int dayOfWeek, int trainingDayId, int trainingExerciseId, bool confirmation = false)
         {
-            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || trainingExerciseId == 0 || _userManager.GetUserId(User) != userId)
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 || trainingDayId == 0 || trainingExerciseId == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
             if (confirmation)
             {
                 var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                 var key = new TrainingExerciseKey()
                 {
                     UserId = userId,
@@ -1324,7 +1310,7 @@ namespace BodyReport.Areas.User.Controllers
                     TrainingDayId = trainingDayId,
                     Id = trainingExerciseId
                 };
-                var trainingExercise = trainingExerciseManager.GetTrainingExercise(key);
+                var trainingExercise = _trainingExercisesService.GetTrainingExercise(key);
                 if (trainingExercise == null)
                     return actionResult;
 
@@ -1332,7 +1318,7 @@ namespace BodyReport.Areas.User.Controllers
                 {
                     try
                     {
-                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                        _trainingExercisesService.DeleteTrainingExercise(trainingExercise);
                         transaction.Commit();
                     }
                     catch (Exception exception)
@@ -1361,15 +1347,14 @@ namespace BodyReport.Areas.User.Controllers
         public IActionResult SwitchTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int dayOfWeekSelected)
         {
            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 ||
-                dayOfWeekSelected < 0 || dayOfWeekSelected > 6 || _userManager.GetUserId(User) != userId)
+                dayOfWeekSelected < 0 || dayOfWeekSelected > 6 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
             var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
 
             try
             {
-                TrainingDayService service = new TrainingDayService(_dbContext);
-                service.SwitchDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, dayOfWeekSelected);
+                _trainingDaysService.SwitchDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, dayOfWeekSelected);
             }
             catch(Exception except)
             {

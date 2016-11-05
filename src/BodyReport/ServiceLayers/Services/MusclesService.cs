@@ -18,7 +18,6 @@ namespace BodyReport.ServiceLayers.Services
 
         public MusclesService(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _dbContext = dbContext;
             _muscleManager = new MuscleManager(_dbContext);
         }
 

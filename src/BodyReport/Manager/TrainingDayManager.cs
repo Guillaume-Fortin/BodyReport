@@ -22,6 +22,27 @@ namespace BodyReport.Manager
 
         internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
         {
+            var trainingDayCriteria = new TrainingDayCriteria()
+            {
+                UserId = new StringCriteria() { Equal = trainingDay.UserId },
+                Year = new IntegerCriteria() { Equal = trainingDay.Year },
+                WeekOfYear = new IntegerCriteria() { Equal = trainingDay.WeekOfYear },
+                DayOfWeek = new IntegerCriteria() { Equal = trainingDay.DayOfWeek },
+            };
+            var trainingDayScenario = new TrainingDayScenario()
+            {
+                ManageExercise = false
+            };
+            var trainingDayList = FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+            int trainingDayId = 1;
+            if (trainingDayList != null && trainingDayList.Count > 0)
+            {
+                trainingDayId = trainingDayList.Max(td => td.TrainingDayId) + 1;
+            }
+
+            trainingDay.TrainingDayId = trainingDayId;
+            // no need transaction, only header
+
             TrainingDay trainingDayResult = null;
             trainingDayResult = _trainingDayModule.Create(trainingDay);
             SynchroManager.TrainingDayChange(_dbContext, trainingDayResult);
@@ -122,17 +143,97 @@ namespace BodyReport.Manager
             return trainingDayResult;
         }
 
-        internal void DeleteTrainingDay(TrainingDay trainingDay)
+        public void DeleteTrainingDay(TrainingDayKey key)
         {
-            _trainingDayModule.Delete(trainingDay);
-            SynchroManager.TrainingDayChange(_dbContext, trainingDay, true);
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+            var trainingDay = GetTrainingDay(key, trainingDayScenario);
+            if (trainingDay != null)
+            {
+                _trainingDayModule.Delete(trainingDay);
+                SynchroManager.TrainingDayChange(_dbContext, trainingDay, true);
 
+                if (trainingDay.TrainingExercises != null)
+                {
+                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
+                    foreach (var trainingExercise in trainingDay.TrainingExercises)
+                    {
+                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                    }
+                }
+            }
+        }
+        
+        private void DeleteTrainingDays(List<TrainingDay> trainingDays)
+        {
+            TrainingDay trainingDay;
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+            if (trainingDays == null)
+                return;
+            foreach (var trainingDayKey in trainingDays)
+            {
+                trainingDay = GetTrainingDay(trainingDayKey, trainingDayScenario);
+                if (trainingDay != null)
+                    DeleteTrainingDay(trainingDay);
+            }
+        }
+
+        private void ChangeDayOnTrainingDay(TrainingDay trainingDay, int newDayOfWeek)
+        {
+            if (trainingDay == null)
+                return;
+
+            trainingDay.DayOfWeek = newDayOfWeek;
             if (trainingDay.TrainingExercises != null)
             {
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                 foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {
-                    trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                    trainingExercise.DayOfWeek = newDayOfWeek;
+                    if (trainingExercise.TrainingExerciseSets != null)
+                    {
+                        foreach (var set in trainingExercise.TrainingExerciseSets)
+                        {
+                            set.DayOfWeek = newDayOfWeek;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void SwitchDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int switchDayOfWeek)
+        {
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+
+            //Search current training day
+            var trainingDayCriteria = new TrainingDayCriteria()
+            {
+                UserId = new StringCriteria() { Equal = userId },
+                Year = new IntegerCriteria() { Equal = year },
+                WeekOfYear = new IntegerCriteria() { Equal = weekOfYear },
+                DayOfWeek = new IntegerCriteria() { Equal = dayOfWeek }
+            };
+            var currentTrainingDayList = FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+
+            trainingDayCriteria.DayOfWeek.Equal = switchDayOfWeek;
+            var switchTrainingDayList = FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+
+            DeleteTrainingDays(currentTrainingDayList);
+            DeleteTrainingDays(switchTrainingDayList);
+
+            if (currentTrainingDayList != null)
+            {
+                foreach (var trainingDay in currentTrainingDayList)
+                {
+                    ChangeDayOnTrainingDay(trainingDay, switchDayOfWeek);
+                    UpdateTrainingDay(trainingDay, trainingDayScenario);
+                }
+            }
+
+            if (switchTrainingDayList != null)
+            {
+                foreach (var trainingDay in switchTrainingDayList)
+                {
+                    ChangeDayOnTrainingDay(trainingDay, dayOfWeek);
+                    UpdateTrainingDay(trainingDay, trainingDayScenario);
                 }
             }
         }

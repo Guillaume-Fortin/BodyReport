@@ -5,49 +5,49 @@ using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
 using BodyReport.Message;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
-using BodyReport.Data;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using BodyReport.Services;
 using System;
-using System.Linq;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
-    public class UserController : Controller
+    public class UserController : MvcController
     {
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUsersService _usersService;
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUserInfosService _userInfosService;
         /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UserController));
         /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-        /// <summary>
         /// Hosting Environement
         /// </summary>
-        IHostingEnvironment _env = null;
-        /// <summary>
-        /// IdentityUserManager
-        /// </summary>
-        private readonly UserManager<ApplicationUser> _identityUserManager;
+        private readonly IHostingEnvironment _env = null;
         /// <summary>
         /// Email sender
         /// </summary>
         private readonly IEmailSender _emailSender;
 
-        public UserController(ApplicationDbContext dbContext, IHostingEnvironment env, UserManager<ApplicationUser> identityUserManager, IEmailSender emailSender)
+        public UserController(IHostingEnvironment env, IEmailSender emailSender,
+                              UserManager<ApplicationUser> userManager,
+                              IUsersService usersService, IUserInfosService userInfosService) : base(userManager)
         {
-            _dbContext = dbContext;
             _env = env;
-            _identityUserManager = identityUserManager;
             _emailSender = emailSender;
+            _usersService = usersService;
+            _userInfosService = userInfosService;
         }
 
         private void ApplyUserSort(ref UserCriteria userCriteria, string sortOrder)
@@ -91,7 +91,6 @@ namespace BodyReport.Areas.Admin.Controllers
             const int pageSize = 10;
             int currentRecordIndex = (currentPage - 1) * pageSize;
             var userViewModels = new List<UserViewModel>();
-            var manager = new UserManager(_dbContext);
 
             UserCriteria userCriteria = null;
             if (!string.IsNullOrWhiteSpace(searchUserViewModel.UserId))
@@ -112,7 +111,7 @@ namespace BodyReport.Areas.Admin.Controllers
             ApplyUserSort(ref userCriteria, sortOrder);
 
             int totalRecords;
-            var users = manager.FindUsers(out totalRecords, userCriteria, true, currentRecordIndex, pageSize);
+            var users = _usersService.FindUsers(out totalRecords, userCriteria, true, currentRecordIndex, pageSize);
             if (users != null)
             {
                 ApplicationUser appUser;
@@ -162,9 +161,8 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var manager = new UserManager(_dbContext);
                 var key = new UserKey() { Id = id };
-                var user = manager.GetUser(key);
+                var user = _usersService.GetUser(key);
                 if (user != null)
                 {
                     var viewModel = new UserViewModel()
@@ -180,7 +178,7 @@ namespace BodyReport.Areas.Admin.Controllers
                         viewModel.RoleId = user.Role.Id;
 
                     // Populate SelectListItem of roles
-                    ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(manager.FindRoles(), user.Id);
+                    ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_usersService.FindRoles(), user.Id);
                     return View(viewModel);
                 }
             }
@@ -193,12 +191,11 @@ namespace BodyReport.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(UserViewModel viewModel)
         {
-            var manager = new UserManager(_dbContext);
             if (ModelState.IsValid)
             {
                 // Verify not exist on id
                 var key = new UserKey() { Id = viewModel.Id };
-                var user = manager.GetUser(key);
+                var user = _usersService.GetUser(key);
                 if (user != null)
                 {
                     user.Id = viewModel.Id;
@@ -209,18 +206,18 @@ namespace BodyReport.Areas.Admin.Controllers
                     //Verify role exist
                     var roleKey = new RoleKey();
                     roleKey.Id = viewModel.RoleId;
-                    var role = manager.GetRole(roleKey);
+                    var role = _usersService.GetRole(roleKey);
                     if (role != null)
                     {
                         user.Role = role;
-                        user = manager.UpdateUser(user);
+                        user = _usersService.UpdateUser(user);
                         return RedirectToAction("Index");
                     }
                 }
             }
 
             // Populate SelectListItem of roles
-            ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(manager.FindRoles(), viewModel.Id);
+            ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_usersService.FindRoles(), viewModel.Id);
             return View(viewModel);
         }
 
@@ -231,13 +228,12 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var manager = new UserManager(_dbContext);
                 var key = new UserKey() { Id = id };
-                var user = manager.GetUser(key);
+                var user = _usersService.GetUser(key);
                 if (user != null)
                 {
                     user.Suspended = true;
-                    manager.UpdateUser(user);
+                    _usersService.UpdateUser(user);
                 }
             }
             return RedirectToAction("Index");
@@ -250,13 +246,12 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var manager = new UserManager(_dbContext);
                 var key = new UserKey() { Id = id };
-                var user = manager.GetUser(key);
+                var user = _usersService.GetUser(key);
                 if (user != null)
                 {
                     user.Suspended = false;
-                    manager.UpdateUser(user);
+                    _usersService.UpdateUser(user);
                 }
             }
             return RedirectToAction("Index");
@@ -276,26 +271,24 @@ namespace BodyReport.Areas.Admin.Controllers
                     await _identityUserManager.UpdateAsync(appUser);
 
                     //Add user role
-                    var manager = new UserManager(_dbContext);
                     var userKey = new UserKey() { Id = id };
-                    var user = manager.GetUser(userKey);
+                    var user = _usersService.GetUser(userKey);
                     if (user != null)
                     {
                         //Verify role exist
                         var roleKey = new RoleKey();
                         roleKey.Id = "1"; //User
-                        var role = manager.GetRole(roleKey);
+                        var role = _usersService.GetRole(roleKey);
                         if (role != null)
                         {
                             user.Role = role;
-                            user = manager.UpdateUser(user);
+                            user = _usersService.UpdateUser(user);
                         }
                     }
 
                     //Add empty user profil (for correct connect error on mobile application)
-                    var userInfoManager = new UserInfoManager(_dbContext);
                     var userInfoKey = new UserInfoKey() { UserId = id };
-                    var userInfo = userInfoManager.GetUserInfo(userInfoKey);
+                    var userInfo = _userInfosService.GetUserInfo(userInfoKey);
                     if (userInfo == null)
                     {
                         userInfo = new UserInfo()
@@ -303,7 +296,7 @@ namespace BodyReport.Areas.Admin.Controllers
                             UserId = id,
                             Unit = TUnitType.Metric
                         };
-                        userInfoManager.UpdateUserInfo(userInfo);
+                        _userInfosService.UpdateUserInfo(userInfo);
                     }
 
                     try

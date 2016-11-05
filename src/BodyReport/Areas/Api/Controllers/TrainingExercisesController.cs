@@ -2,13 +2,10 @@
 using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.Message;
-using BodyReport.Message.WebApi;
+using BodyReport.Message.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BodyReport.Areas.Api.Controllers

@@ -9,30 +9,34 @@ using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
 using Microsoft.AspNetCore.Hosting;
 using BodyReport.Data;
+using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
-    public class RoleController : Controller
+    public class RoleController : MvcController
     {
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUsersService _usersService;
         /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(RoleController));
         /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-        /// <summary>
         /// Hosting Environement
         /// </summary>
-        IHostingEnvironment _env = null;
+        private readonly IHostingEnvironment _env = null;
 
-        public RoleController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public RoleController(IHostingEnvironment env, 
+                              UserManager<ApplicationUser> userManager,
+                              IUsersService usersService) : base(userManager)
         {
-            _dbContext = dbContext;
             _env = env;
+            _usersService = usersService;
         }
 
         //
@@ -41,9 +45,7 @@ namespace BodyReport.Areas.Admin.Controllers
         public IActionResult Index(string returnUrl = null)
         {
             var result = new List<RoleViewModel>();
-
-            var manager = new UserManager(_dbContext);
-            var roles = manager.FindRoles();
+            var roles = _usersService.FindRoles();
             if (roles != null)
             {
                 foreach (var role in roles)
@@ -70,9 +72,8 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var manager = new UserManager(_dbContext);
                 var role = new Role() { Name = roleViewModel.Name, NormalizedName = roleViewModel.NormalizedName };
-                role = manager.CreateRole(role);
+                role = _usersService.CreateRole(role);
                 if (role == null || string.IsNullOrWhiteSpace(role.Id))
                 {
                     _logger.LogError("Create new role fail");
@@ -91,9 +92,8 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var manager = new UserManager(_dbContext);
                 var key = new RoleKey() { Id = id };
-                var role = manager.GetRole(key);
+                var role = _usersService.GetRole(key);
                 if (role != null)
                 {
                     var viewModel = new RoleViewModel();
@@ -114,14 +114,13 @@ namespace BodyReport.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 // Verify not exist on id
-                var manager = new UserManager(_dbContext);
                 var key = new RoleKey() { Id = viewModel.Id };
-                var role = manager.GetRole(key);
+                var role = _usersService.GetRole(key);
                 if (role != null)
                 {
                     role.Name = viewModel.Name;
                     role.NormalizedName = viewModel.NormalizedName;
-                    role = manager.UpdateRole(role);
+                    role = _usersService.UpdateRole(role);
                     return RedirectToAction("Index");
                 }
             }
@@ -136,12 +135,11 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (!string.IsNullOrWhiteSpace(id))
             {
-                var manager = new UserManager(_dbContext);
                 var key = new RoleKey() { Id = id };
-                var role = manager.GetRole(key);
+                var role = _usersService.GetRole(key);
                 if (role != null)
                 {
-                    manager.DeleteRole(key);
+                    _usersService.DeleteRole(key);
                 }
             }
             return RedirectToAction("Index");
