@@ -8,30 +8,24 @@ using BodyReport.Message.Web;
 using BodyReport.Framework;
 using BodyReport.Models;
 using BodyReport.Services;
-using BodyReport.Data;
 using Microsoft.AspNetCore.Authorization;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Areas.Api.Controllers
 {
     [Area("Api")]
     [Authorize]
-    public class UserProfileController : Controller
+    public class UserProfileController : MvcController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
         /// <summary>
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public UserProfileController(UserManager<ApplicationUser> userManager, IHostingEnvironment env, ApplicationDbContext dbContext)
+        public UserProfileController(UserManager<ApplicationUser> userManager,
+                                     IHostingEnvironment env) : base(userManager)
         {
-            _userManager = userManager;
             _env = env;
-            _dbContext = dbContext;
         }
 
         //
@@ -54,7 +48,7 @@ namespace BodyReport.Areas.Api.Controllers
         {
             try
             {
-                string userId = _userManager.GetUserId(User);
+                string userId = SessionUserId;
                 if (string.IsNullOrWhiteSpace(userId))
                     return BadRequest();
                 else if (!ImageUtils.CheckUploadedImageIsCorrect(imageFile))

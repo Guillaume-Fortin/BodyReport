@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BodyReport.Framework;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BodyReport.Areas.Site.Controllers
 {
     [Area("Site")]
-    public class MessageController : Controller
+    public class MessageController : MvcController
     {
         //
         // GET: /Site/Message/Index

@@ -10,6 +10,7 @@ namespace BodyReport.ServiceLayers.Interfaces
     {
         Muscle GetMuscle(MuscleKey key);
         List<Muscle> FindMuscles(MuscleCriteria criteria = null);
+        Muscle CreateMuscle(Muscle muscle);
         Muscle UpdateMuscle(Muscle muscle);
         List<Muscle> UpdateMuscleList(List<Muscle> muscles);
         void DeleteMuscle(MuscleKey key);

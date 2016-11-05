@@ -7,27 +7,25 @@ using Microsoft.AspNetCore.Identity;
 using BodyReport.Models;
 using BodyReport.Services;
 using BodyReport.Areas.Site.ViewModels.Manage;
+using BodyReport.Framework;
 
 namespace BodyReport.Areas.Site.Controllers
 {
     [Authorize]
     [Area("Site")]
-    public class ManageController : Controller
+    public class ManageController : MvcController
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
-        public ManageController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IEmailSender emailSender,
-        ISmsSender smsSender,
-        ILoggerFactory loggerFactory)
+        public ManageController(UserManager<ApplicationUser> userManager,
+                                SignInManager<ApplicationUser> signInManager,
+                                IEmailSender emailSender,
+                                ISmsSender smsSender,
+                                ILoggerFactory loggerFactory) : base(userManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
@@ -51,10 +49,10 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             var model = new IndexViewModel
             {
-                HasPassword = await _userManager.HasPasswordAsync(user),
-                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
-                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
-                Logins = await _userManager.GetLoginsAsync(user),
+                HasPassword = await _identityUserManager.HasPasswordAsync(user),
+                PhoneNumber = await _identityUserManager.GetPhoneNumberAsync(user),
+                TwoFactor = await _identityUserManager.GetTwoFactorEnabledAsync(user),
+                Logins = await _identityUserManager.GetLoginsAsync(user),
                 BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
             };
             return View(model);
@@ -70,7 +68,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
+                var result = await _identityUserManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -99,7 +97,7 @@ namespace BodyReport.Areas.Site.Controllers
             }
             // Generate the token and send it
             var user = await GetCurrentUserAsync();
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+            var code = await _identityUserManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await _smsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
         }
@@ -113,7 +111,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                await _userManager.SetTwoFactorEnabledAsync(user, true);
+                await _identityUserManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(1, "User enabled two-factor authentication.");
             }
@@ -129,7 +127,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                await _userManager.SetTwoFactorEnabledAsync(user, false);
+                await _identityUserManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(2, "User disabled two-factor authentication.");
             }
@@ -141,7 +139,7 @@ namespace BodyReport.Areas.Site.Controllers
         [HttpGet]
         public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
         {
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(await GetCurrentUserAsync(), phoneNumber);
+            var code = await _identityUserManager.GenerateChangePhoneNumberTokenAsync(await GetCurrentUserAsync(), phoneNumber);
             // Send an SMS to verify the phone number
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
@@ -159,7 +157,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
+                var result = await _identityUserManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -179,7 +177,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.SetPhoneNumberAsync(user, null);
+                var result = await _identityUserManager.SetPhoneNumberAsync(user, null);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -210,7 +208,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                var result = await _identityUserManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -245,7 +243,7 @@ namespace BodyReport.Areas.Site.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                var result = await _identityUserManager.AddPasswordAsync(user, model.NewPassword);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -271,7 +269,7 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View("Error");
             }
-            var userLogins = await _userManager.GetLoginsAsync(user);
+            var userLogins = await _identityUserManager.GetLoginsAsync(user);
             var otherLogins = _signInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
             ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
             return View(new ManageLoginsViewModel
@@ -289,7 +287,7 @@ namespace BodyReport.Areas.Site.Controllers
         {
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _identityUserManager.GetUserId(User));
             return new ChallengeResult(provider, properties);
         }
 
@@ -303,12 +301,12 @@ namespace BodyReport.Areas.Site.Controllers
             {
                 return View("Error");
             }
-            var info = await _signInManager.GetExternalLoginInfoAsync(_userManager.GetUserId(User));
+            var info = await _signInManager.GetExternalLoginInfoAsync(_identityUserManager.GetUserId(User));
             if (info == null)
             {
                 return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
             }
-            var result = await _userManager.AddLoginAsync(user, info);
+            var result = await _identityUserManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
@@ -333,11 +331,6 @@ namespace BodyReport.Areas.Site.Controllers
             RemoveLoginSuccess,
             RemovePhoneSuccess,
             Error
-        }
-
-        private Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return _userManager.GetUserAsync(HttpContext.User);
         }
 
         #endregion

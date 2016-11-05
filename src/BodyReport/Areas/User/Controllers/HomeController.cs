@@ -9,20 +9,10 @@ namespace BodyReport.Areas.User.Controllers
 {
     [Authorize(Roles = "User,Admin")]
     [Area("User")]
-    public class HomeController : Controller
+    public class HomeController : MvcController
     {
-        /// <summary>
-        /// Logger
-        /// </summary>
-        private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(HomeController));
-        /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-
-        public HomeController(ApplicationDbContext dbContext)
+        public HomeController() : base()
         {
-            _dbContext = dbContext;
         }
 
         //

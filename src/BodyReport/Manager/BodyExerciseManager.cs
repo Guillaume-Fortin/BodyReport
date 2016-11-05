@@ -23,28 +23,53 @@ namespace BodyReport.Manager
             _bodyExerciseModule = new BodyExerciseModule(_dbContext);
         }
 
+        private void SaveTranslation(BodyExercise bodyExercise)
+        {
+            if (bodyExercise != null)
+            {
+                string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
+                Translation.UpdateInDB(trKey, bodyExercise.Name, _dbContext);
+            }
+        }
+
+        private void CompleteTranslation(BodyExercise bodyExercise)
+        {
+            if (bodyExercise != null)
+            {
+                string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
+                bodyExercise.Name = Translation.GetInDB(trKey, _dbContext);
+            }
+        }
+
         public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
-            return _bodyExerciseModule.Get(key);
+            BodyExercise result = _bodyExerciseModule.Get(key);
+            CompleteTranslation(result);
+            return result;
         }
 
         public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria bodyExerciseCriteria = null)
         {
-            return _bodyExerciseModule.Find(bodyExerciseCriteria);
+            var list = _bodyExerciseModule.Find(bodyExerciseCriteria);
+            if (list != null)
+            {
+                foreach (var bodyExercise in list)
+                    CompleteTranslation(bodyExercise);
+            }
+            return list;
         }
 
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
-            string name = bodyExercise.Name;
-            bodyExercise = _bodyExerciseModule.Create(bodyExercise);
-            if (bodyExercise != null && bodyExercise.Id > 0)
+            string name = bodyExercise != null ? bodyExercise.Name : null;
+            var result = _bodyExerciseModule.Create(bodyExercise);
+            if (result != null && result.Id != 0)
             {
-                //Update Translation Name
-                string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
-                Translation.UpdateInDB(trKey, name, _dbContext);
-                bodyExercise.Name = Translation.GetInDB(trKey, _dbContext);
+                result.Name = name;
+                SaveTranslation(result);
+                CompleteTranslation(result);
             }
-            return bodyExercise;
+            return result;
         }
 
         internal void DeleteBodyExercise(BodyExerciseKey key)
@@ -57,10 +82,11 @@ namespace BodyReport.Manager
 
         internal BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
         {
-            //Update Translation Name
-            Translation.UpdateInDB(BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id), bodyExercise.Name, _dbContext);
+            SaveTranslation(bodyExercise);
 
-            return _bodyExerciseModule.Update(bodyExercise);
+            BodyExercise result = _bodyExerciseModule.Update(bodyExercise);
+            CompleteTranslation(result);
+            return result;
         }
     }
 }

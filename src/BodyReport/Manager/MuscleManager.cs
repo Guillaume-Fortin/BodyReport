@@ -19,28 +19,53 @@ namespace BodyReport.Manager
             _muscleModule = new MuscleModule(_dbContext);
         }
 
+        private void SaveTranslation(Muscle muscle)
+        {
+            if (muscle != null)
+            {
+                string trKey = BodyExerciseTransformer.GetTranslationKey(muscle.Id);
+                Translation.UpdateInDB(trKey, muscle.Name, _dbContext);
+            }
+        }
+
+        private void CompleteTranslation(Muscle muscle)
+        {
+            if (muscle != null)
+            {
+                string trKey = BodyExerciseTransformer.GetTranslationKey(muscle.Id);
+                muscle.Name = Translation.GetInDB(trKey, _dbContext);
+            }
+        }
+
         public List<Muscle> FindMuscles(MuscleCriteria criteria = null)
         {
-            return _muscleModule.Find(criteria);
+            var list = _muscleModule.Find(criteria);
+            if (list != null)
+            {
+                foreach (var muscle in list)
+                    CompleteTranslation(muscle);
+            }
+            return list;
         }
 
         internal Muscle CreateMuscle(Muscle muscle)
         {
-            string name = muscle.Name;
-            muscle = _muscleModule.Create(muscle);
-            if(muscle != null && muscle.Id > 0)
+            string name = muscle != null ? muscle.Name : null;
+            var result = _muscleModule.Create(muscle);
+            if(result != null && result.Id != 0)
             {
-                //Update Translation Name
-                string trKey = MuscleTransformer.GetTranslationKey(muscle.Id);
-                Translation.UpdateInDB(trKey, name, _dbContext);
-                muscle.Name = Translation.GetInDB(trKey, _dbContext);
+                result.Name = name;
+                SaveTranslation(result);
+                CompleteTranslation(result);
             }
-            return muscle;
+            return result;
         }
 
         internal Muscle GetMuscle(MuscleKey key)
         {
-            return _muscleModule.Get(key);
+            var result = _muscleModule.Get(key);
+            CompleteTranslation(result);
+            return result;
         }
 
         internal void DeleteMuscle(MuscleKey key)
@@ -52,10 +77,11 @@ namespace BodyReport.Manager
 
         internal Muscle UpdateMuscle(Muscle muscle)
         {
-            //Update Translation Name
-            Translation.UpdateInDB(MuscleTransformer.GetTranslationKey(muscle.Id), muscle.Name, _dbContext);
+            SaveTranslation(muscle);
 
-            return _muscleModule.Update(muscle);
+            Muscle result = _muscleModule.Update(muscle);
+            CompleteTranslation(result);
+            return result;
         }
     }
 }

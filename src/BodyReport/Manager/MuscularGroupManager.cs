@@ -22,28 +22,53 @@ namespace BodyReport.Manager
             _muscularGroupModule = new MuscularGroupModule(_dbContext);
         }
 
+        private void SaveTranslation(MuscularGroup muscularGroup)
+        {
+            if (muscularGroup != null)
+            {
+                string trKey = MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id);
+                Translation.UpdateInDB(trKey, muscularGroup.Name, _dbContext);
+            }
+        }
+
+        private void CompleteTranslation(MuscularGroup muscularGroup)
+        {
+            if (muscularGroup != null)
+            {
+                string trKey = MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id);
+                muscularGroup.Name = Translation.GetInDB(trKey, _dbContext);
+            }
+        }
+
         public List<MuscularGroup> FindMuscularGroups()
         {
-            return _muscularGroupModule.Find();
+            var list = _muscularGroupModule.Find();
+            if(list != null)
+            {
+                foreach (var muscularGroup in list)
+                    CompleteTranslation(muscularGroup);
+            }
+            return list;
         }
 
         internal MuscularGroup CreateMuscularGroup(MuscularGroup muscularGroup)
         {
-            string name = muscularGroup.Name;
-            muscularGroup = _muscularGroupModule.Create(muscularGroup);
-            if (muscularGroup != null && muscularGroup.Id > 0)
+            string name = muscularGroup != null ? muscularGroup.Name : null;
+            MuscularGroup result = _muscularGroupModule.Create(muscularGroup);
+            if (result != null && result.Id != 0)
             {
-                //Update Translation Name
-                string trKey = MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id);
-                Translation.UpdateInDB(trKey, name, _dbContext);
-                muscularGroup.Name = Translation.GetInDB(trKey, _dbContext);
+                result.Name = name;
+                SaveTranslation(result);
+                CompleteTranslation(result);
             }
-            return muscularGroup;
+            return result;
         }
 
         internal MuscularGroup GetMuscularGroup(MuscularGroupKey key)
         {
-            return _muscularGroupModule.Get(key);
+            MuscularGroup result = _muscularGroupModule.Get(key);
+            CompleteTranslation(result);
+            return result;
         }
 
         internal void DeleteMuscularGroup(MuscularGroupKey key)
@@ -55,10 +80,10 @@ namespace BodyReport.Manager
 
         internal MuscularGroup UpdateMuscularGroup(MuscularGroup muscularGroup)
         {
-            //Update Translation Name
-            Translation.UpdateInDB(MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id), muscularGroup.Name, _dbContext);
-
-            return _muscularGroupModule.Update(muscularGroup);
+            SaveTranslation(muscularGroup);
+            MuscularGroup result = _muscularGroupModule.Update(muscularGroup);
+            CompleteTranslation(result);
+            return result;
         }
     }
 }

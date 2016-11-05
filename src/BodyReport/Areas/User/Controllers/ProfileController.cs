@@ -11,8 +11,8 @@ using BodyReport.Areas.User.ViewModels;
 using BodyReport.Services;
 using BodyReport.Models;
 using BodyReport.Resources;
-using BodyReport.Data;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Data;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -28,10 +28,6 @@ namespace BodyReport.Areas.User.Controllers
         /// SignInManager Identity
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
-        /// <summary>
-        /// UserManager Identity
-        /// </summary>
-        private readonly UserManager<ApplicationUser> _userManager;
         /// <summary>
         /// Hosting Environement
         /// </summary>
@@ -55,12 +51,12 @@ namespace BodyReport.Areas.User.Controllers
 
         public ProfileController(SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext,
             IUsersService usersService, IUserInfosService userInfosService, ICitiesService citiesService,
             ICountriesService countriesService,
-            IHostingEnvironment env) : base(userManager)
+            IHostingEnvironment env) : base(userManager, dbContext)
         {
             _signInManager = signInManager;
-            _userManager = userManager;
             _usersService = usersService;
             _userInfosService = userInfosService;
             _citiesService = citiesService;

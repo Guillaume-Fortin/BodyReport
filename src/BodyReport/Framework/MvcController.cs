@@ -31,6 +31,9 @@ namespace BodyReport.Framework
         /// </summary>
         private Cookie _userIdentityCookie = null;
 
+        public MvcController()
+        {
+        }
         public MvcController(UserManager<ApplicationUser> userManager)
         {
             _identityUserManager = userManager;

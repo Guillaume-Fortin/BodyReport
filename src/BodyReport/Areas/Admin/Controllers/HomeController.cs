@@ -3,6 +3,7 @@ using BodyReport.Framework;
 using BodyReport.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -10,24 +11,19 @@ namespace BodyReport.Controllers
 {
     [Authorize(Roles="Admin")]
     [Area("Admin")]
-    public class HomeController : Controller
+    public class HomeController : MvcController
     {
         /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(HomeController));
         /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-        /// <summary>
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
 
-        public HomeController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public HomeController(UserManager<ApplicationUser> userManager, IHostingEnvironment env) : base(userManager)
         {
-            _dbContext = dbContext;
             _env = env;
         }
 

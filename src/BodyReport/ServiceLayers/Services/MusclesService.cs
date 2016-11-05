@@ -37,6 +37,26 @@ namespace BodyReport.ServiceLayers.Services
             return _muscleManager.FindMuscles(criteria);
         }
 
+        public Muscle CreateMuscle(Muscle muscle)
+        {
+            Muscle result = null;
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    result = _muscleManager.CreateMuscle(muscle);
+                    transaction.Commit();
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogCritical("Unable to create muscle", exception);
+                    transaction.Rollback();
+                    throw exception;
+                }
+            }
+            return result;
+        }
+
         public Muscle UpdateMuscle(Muscle muscle)
         {
             Muscle result = null;

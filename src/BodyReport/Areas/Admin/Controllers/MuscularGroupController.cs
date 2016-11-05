@@ -5,33 +5,36 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using BodyReport.Message;
 using BodyReport.Framework;
-using BodyReport.Manager;
-using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
 using BodyReport.Data;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
-    public class MuscularGroupController : Controller
+    public class MuscularGroupController : MvcController
     {
         /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(MuscularGroupController));
         /// <summary>
-        /// Database db context
-        /// </summary>
-        ApplicationDbContext _dbContext = null;
-        /// <summary>
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
+        /// <summary>
+        /// Service layer
+        /// </summary>
+        private readonly IMuscularGroupsService _muscularGroupsService;
 
-        public MuscularGroupController(ApplicationDbContext dbContext, IHostingEnvironment env)
+        public MuscularGroupController(UserManager<ApplicationUser> userManager,
+                                       IMuscularGroupsService muscularGroupsService,
+                                       IHostingEnvironment env) : base(userManager)
         {
-            _dbContext = dbContext;
+            _muscularGroupsService = muscularGroupsService;
             _env = env;
         }
 
@@ -42,9 +45,7 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             MuscularGroupViewModel muscularGroupViewModel;
             var muscularGroupsViewModels = new List<MuscularGroupViewModel>();
-            var manager = new MuscularGroupManager(_dbContext);
-
-            var muscularGroups = manager.FindMuscularGroups();
+            var muscularGroups = _muscularGroupsService.FindMuscularGroups();
             if (muscularGroups != null)
             {
                 foreach (var muscularGroup in muscularGroups)
@@ -74,9 +75,8 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var manager = new MuscularGroupManager(_dbContext);
                 var muscularGroup = new MuscularGroup() { Name = muscularGroupViewModel.Name };
-                muscularGroup = manager.CreateMuscularGroup(muscularGroup);
+                muscularGroup = _muscularGroupsService.CreateMuscularGroup(muscularGroup);
                 if (muscularGroup == null || muscularGroup.Id == 0)
                 {
                     _logger.LogError("Create new muscular group fail");
@@ -95,9 +95,8 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (id != 0)
             {
-                var manager = new MuscularGroupManager(_dbContext);
                 var key = new MuscularGroupKey() { Id = id };
-                var muscularGroup = manager.GetMuscularGroup(key);
+                var muscularGroup = _muscularGroupsService.GetMuscularGroup(key);
                 if (muscularGroup != null)
                 {
                     var viewModel = new MuscularGroupViewModel();
@@ -118,13 +117,12 @@ namespace BodyReport.Areas.Admin.Controllers
             if (ModelState.IsValid && viewModel.Id > 0)
             {
                 // Verify not exist on id
-                var manager = new MuscularGroupManager(_dbContext);
                 var key = new MuscularGroupKey() { Id = viewModel.Id };
-                var muscularGroup = manager.GetMuscularGroup(key);
+                var muscularGroup = _muscularGroupsService.GetMuscularGroup(key);
                 if (muscularGroup != null)
                 {
                     muscularGroup.Name = viewModel.Name;
-                    muscularGroup = manager.UpdateMuscularGroup(muscularGroup);
+                    muscularGroup = _muscularGroupsService.UpdateMuscularGroup(muscularGroup);
                     return RedirectToAction("Index");
                 }
             }
@@ -139,12 +137,11 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (id != 0)
             {
-                var manager = new MuscularGroupManager(_dbContext);
                 var key = new MuscularGroupKey() { Id = id };
-                var muscularGroup = manager.GetMuscularGroup(key);
+                var muscularGroup = _muscularGroupsService.GetMuscularGroup(key);
                 if (muscularGroup != null)
                 {
-                    manager.DeleteMuscularGroup(muscularGroup);
+                    _muscularGroupsService.DeleteMuscularGroup(muscularGroup);
                 }
             }
             return RedirectToAction("Index");

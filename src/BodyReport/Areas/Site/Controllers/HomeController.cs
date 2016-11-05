@@ -3,15 +3,17 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using BodyReport.Framework;
+using Microsoft.AspNetCore.Identity;
+using BodyReport.Models;
 
 namespace BodyReport.Areas.Site.Controllers
 {
     [Area("Site")]
-    public class HomeController : Controller
+    public class HomeController : MvcController
     {
         private IStringLocalizer _htmlLocalizer;
 
-        public HomeController()
+        public HomeController() : base()
         {
             StringLocalizerFactory sl = new StringLocalizerFactory();
             _htmlLocalizer = sl.Create("Translation", "Resources");

@@ -4,11 +4,9 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using BodyReport.Message;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Models;
 using BodyReport.ViewModels.Admin;
 using Microsoft.AspNetCore.Hosting;
-using BodyReport.Data;
 using BodyReport.ServiceLayers.Interfaces;
 using Microsoft.AspNetCore.Identity;
 

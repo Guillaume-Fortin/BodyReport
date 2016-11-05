@@ -31,7 +31,6 @@ namespace BodyReport.Crud.Transformer
             var bean = new Muscle();
             bean.Id = row.Id;
             bean.MuscularGroupId = row.MuscularGroupId;
-            bean.Name = Resources.Translation.GetInDB(GetTranslationKey(row.Id));
             return bean;
         }
     }
