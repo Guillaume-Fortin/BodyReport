@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class CountryKey
+    public class CountryKey : Key
     {
         /// <summary>
         /// Id (Key)
@@ -14,6 +14,10 @@ namespace BodyReport.Message
         {
             get;
             set;
+        }
+
+        public override string GetCacheKey()
+        {
         }
     }
 
@@ -44,5 +48,10 @@ namespace BodyReport.Message
         /// Id
         /// </summary>
         public IntegerCriteria Id { get; set; }
+
+        public override string GetCacheKey()
+        {
+                Id == null ? "null" : Id.GetCacheKey());
+        }
     }
 }

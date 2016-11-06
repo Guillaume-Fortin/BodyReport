@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class UserRoleKey
+    public class UserRoleKey : Key
     {
         /// <summary>
         /// User Id
@@ -16,6 +16,11 @@ namespace BodyReport.Message
         /// Role Id
         /// </summary>
         public string RoleId { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("UserRoleKey_{0}_{1}", UserId, RoleId);
+        }
     }
 
     public class UserRole : UserRoleKey
@@ -33,5 +38,12 @@ namespace BodyReport.Message
         /// Role Id
         /// </summary>
         public StringCriteria RoleId { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("UserRoleCriteria_{0}",
+                UserId == null ? "null" : UserId.GetCacheKey(),
+                RoleId == null ? "null" : RoleId.GetCacheKey());
+        }
     }
 }

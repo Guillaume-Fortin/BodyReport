@@ -21,7 +21,7 @@ namespace BodyReport.ServiceLayers.Services
         /// Training Exercise Manager
         /// </summary>
         TrainingExerciseManager _trainingExerciseManager = null;
-        public TrainingExercisesService(ApplicationDbContext dbContext) : base(dbContext)
+        public TrainingExercisesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _trainingExerciseManager = new TrainingExerciseManager(_dbContext);
         }

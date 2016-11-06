@@ -19,7 +19,7 @@ namespace BodyReport.ServiceLayers.Services
         /// User info Manager
         /// </summary>
         UserManager _userManager = null;
-        public UsersService(ApplicationDbContext dbContext) : base(dbContext)
+        public UsersService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _userManager = new UserManager(_dbContext);
         }

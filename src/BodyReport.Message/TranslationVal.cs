@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class TranslationValKey
+    public class TranslationValKey : Key
     {
         /// <summary>
         /// Culture Id
@@ -16,6 +16,11 @@ namespace BodyReport.Message
         /// Key
         /// </summary>
         public string Key { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TranslationValKey_{0}_{1}", CultureId.ToString(), Key);
+        }
     }
 
     public class TranslationVal : TranslationValKey
@@ -34,5 +39,12 @@ namespace BodyReport.Message
         /// Key
         /// </summary>
         public StringCriteria Key { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TranslationValCriteria_{0}",
+                CultureId == null ? "null" : CultureId.GetCacheKey(),
+                Key == null ? "null" : Key.GetCacheKey());
+        }
     }
 }

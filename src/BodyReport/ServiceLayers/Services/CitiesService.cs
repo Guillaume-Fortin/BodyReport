@@ -13,6 +13,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class CitiesService : BodyReportService, ICitiesService
     {
+        private const string _cacheName = "CitiesCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -21,18 +22,32 @@ namespace BodyReport.ServiceLayers.Services
         /// City Manager
         /// </summary>
         CityManager _cityManager = null;
-        public CitiesService(ApplicationDbContext dbContext) : base(dbContext)
+        public CitiesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _cityManager = new CityManager(_dbContext);
         }
         public City GetCity(CityKey key)
         {
-            return _cityManager.GetCity(key);
+            City city = null;
+            string cacheKey = key == null ? "CityKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out city))
+            {
+                city = _cityManager.GetCity(key);
+                SetCacheData(_cacheName, cacheKey, city);
+            }
+            return city;
         }
 
-        public List<City> FindCities(CityCriteria cityCriteria = null)
+        public List<City> FindCities(CityCriteria criteria = null)
         {
-            return _cityManager.FindCities(cityCriteria);
+            List<City> cityList = null;
+            string cacheKey = criteria == null ? "CityCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out cityList))
+            {
+                cityList = _cityManager.FindCities(criteria);
+                SetCacheData(_cacheName, cacheKey, cityList);
+            }
+            return cityList;
         }
     }
 }

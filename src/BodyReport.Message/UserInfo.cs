@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class UserInfoKey
+    public class UserInfoKey : Key
     {
         /// <summary>
         /// UserId (Key)
@@ -14,6 +14,11 @@ namespace BodyReport.Message
         {
             get;
             set;
+        }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("UserInfoKey_{0}", UserId);
         }
     }
 
@@ -89,5 +94,11 @@ namespace BodyReport.Message
         /// User Id
         /// </summary>
         public StringCriteria UserId { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("UserInfoCriteria_{0}",
+                UserId == null ? "null" : UserId.GetCacheKey());
+        }
     }
 }

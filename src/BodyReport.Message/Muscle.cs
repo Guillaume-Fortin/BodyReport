@@ -5,12 +5,17 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class MuscleKey
+    public class MuscleKey : Key
     {
         /// <summary>
         /// Muscle Id
         /// </summary>
         public int Id { get; set; }
+        
+        public override string GetCacheKey()
+        {
+            return string.Format("MuscleKey_{0}", Id.ToString());
+        }
     }
 
     /// <summary>
@@ -40,5 +45,12 @@ namespace BodyReport.Message
         /// Muscular group Id
         /// </summary>
         public IntegerCriteria MuscularGroupId { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("MuscleCriteria_{0}_{1}",
+                Id == null ? "null" : Id.GetCacheKey(),
+                MuscularGroupId == null ? "null" : MuscularGroupId.GetCacheKey());
+        }
     }
 }

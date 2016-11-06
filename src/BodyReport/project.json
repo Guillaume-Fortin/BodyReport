@@ -42,7 +42,8 @@
     "MailKit": "1.8.1",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2"
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0"
   },
 
   "tools": {

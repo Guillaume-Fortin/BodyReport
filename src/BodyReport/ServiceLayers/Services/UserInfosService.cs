@@ -13,6 +13,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class UserInfosService : BodyReportService, IUserInfosService
     {
+        private const string _cacheName = "UserInfosCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -21,14 +22,21 @@ namespace BodyReport.ServiceLayers.Services
         /// User info Manager
         /// </summary>
         UserInfoManager _userInfoManager = null;
-        public UserInfosService(ApplicationDbContext dbContext) : base(dbContext)
+        public UserInfosService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _userInfoManager = new UserInfoManager(_dbContext);
         }
 
         public UserInfo GetUserInfo(UserInfoKey key)
         {
-            return _userInfoManager.GetUserInfo(key);
+            UserInfo userInfo = null;
+            string cacheKey = key == null ? "UserInfoKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out userInfo))
+            {
+                userInfo = _userInfoManager.GetUserInfo(key);
+                SetCacheData(_cacheName, cacheKey, userInfo);
+            }
+            return userInfo;
         }
 
         public UserInfo UpdateUserInfo(UserInfo userInfo)
@@ -40,6 +48,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _userInfoManager.UpdateUserInfo(userInfo);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {

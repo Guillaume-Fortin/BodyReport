@@ -12,6 +12,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class BodyExercisesService : BodyReportService, IBodyExercisesService
     {
+        private const string _cacheName = "BodyExercisesCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -20,7 +21,7 @@ namespace BodyReport.ServiceLayers.Services
         /// Body Exercise Manager
         /// </summary>
         BodyExerciseManager _bodyExerciseManager = null;
-        public BodyExercisesService(ApplicationDbContext dbContext) : base(dbContext)
+        public BodyExercisesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _bodyExerciseManager = new BodyExerciseManager(_dbContext);
         }
@@ -34,6 +35,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _bodyExerciseManager.CreateBodyExercise(bodyExercise);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -47,17 +50,26 @@ namespace BodyReport.ServiceLayers.Services
 
         public BodyExercise GetBodyExercise(BodyExerciseKey key)
         {
-            BodyExercise result = null;
-            if (key != null)
+            BodyExercise bodyExercise = null;
+            string cacheKey = key == null ? "BodyExerciseKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out bodyExercise))
             {
-                result = _bodyExerciseManager.GetBodyExercise(key);
+                bodyExercise = _bodyExerciseManager.GetBodyExercise(key);
+                SetCacheData(_cacheName, cacheKey, bodyExercise);
             }
-            return result;
+            return bodyExercise;
         }
 
         public List<BodyExercise> FindBodyExercises(BodyExerciseCriteria criteria = null)
         {
-            return _bodyExerciseManager.FindBodyExercises(criteria);
+            List<BodyExercise> bodyExerciseList = null;
+            string cacheKey = criteria == null ? "BodyExerciseCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out bodyExerciseList))
+            {
+                bodyExerciseList = _bodyExerciseManager.FindBodyExercises(criteria);
+                SetCacheData(_cacheName, cacheKey, bodyExerciseList);
+            }
+            return bodyExerciseList;
         }
 
         public BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
@@ -69,6 +81,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _bodyExerciseManager.UpdateBodyExercise(bodyExercise);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -93,8 +107,10 @@ namespace BodyReport.ServiceLayers.Services
                         {
                             results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
                         }
+                        transaction.Commit();
+                        //invalidate cache
+                        InvalidateCache(_cacheName);
                     }
-                    transaction.Commit();
                 }
                 catch (Exception exception)
                 {
@@ -113,6 +129,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     _bodyExerciseManager.DeleteBodyExercise(key);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {

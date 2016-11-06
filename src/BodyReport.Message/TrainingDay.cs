@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class TrainingDayKey
+    public class TrainingDayKey : Key
     {
         /// <summary>
         /// UserId
@@ -36,6 +36,12 @@ namespace BodyReport.Message
         {
             return key1.UserId == key2.UserId && key1.Year == key2.Year && key1.WeekOfYear == key2.WeekOfYear &&
                    key1.DayOfWeek == key2.DayOfWeek && key1.TrainingDayId == key2.TrainingDayId;
+        }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingDayKey_{0}_{1}_{2}_{3}_{4}", 
+                UserId, Year.ToString(), WeekOfYear.ToString(), DayOfWeek.ToString(), TrainingDayId.ToString());
         }
     }
 
@@ -89,14 +95,30 @@ namespace BodyReport.Message
         /// Day Of Year
         /// </summary>
         public IntegerCriteria TrainingDayId { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingDayCriteria_{0}_{1}_{2}_{3}_{4}",
+                UserId == null ? "null" : UserId.GetCacheKey(),
+                Year == null ? "null" : Year.GetCacheKey(),
+                WeekOfYear == null ? "null" : WeekOfYear.GetCacheKey(),
+                DayOfWeek == null ? "null" : DayOfWeek.GetCacheKey(),
+                TrainingDayId == null ? "null" : TrainingDayId.GetCacheKey());
+        }
     }
 
-    public class TrainingDayScenario
+    public class TrainingDayScenario : Key
     {
         public bool ManageExercise { get; set; } = true;
 
         public TrainingDayScenario()
         {
+        }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingDayScenario_{0}",
+                ManageExercise ? "1" : "0");
         }
     }
 }

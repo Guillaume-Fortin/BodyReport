@@ -5,12 +5,17 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class RoleKey
+    public class RoleKey : Key
     {
         /// <summary>
         /// Role Id
         /// </summary>
         public string Id { get; set; } = string.Empty;
+
+        public override string GetCacheKey()
+        {
+            return string.Format("RoleKey_{0}", Id.ToString());
+        }
     }
 
     public class Role : RoleKey
@@ -32,5 +37,11 @@ namespace BodyReport.Message
         /// Role Id
         /// </summary>
         public IntegerCriteria Id { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("RoleCriteria_{0}",
+                Id == null ? "null" : Id.GetCacheKey());
+        }
     }
 }

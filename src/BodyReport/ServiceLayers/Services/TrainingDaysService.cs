@@ -21,7 +21,7 @@ namespace BodyReport.ServiceLayers.Services
         /// TrainingDay Manager
         /// </summary>
         TrainingDayManager _trainingDayManager = null;
-        public TrainingDaysService(ApplicationDbContext dbContext) : base(dbContext)
+        public TrainingDaysService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _trainingDayManager = new TrainingDayManager(_dbContext);
         }

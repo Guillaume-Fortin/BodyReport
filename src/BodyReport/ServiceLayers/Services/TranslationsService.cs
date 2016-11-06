@@ -12,6 +12,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class TranslationsService : BodyExercisesService, ITranslationsService
     {
+        private const string _cacheName = "TranslationsCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -20,14 +21,22 @@ namespace BodyReport.ServiceLayers.Services
         /// Body Exercise Manager
         /// </summary>
         TranslationManager _translationManager = null;
-        public TranslationsService(ApplicationDbContext dbContext) : base(dbContext)
+        public TranslationsService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _translationManager = new TranslationManager(_dbContext);
         }
 
         public List<TranslationVal> FindTranslation()
         {
-            return _translationManager.FindTranslation();
+            List<TranslationVal> translationList = null;
+            //string cacheKey = criteria == null ? "TranslationValCriteria_null" : criteria.GetCacheKey();
+            string cacheKey = string.Format("TranslationValCriteria_null");
+            if (!TryGetCacheData(cacheKey, out translationList))
+            {
+                translationList = _translationManager.FindTranslation();
+                SetCacheData(_cacheName, cacheKey, translationList);
+            }
+            return translationList;
         }
 
         public TranslationVal UpdateTranslation(TranslationVal translation)
@@ -40,6 +49,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _translationManager.UpdateTranslation(translation);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -66,8 +77,10 @@ namespace BodyReport.ServiceLayers.Services
                         {
                             results.Add(_translationManager.UpdateTranslation(translation));
                         }
+                        transaction.Commit();
+                        //invalidate cache
+                        InvalidateCache(_cacheName);
                     }
-                    transaction.Commit();
                 }
                 catch (Exception exception)
                 {

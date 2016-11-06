@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace BodyReport.Message
 {
-	public class TrainingWeekKey : NotifyPropertyChanged
+	public class TrainingWeekKey : KeyNotifyPropertyChanged
     {
         /// <summary>
         /// UserId
@@ -59,6 +59,12 @@ namespace BodyReport.Message
         public static bool IsEqualByKey(TrainingWeekKey key1, TrainingWeekKey key2)
         {
             return key1.UserId == key2.UserId && key1.Year == key2.Year && key1.WeekOfYear == key2.WeekOfYear;
+        }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingWeekKey_{0}_{1}_{2}",
+                UserId, Year.ToString(), WeekOfYear.ToString());
         }
     }
 
@@ -151,9 +157,17 @@ namespace BodyReport.Message
         /// Week Of Year
         /// </summary>
         public IntegerCriteria WeekOfYear { get; set; }
+        
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingWeekCriteria_{0}_{1}_{2}",
+                UserId == null ? "null" : UserId.GetCacheKey(),
+                Year == null ? "null" : Year.GetCacheKey(),
+                WeekOfYear == null ? "null" : WeekOfYear.GetCacheKey());
+        }
     }
 
-    public class TrainingWeekScenario
+    public class TrainingWeekScenario : Key
     {
         private bool _manageTrainingDay;
         public bool ManageTrainingDay
@@ -177,6 +191,12 @@ namespace BodyReport.Message
         public TrainingWeekScenario()
         {
             ManageTrainingDay = true;
+        }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingWeekScenario_{0}",
+                ManageTrainingDay ? "1" : "0");
         }
     }
 }

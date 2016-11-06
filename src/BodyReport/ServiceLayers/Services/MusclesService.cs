@@ -13,6 +13,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class MusclesService : BodyReportService, IMusclesService
     {
+        private const string _cacheName = "MusclesCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -22,19 +23,33 @@ namespace BodyReport.ServiceLayers.Services
         /// </summary>
         MuscleManager _muscleManager = null;
 
-        public MusclesService(ApplicationDbContext dbContext) : base(dbContext)
+        public MusclesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _muscleManager = new MuscleManager(_dbContext);
         }
 
         public Muscle GetMuscle(MuscleKey key)
         {
-            return _muscleManager.GetMuscle(key);
+            Muscle muscle = null;
+            string cacheKey = key == null ? "MuscleKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out muscle))
+            {
+                muscle = _muscleManager.GetMuscle(key);
+                SetCacheData(_cacheName, cacheKey, muscle);
+            }
+            return muscle;
         }
 
         public List<Muscle> FindMuscles(MuscleCriteria criteria = null)
         {
-            return _muscleManager.FindMuscles(criteria);
+            List<Muscle> muscleList = null;
+            string cacheKey = criteria == null ? "MuscleCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out muscleList))
+            {
+                muscleList = _muscleManager.FindMuscles(criteria);
+                SetCacheData(_cacheName, cacheKey, muscleList);
+            }
+            return muscleList;
         }
 
         public Muscle CreateMuscle(Muscle muscle)
@@ -46,6 +61,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _muscleManager.CreateMuscle(muscle);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -66,6 +83,8 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     result = _muscleManager.UpdateMuscle(muscle);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -93,6 +112,8 @@ namespace BodyReport.ServiceLayers.Services
                         }
                     }
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
@@ -112,10 +133,12 @@ namespace BodyReport.ServiceLayers.Services
                 {
                     _muscleManager.DeleteMuscle(key);
                     transaction.Commit();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogCritical("Unable to update muscle", exception);
+                    _logger.LogCritical("Unable to delete muscle", exception);
                     transaction.Rollback();
                     throw exception;
                 }

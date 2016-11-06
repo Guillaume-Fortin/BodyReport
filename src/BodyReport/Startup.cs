@@ -141,6 +141,9 @@ namespace BodyReport
             */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
+            
+            //Add service for manage cache data
+            services.AddMemoryCache();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -284,6 +287,7 @@ namespace BodyReport
             services.AddTransient<ITranslationsService, TranslationsService>();
             services.AddTransient<IUserInfosService, UserInfosService>();
             services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<ICachesService, CachesService>();
         }
     }
 }

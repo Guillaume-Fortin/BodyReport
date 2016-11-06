@@ -1,6 +1,10 @@
 ﻿using BodyReport.Data;
+using BodyReport.Resources;
+using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,9 +16,53 @@ namespace BodyReport.ServiceLayers
         /// Database db context
         /// </summary>
         protected readonly ApplicationDbContext _dbContext = null;
-        public BodyReportService(ApplicationDbContext dbContext)
+
+        /// <summary>
+        /// Cache service
+        /// </summary>
+        private ICachesService _cacheService;
+
+        
+        public BodyReportService(ApplicationDbContext dbContext, ICachesService cacheService)
         {
             _dbContext = dbContext;
+            _cacheService = cacheService;
+        }
+
+        private string CompleteCacheKeyWithCulture(string cacheKey, string culture = null)
+        {
+            if(culture == null)
+                culture = CultureInfo.CurrentCulture.Name;
+            return string.Format("{0}_{1}", culture, cacheKey);
+        }
+
+        public T GetCacheData<T>(string cacheKey)
+        {
+            return _cacheService.GetData<T>(CompleteCacheKeyWithCulture(cacheKey));
+        }
+
+        public bool TryGetCacheData<T>(string cacheKey, out T data)
+        {
+            return _cacheService.TryGetData<T>(CompleteCacheKeyWithCulture(cacheKey), out data);
+        }
+
+        public void SetCacheData<T>(string cacheName, string cacheKey, T data)
+        {
+            var cacheOption = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5)).SetAbsoluteExpiration(TimeSpan.FromHours(1));
+            _cacheService.SetData<T>(cacheName, CompleteCacheKeyWithCulture(cacheKey), data, cacheOption);
+        }
+
+        public void InvalidateCache(string cacheName)
+        {
+            _cacheService.InvalidateCache(cacheName);
+        }
+
+        public void RemoveCacheData(string cacheKey)
+        {
+            foreach (string cultureName in Translation.SupportedCultureNames)
+            {
+                _cacheService.RemoveCache(CompleteCacheKeyWithCulture(cacheKey, cultureName));
+            }
         }
     }
 }

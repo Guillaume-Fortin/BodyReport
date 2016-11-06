@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Message
 {
-    public class TrainingExerciseSetKey
+    public class TrainingExerciseSetKey : Key
     {
         /// <summary>
         /// UserId
@@ -35,6 +35,13 @@ namespace BodyReport.Message
         /// Id of set/Rep
         /// </summary>
         public int Id { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingExerciseSetKey_{0}_{1}_{2}_{3}_{4}_{5}_{6}",
+                UserId, Year.ToString(), WeekOfYear.ToString(), DayOfWeek.ToString(), 
+                TrainingDayId.ToString(), TrainingExerciseId.ToString(), Id.ToString());
+        }
     }
 
     public class TrainingExerciseSet : TrainingExerciseSetKey
@@ -105,5 +112,17 @@ namespace BodyReport.Message
         /// Id
         /// </summary>
         public IntegerCriteria Id { get; set; }
+
+        public override string GetCacheKey()
+        {
+            return string.Format("TrainingExerciseSetCriteria_{0}_{1}_{2}_{3}_{4}_{5}_{6}",
+                UserId == null ? "null" : UserId.GetCacheKey(),
+                Year == null ? "null" : Year.GetCacheKey(),
+                WeekOfYear == null ? "null" : WeekOfYear.GetCacheKey(),
+                DayOfWeek == null ? "null" : DayOfWeek.GetCacheKey(),
+                TrainingDayId == null ? "null" : TrainingDayId.GetCacheKey(),
+                TrainingExerciseId == null ? "null" : TrainingExerciseId.GetCacheKey(),
+                Id == null ? "null" : Id.GetCacheKey());
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace BodyReport.ServiceLayers.Services
         /// TrainingWeek Manager
         /// </summary>
         TrainingWeekManager _trainingWeekManager = null;
-        public TrainingWeeksService(ApplicationDbContext dbContext) : base(dbContext)
+        public TrainingWeeksService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _trainingWeekManager = new TrainingWeekManager(_dbContext);
         }

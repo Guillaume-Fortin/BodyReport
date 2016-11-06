@@ -13,6 +13,7 @@ namespace BodyReport.ServiceLayers.Services
 {
     public class CountriesService : BodyReportService, ICountriesService
     {
+        private const string _cacheName = "CountriesCache";
         /// <summary>
         /// Logger
         /// </summary>
@@ -21,19 +22,33 @@ namespace BodyReport.ServiceLayers.Services
         /// City Manager
         /// </summary>
         CountryManager _countryManager = null;
-        public CountriesService(ApplicationDbContext dbContext) : base(dbContext)
+        public CountriesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
             _countryManager = new CountryManager(_dbContext);
         }
 
         public Country GetCountry(CountryKey key)
         {
-            return _countryManager.GetCountry(key);
+            Country country = null;
+            string cacheKey = key == null ? "CountryKey_null" : key.GetCacheKey();
+            if (key != null && !TryGetCacheData(cacheKey, out country))
+            {
+                country = _countryManager.GetCountry(key);
+                SetCacheData(_cacheName, cacheKey, country);
+            }
+            return country;
         }
 
-        public List<Country> FindCountries(CountryCriteria countryCriteria = null)
+        public List<Country> FindCountries(CountryCriteria criteria = null)
         {
-            return _countryManager.FindCountries(countryCriteria);
+            List<Country> countryList = null;
+            string cacheKey = criteria == null ? "CountryCriteria_null" : criteria.GetCacheKey();
+            if (!TryGetCacheData(cacheKey, out countryList))
+            {
+                countryList = _countryManager.FindCountries(criteria);
+                SetCacheData(_cacheName, cacheKey, countryList);
+            }
+            return countryList;
         }
     }
 }
