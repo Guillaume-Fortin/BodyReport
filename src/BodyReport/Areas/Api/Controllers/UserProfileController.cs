@@ -10,6 +10,7 @@ using BodyReport.Models;
 using BodyReport.Services;
 using Microsoft.AspNetCore.Authorization;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Message;
 
 namespace BodyReport.Areas.Api.Controllers
 {
@@ -21,10 +22,16 @@ namespace BodyReport.Areas.Api.Controllers
         /// Hosting Environement
         /// </summary>
         IHostingEnvironment _env = null;
+        /// <summary>
+        /// Service layer users
+        /// </summary>
+        private readonly IUsersService _usersService;
 
         public UserProfileController(UserManager<ApplicationUser> userManager,
+                                     IUsersService usersService,
                                      IHostingEnvironment env) : base(userManager)
         {
+            _usersService = usersService;
             _env = env;
         }
 
@@ -36,8 +43,12 @@ namespace BodyReport.Areas.Api.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return BadRequest();
 
-            var userProfileService = new UserProfileService(_dbContext, _env);
-            string imageUrl = userProfileService.GetImageUserProfileRelativeURL(userId);
+            string imageUrl = null;
+            var user = _usersService.GetUser(new UserKey() { Id = SessionUserId });
+
+            if (user != null)
+                imageUrl = ImageUtils.GetImageUserProfileRelativeURL(user, _env);
+
             return new JsonResult(imageUrl);
         }
 

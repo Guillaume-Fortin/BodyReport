@@ -114,9 +114,7 @@ namespace BodyReport.Areas.User.Controllers
                     ViewBag.Country = country == null ? Translation.NOT_SPECIFIED : country.Name;
 
                     ViewBag.TimeZoneName = userInfo.TimeZoneName;
-
-                    var userProfileService = new UserProfileService(_dbContext, _env);
-                    viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
+                    viewModel.ImageUrl = ImageUtils.GetImageUserProfileRelativeURL(user, _env);
                 }
             }
 
@@ -149,9 +147,8 @@ namespace BodyReport.Areas.User.Controllers
                     viewModel.ZipCode = userInfo.ZipCode;
                     viewModel.CountryId = userInfo.CountryId;
                     viewModel.TimeZoneName = userInfo.TimeZoneName;
-
-                    var userProfileService = new UserProfileService(_dbContext, _env);
-                    viewModel.ImageUrl = userProfileService.GetImageUserProfileRelativeURL(userInfo.UserId);
+                    
+                    viewModel.ImageUrl = ImageUtils.GetImageUserProfileRelativeURL(user, _env);
                 }
 
                 ViewBag.Sex = ControllerUtils.CreateSelectSexItemList(viewModel.SexId);

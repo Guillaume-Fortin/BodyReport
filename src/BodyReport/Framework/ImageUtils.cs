@@ -1,4 +1,6 @@
 ﻿using BodyReport.Framework.Extensions;
+using BodyReport.Message;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
@@ -84,6 +86,23 @@ namespace BodyReport.Framework
                     return ".bmp";
                 case "image/jpeg":
                     return ".jpg";
+            }
+            return null;
+        }
+
+        public static string GetImageUserProfileRelativeURL(User user, IHostingEnvironment _env)
+        {
+            if (user != null)
+            {
+                string imagePath = Path.Combine(_env.WebRootPath, "images", "userprofil", user.Id);
+                string[] imageExts = new string[] { ".png", ".jpg", ".bmp" };
+                foreach (string imageExt in imageExts)
+                {
+                    if (System.IO.File.Exists(imagePath + imageExt))
+                    {
+                        return string.Format("/images/userprofil/{0}{1}", user.Id, imageExt);
+                    }
+                }
             }
             return null;
         }
