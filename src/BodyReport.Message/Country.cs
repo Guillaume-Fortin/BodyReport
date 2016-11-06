@@ -18,6 +18,7 @@ namespace BodyReport.Message
 
         public override string GetCacheKey()
         {
+            return string.Format("CountryKey_{0}", Id.ToString());
         }
     }
 
@@ -51,6 +52,7 @@ namespace BodyReport.Message
 
         public override string GetCacheKey()
         {
+            return string.Format("CountryCriteria_{0}",
                 Id == null ? "null" : Id.GetCacheKey());
         }
     }
