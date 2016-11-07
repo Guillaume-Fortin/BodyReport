@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Manager
 {
@@ -15,19 +16,40 @@ namespace BodyReport.Manager
     public class UserManager : ServiceManager
     {
         UserModule _userModule = null;
-        RoleModule _roleModule = null;
-        UserRoleModule _userRoleModule = null;
+        IUserRolesService _usersRoleService;
+        IRolesService _rolesService;
 
-        public UserManager(ApplicationDbContext dbContext) : base(dbContext)
+        public UserManager(ApplicationDbContext dbContext,
+                           IUserRolesService usersRoleService,
+                           IRolesService rolesService) : base(dbContext)
         {
             _userModule = new UserModule(_dbContext);
-            _roleModule = new RoleModule(_dbContext);
-            _userRoleModule = new UserRoleModule(_dbContext);
+            _usersRoleService = usersRoleService;
+            _rolesService = rolesService;
+        }
+
+        private void CompleteUserRole(User user)
+        {
+            var userRoleCriteria = new UserRoleCriteria();
+            userRoleCriteria.UserId = new StringCriteria() { Equal = user.Id };
+            var userRoleList = _usersRoleService.FindUserRole(userRoleCriteria);
+            if (userRoleList != null)
+            {
+                foreach (var userRole in userRoleList)
+                {
+                    user.Role = _rolesService.GetRole(new RoleKey() { Id = userRole.RoleId });
+                }
+            }
         }
 
         internal User GetUser(UserKey key, bool manageRole = true)
         {
-            return _userModule.Get(key, manageRole);
+            User user = _userModule.Get(key);
+
+            if(user != null && manageRole)
+                CompleteUserRole(user);
+
+            return user;
         }
 
         public List<User> FindUsers(out int totalRecords, UserCriteria userCriteria = null, bool manageRole = true, int currentRecordIndex = 0, int maxRecord = 0)
@@ -38,20 +60,8 @@ namespace BodyReport.Manager
             {
                 foreach(var user in userList)
                 {
-                    if(user.Role == null)
-                    {
-                        var userRoleCriteria = new UserRoleCriteria();
-                        userRoleCriteria.UserId = new StringCriteria() { Equal = user.Id };
-                        var userRoleList = _userRoleModule.Find(userRoleCriteria);
-                        if (userRoleList != null)
-                        {
-                            foreach (var userRole in userRoleList)
-                            {
-                                user.Role = _roleModule.Get(new RoleKey() { Id = userRole.RoleId });
-                                break;
-                            }
-                        }
-                    }
+                    if(user != null && manageRole)
+                        CompleteUserRole(user);
                 }
             }
 
@@ -65,35 +75,20 @@ namespace BodyReport.Manager
 
         internal User UpdateUser(User user)
         {
-            user = _userModule.Update(user);
+            var result = _userModule.Update(user);
+
+            if (user.Role != null && result != null)
+            {
+                var userRole = new UserRole()
+                {
+                    UserId = user.Id,
+                    RoleId = user.Role.Id
+                };
+                _usersRoleService.UpdateUserRole(userRole);
+                CompleteUserRole(result);
+            }
+
             return user;
         }
-
-        #region manage role
-        public List<Role> FindRoles(RoleCriteria roleCriteria = null)
-        {
-            return _roleModule.Find(roleCriteria);
-        }
-
-        internal Role CreateRole(Role role)
-        {
-            return _roleModule.Create(role);
-        }
-
-        internal Role GetRole(RoleKey key)
-        {
-            return _roleModule.Get(key);
-        }
-
-        internal Role UpdateRole(Role role)
-        {
-            return _roleModule.Update(role);
-        }
-
-        internal void DeleteRole(RoleKey key)
-        {
-            _roleModule.Delete(key);
-        }
-        #endregion
     }
 }

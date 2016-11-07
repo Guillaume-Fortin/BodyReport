@@ -21,6 +21,10 @@ namespace BodyReport.Areas.Admin.Controllers
         /// </summary>
         private readonly IUsersService _usersService;
         /// <summary>
+        /// Service layer roles
+        /// </summary>
+        private readonly IRolesService _rolesService;
+        /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(RoleController));
@@ -31,10 +35,12 @@ namespace BodyReport.Areas.Admin.Controllers
 
         public RoleController(IHostingEnvironment env, 
                               UserManager<ApplicationUser> userManager,
-                              IUsersService usersService) : base(userManager)
+                              IUsersService usersService,
+                              IRolesService rolesService) : base(userManager)
         {
             _env = env;
             _usersService = usersService;
+            _rolesService = rolesService;
         }
 
         //
@@ -43,7 +49,7 @@ namespace BodyReport.Areas.Admin.Controllers
         public IActionResult Index(string returnUrl = null)
         {
             var result = new List<RoleViewModel>();
-            var roles = _usersService.FindRoles();
+            var roles = _rolesService.FindRoles();
             if (roles != null)
             {
                 foreach (var role in roles)
@@ -71,7 +77,7 @@ namespace BodyReport.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var role = new Role() { Name = roleViewModel.Name, NormalizedName = roleViewModel.NormalizedName };
-                role = _usersService.CreateRole(role);
+                role = _rolesService.CreateRole(role);
                 if (role == null || string.IsNullOrWhiteSpace(role.Id))
                 {
                     _logger.LogError("Create new role fail");
@@ -91,7 +97,7 @@ namespace BodyReport.Areas.Admin.Controllers
             if (!string.IsNullOrWhiteSpace(id))
             {
                 var key = new RoleKey() { Id = id };
-                var role = _usersService.GetRole(key);
+                var role = _rolesService.GetRole(key);
                 if (role != null)
                 {
                     var viewModel = new RoleViewModel();
@@ -113,12 +119,12 @@ namespace BodyReport.Areas.Admin.Controllers
             {
                 // Verify not exist on id
                 var key = new RoleKey() { Id = viewModel.Id };
-                var role = _usersService.GetRole(key);
+                var role = _rolesService.GetRole(key);
                 if (role != null)
                 {
                     role.Name = viewModel.Name;
                     role.NormalizedName = viewModel.NormalizedName;
-                    role = _usersService.UpdateRole(role);
+                    role = _rolesService.UpdateRole(role);
                     return RedirectToAction("Index");
                 }
             }
@@ -134,10 +140,10 @@ namespace BodyReport.Areas.Admin.Controllers
             if (!string.IsNullOrWhiteSpace(id))
             {
                 var key = new RoleKey() { Id = id };
-                var role = _usersService.GetRole(key);
+                var role = _rolesService.GetRole(key);
                 if (role != null)
                 {
-                    _usersService.DeleteRole(key);
+                    _rolesService.DeleteRole(key);
                 }
             }
             return RedirectToAction("Index");

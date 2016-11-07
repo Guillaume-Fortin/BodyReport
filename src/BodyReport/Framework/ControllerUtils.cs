@@ -14,6 +14,7 @@ using BodyReport.Manager;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.Net;
+using BodyReport.ServiceLayers.Interfaces;
 
 namespace BodyReport.Framework
 {
@@ -168,12 +169,10 @@ namespace BodyReport.Framework
             return trainingDay;
         }
 
-        public static void SendEmailToAdmin(ApplicationDbContext dbContext, IEmailSender emailSender, string subject, string message)
+        public static void SendEmailToAdmin(ApplicationDbContext dbContext, IUsersService usersService, IEmailSender emailSender, string subject, string message)
         {
-            var manager = new UserManager(dbContext);
-
             int totalRecords;
-            var users = manager.FindUsers(out totalRecords, null, true);
+            var users = usersService.FindUsers(out totalRecords, null, true);
             if (users == null)
                 return;
 

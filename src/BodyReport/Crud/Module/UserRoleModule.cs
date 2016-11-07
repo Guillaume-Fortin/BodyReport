@@ -20,6 +20,23 @@ namespace BodyReport.Crud.Module
         }
 
         /// <summary>
+        /// Create data in database
+        /// </summary>
+        /// <param name="userRole">Data</param>
+        /// <returns>insert data</returns>
+        public UserRole Create(UserRole userRole)
+        {
+            if (userRole == null || string.IsNullOrEmpty(userRole.UserId) || string.IsNullOrEmpty(userRole.RoleId))
+                return null;
+
+            var row = new IdentityUserRole<string>();
+            UserRoleTransformer.ToRow(userRole, row);
+            _dbContext.UserRoles.Add(row);
+            _dbContext.SaveChanges();
+            return UserRoleTransformer.ToBean(row);
+        }
+
+        /// <summary>
         /// Get data in database
         /// </summary>
         /// <param name="key">Primary Key</param>
@@ -58,6 +75,27 @@ namespace BodyReport.Crud.Module
                 }
             }
             return resultList;
+        }
+
+        /// <summary>
+        /// Update data in database
+        /// </summary>
+        /// <param name="userRole">data</param>
+        /// <returns>updated data</returns>
+        public UserRole Update(UserRole userRole)
+        {
+            if (userRole == null || string.IsNullOrEmpty(userRole.UserId) || string.IsNullOrEmpty(userRole.RoleId))
+                return null;
+
+            var userRoleRowList = _dbContext.UserRoles.Where(ur => ur.UserId == userRole.UserId);
+            _dbContext.UserRoles.RemoveRange(userRoleRowList);
+
+            var userRoleRow = new IdentityUserRole<string>() { UserId = userRole.UserId, RoleId = userRole.RoleId };
+            _dbContext.UserRoles.Add(userRoleRow);
+
+            _dbContext.SaveChanges();
+            
+             return UserRoleTransformer.ToBean(userRoleRow);
         }
     }
 }

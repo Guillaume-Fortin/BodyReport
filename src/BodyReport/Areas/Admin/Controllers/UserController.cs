@@ -28,6 +28,10 @@ namespace BodyReport.Areas.Admin.Controllers
         /// </summary>
         private readonly IUserInfosService _userInfosService;
         /// <summary>
+        /// Service layer roles
+        /// </summary>
+        private readonly IRolesService _rolesService;
+        /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UserController));
@@ -42,12 +46,15 @@ namespace BodyReport.Areas.Admin.Controllers
 
         public UserController(IHostingEnvironment env, IEmailSender emailSender,
                               UserManager<ApplicationUser> userManager,
-                              IUsersService usersService, IUserInfosService userInfosService) : base(userManager)
+                              IUsersService usersService,
+                              IUserInfosService userInfosService,
+                              IRolesService rolesService) : base(userManager)
         {
             _env = env;
             _emailSender = emailSender;
             _usersService = usersService;
             _userInfosService = userInfosService;
+            _rolesService = rolesService;
         }
 
         private void ApplyUserSort(ref UserCriteria userCriteria, string sortOrder)
@@ -178,7 +185,7 @@ namespace BodyReport.Areas.Admin.Controllers
                         viewModel.RoleId = user.Role.Id;
 
                     // Populate SelectListItem of roles
-                    ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_usersService.FindRoles(), user.Id);
+                    ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_rolesService.FindRoles(), user.Id);
                     return View(viewModel);
                 }
             }
@@ -206,7 +213,7 @@ namespace BodyReport.Areas.Admin.Controllers
                     //Verify role exist
                     var roleKey = new RoleKey();
                     roleKey.Id = viewModel.RoleId;
-                    var role = _usersService.GetRole(roleKey);
+                    var role = _rolesService.GetRole(roleKey);
                     if (role != null)
                     {
                         user.Role = role;
@@ -217,7 +224,7 @@ namespace BodyReport.Areas.Admin.Controllers
             }
 
             // Populate SelectListItem of roles
-            ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_usersService.FindRoles(), viewModel.Id);
+            ViewBag.Roles = ControllerUtils.CreateSelectRoleItemList(_rolesService.FindRoles(), viewModel.Id);
             return View(viewModel);
         }
 
@@ -278,7 +285,7 @@ namespace BodyReport.Areas.Admin.Controllers
                         //Verify role exist
                         var roleKey = new RoleKey();
                         roleKey.Id = "1"; //User
-                        var role = _usersService.GetRole(roleKey);
+                        var role = _rolesService.GetRole(roleKey);
                         if (role != null)
                         {
                             user.Role = role;

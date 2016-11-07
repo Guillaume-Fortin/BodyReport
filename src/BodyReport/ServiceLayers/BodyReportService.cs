@@ -15,18 +15,22 @@ namespace BodyReport.ServiceLayers
         /// <summary>
         /// Database db context
         /// </summary>
-        protected readonly ApplicationDbContext _dbContext = null;
+        protected ApplicationDbContext _dbContext = null;
 
         /// <summary>
         /// Cache service
         /// </summary>
         private ICachesService _cacheService;
-
         
         public BodyReportService(ApplicationDbContext dbContext, ICachesService cacheService)
         {
             _dbContext = dbContext;
             _cacheService = cacheService;
+        }
+
+        public void SetDbContext(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
         }
 
         private string CompleteCacheKeyWithCulture(string cacheKey, string culture = null)

@@ -197,7 +197,7 @@ namespace BodyReport.Areas.Api.Controllers
                         _logger.LogError(3, except, "can't send email ");
                     }
                     //SendEmail to admin
-                    ControllerUtils.SendEmailToAdmin(_dbContext, _emailSender, "BodyReport : New mobile user", "New user register with mobile");
+                    ControllerUtils.SendEmailToAdmin(_dbContext, _usersService, _emailSender, "BodyReport : New mobile user", "New user register with mobile");
                     return new OkObjectResult(true);
                 }
                 StringBuilder errorMessage = new StringBuilder();

@@ -287,6 +287,8 @@ namespace BodyReport
             services.AddTransient<ITranslationsService, TranslationsService>();
             services.AddTransient<IUserInfosService, UserInfosService>();
             services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IUserRolesService, UserRolesService>();
+            services.AddTransient<IRolesService, RolesService>();
             services.AddTransient<ICachesService, CachesService>();
         }
     }

@@ -19,9 +19,11 @@ namespace BodyReport.ServiceLayers.Services
         /// User info Manager
         /// </summary>
         UserManager _userManager = null;
-        public UsersService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
+        public UsersService(ApplicationDbContext dbContext, IUserRolesService userRolesService, IRolesService rolesService, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _userManager = new UserManager(_dbContext);
+            _userManager = new UserManager(_dbContext, userRolesService, rolesService);
+            ((BodyReportService)userRolesService).SetDbContext(dbContext); // for use same transaction
+            ((BodyReportService)rolesService).SetDbContext(dbContext);// for use same transaction
         }
 
         public User GetUser(UserKey key, bool manageRole = true)
@@ -69,75 +71,5 @@ namespace BodyReport.ServiceLayers.Services
             }
             return result;
         }
-
-        #region manage role
-        public List<Role> FindRoles(RoleCriteria roleCriteria = null)
-        {
-            return _userManager.FindRoles(roleCriteria);
-        }
-
-        public Role CreateRole(Role role)
-        {
-            Role result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    result = _userManager.CreateRole(role);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
-            }
-            return result;
-        }
-
-        public Role GetRole(RoleKey key)
-        {
-            return _userManager.GetRole(key);
-        }
-
-        public Role UpdateRole(Role role)
-        {
-            Role result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    result = _userManager.UpdateRole(role);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
-            }
-            return result;
-        }
-
-        public void DeleteRole(RoleKey key)
-        {
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    _userManager.DeleteRole(key);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
-            }
-        }
-        #endregion
     }
 }

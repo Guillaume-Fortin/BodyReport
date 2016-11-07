@@ -25,41 +25,17 @@ namespace BodyReport.Crud.Module
         /// </summary>
         /// <param name="key">Primary Key</param>
         /// <returns>read data</returns>
-        public User Get(UserKey key, bool manageRole=true)
+        public User Get(UserKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.Id))
                 return null;
 
             User user = null;
-            if (manageRole)
+            ApplicationUser row = _dbContext.Users.Where(m => m.Id == key.Id).FirstOrDefault();
+
+            if (row != null)
             {
-                var joinQuery =
-                     from dbUser in _dbContext.Users
-                     join dbUserRole in _dbContext.UserRoles on dbUser.Id equals dbUserRole.UserId into ps
-                     from dbUserRole in ps.DefaultIfEmpty()
-                     where dbUser.Id == key.Id
-                     select new { User = dbUser, UserRole = dbUserRole };
-
-                var joinRow = joinQuery.FirstOrDefault();
-
-                if (joinRow != null)
-                {
-                    user = UserTransformer.ToBean(joinRow.User);
-                    if (user != null && joinRow.UserRole != null)
-                    {
-                        RoleModule roleModule = new RoleModule(_dbContext);
-                        user.Role = roleModule.Get(new RoleKey { Id = joinRow.UserRole.RoleId });
-                    }
-                }
-            }
-            else
-            {
-                ApplicationUser row = _dbContext.Users.Where(m => m.Id == key.Id).FirstOrDefault();
-
-                if (row != null)
-                {
-                    user = UserTransformer.ToBean(row);
-                }
+                user = UserTransformer.ToBean(row);
             }
 
             return user;
@@ -104,27 +80,13 @@ namespace BodyReport.Crud.Module
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Id))
                 return null;
-
-            bool loadRole = false;
+            
             var row = _dbContext.Users.Where(m => m.Id == user.Id).FirstOrDefault();
             if (row != null)
             { //Modify Data in database
                 UserTransformer.ToRow(user, row);
-
-                //Update UserRole
-                if (user.Role != null)
-                {
-                    loadRole = true;
-                    var userRoleRowList = _dbContext.UserRoles.Where(ur => ur.UserId == user.Id);
-                    _dbContext.UserRoles.RemoveRange(userRoleRowList);
-                    _dbContext.SaveChanges();
-
-                    var userRoleRow = new IdentityUserRole<string>() { UserId = user.Id, RoleId = user.Role.Id };
-                    _dbContext.UserRoles.Add(userRoleRow);
-                }
-                
                 _dbContext.SaveChanges();
-                return Get(user, loadRole); // for reload all data
+                return Get(user);
             }
             return null;
         }

@@ -36,11 +36,17 @@ namespace BodyReport.Areas.Site.Controllers
         /// Service layer users
         /// </summary>
         private readonly IUserInfosService _userInfosService;
+        /// <summary>
+        /// Service layer roles
+        /// </summary>
+        private readonly IRolesService _rolesService;
 
         public AccountController(ApplicationDbContext dbContext,
                                  UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
-                                 IUsersService usersService, IUserInfosService userInfosService,
+                                 IUsersService usersService,
+                                 IUserInfosService userInfosService,
+                                 IRolesService rolesService,
                                  IEmailSender emailSender,
                                  ISmsSender smsSender,
                                  ILoggerFactory loggerFactory) : base(userManager, dbContext)
@@ -48,6 +54,7 @@ namespace BodyReport.Areas.Site.Controllers
             _signInManager = signInManager;
             _usersService = usersService;
             _userInfosService = userInfosService;
+            _rolesService = rolesService;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -171,7 +178,7 @@ namespace BodyReport.Areas.Site.Controllers
                         _logger.LogError(0, except, "Can't send email");
                     }
                     //SendEmail to admin
-                    ControllerUtils.SendEmailToAdmin(_dbContext, _emailSender, "BodyReport : New WebSite user", "New user register with website");
+                    ControllerUtils.SendEmailToAdmin(_dbContext, _usersService, _emailSender, "BodyReport : New WebSite user", "New user register with website");
                     return RedirectToAction(nameof(AccountController.Login), "Account");
                 }
                 AddErrors(result);
@@ -309,7 +316,7 @@ namespace BodyReport.Areas.Site.Controllers
                     //Verify role exist
                     var roleKey = new RoleKey();
                     roleKey.Id = "1"; //User
-                    var role = _usersService.GetRole(roleKey);
+                    var role = _rolesService.GetRole(roleKey);
                     if (role != null)
                     {
                         user.Role = role;
