@@ -32,19 +32,21 @@ namespace BodyReport.ServiceLayers.Services
         {
             TrainingWeek result = null;
             //Create data in database
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingWeekManager.CreateTrainingWeek(trainingWeek);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create training week", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create training week", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -52,19 +54,21 @@ namespace BodyReport.ServiceLayers.Services
         public TrainingWeek UpdateTrainingWeek(TrainingWeek trainingWeek, TrainingWeekScenario trainingWeekScenario)
         {
             TrainingWeek result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update training week", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update training week", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -86,39 +90,43 @@ namespace BodyReport.ServiceLayers.Services
 
         public void DeleteTrainingWeek(TrainingWeekKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _trainingWeekManager.DeleteTrainingWeek(key);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete training week", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _trainingWeekManager.DeleteTrainingWeek(key);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete training week", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
 
         public bool CopyTrainingWeek(string currentUserId, CopyTrainingWeek copyTrainingWeek, out TrainingWeek newTrainingWeek)
         {
             bool result = false;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingWeekManager.CopyTrainingWeek(currentUserId, copyTrainingWeek, out newTrainingWeek);
-                    transaction.Commit();
-                    result = true;
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to copy training week", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingWeekManager.CopyTrainingWeek(currentUserId, copyTrainingWeek, out newTrainingWeek);
+                CommitTransaction();
+                result = true;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to copy training week", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }

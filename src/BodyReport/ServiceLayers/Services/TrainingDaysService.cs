@@ -29,19 +29,21 @@ namespace BodyReport.ServiceLayers.Services
         public TrainingDay CreateTrainingDay(TrainingDay trainingDay)
         {
             TrainingDay result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingDayManager.CreateTrainingDay(trainingDay);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create training day", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingDayManager.CreateTrainingDay(trainingDay);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create training day", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -59,19 +61,21 @@ namespace BodyReport.ServiceLayers.Services
         public TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)
         {
             TrainingDay result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update training day", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update training day", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }

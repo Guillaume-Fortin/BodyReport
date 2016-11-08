@@ -31,21 +31,23 @@ namespace BodyReport.ServiceLayers.Services
         public Role CreateRole(Role role)
         {
             Role result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _roleManager.CreateRole(role);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _roleManager.CreateRole(role);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create role", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -77,42 +79,46 @@ namespace BodyReport.ServiceLayers.Services
         public Role UpdateRole(Role role)
         {
             Role result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _roleManager.UpdateRole(role);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _roleManager.UpdateRole(role);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update role", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
 
         public void DeleteRole(RoleKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _roleManager.DeleteRole(key);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete role", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _roleManager.DeleteRole(key);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete role", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
     }

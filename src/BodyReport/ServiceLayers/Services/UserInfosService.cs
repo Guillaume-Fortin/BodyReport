@@ -42,21 +42,23 @@ namespace BodyReport.ServiceLayers.Services
         public UserInfo UpdateUserInfo(UserInfo userInfo)
         {
             UserInfo result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _userInfoManager.UpdateUserInfo(userInfo);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update user info", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _userInfoManager.UpdateUserInfo(userInfo);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update user info", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }

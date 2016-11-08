@@ -30,21 +30,23 @@ namespace BodyReport.ServiceLayers.Services
         public MuscularGroup CreateMuscularGroup(MuscularGroup muscularGroup)
         {
             MuscularGroup result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _muscularGroupManager.CreateMuscularGroup(muscularGroup);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create muscular group", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _muscularGroupManager.CreateMuscularGroup(muscularGroup);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create muscular group", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -76,42 +78,46 @@ namespace BodyReport.ServiceLayers.Services
 
         public void DeleteMuscularGroup(MuscularGroupKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _muscularGroupManager.DeleteMuscularGroup(key);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete muscular group", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _muscularGroupManager.DeleteMuscularGroup(key);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete muscular group", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
 
         public MuscularGroup UpdateMuscularGroup(MuscularGroup muscularGroup)
         {
             MuscularGroup result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _muscularGroupManager.UpdateMuscularGroup(muscularGroup);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update muscular group", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _muscularGroupManager.UpdateMuscularGroup(muscularGroup);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update muscular group", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -119,28 +125,30 @@ namespace BodyReport.ServiceLayers.Services
         public List<MuscularGroup> UpdateMuscularGroupList(List<MuscularGroup> muscularGroups)
         {
             List<MuscularGroup> result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
+                if (muscularGroups != null && muscularGroups.Count() > 0)
                 {
-                    if (muscularGroups != null && muscularGroups.Count() > 0)
+                    result = new List<MuscularGroup>();
+                    foreach (var muscularGroup in muscularGroups)
                     {
-                        result = new List<MuscularGroup>();
-                        foreach (var muscularGroup in muscularGroups)
-                        {
-                            result.Add(_muscularGroupManager.UpdateMuscularGroup(muscularGroup));
-                        }
-                        transaction.Commit();
-                        //invalidate cache
-                        InvalidateCache(_cacheName);
+                        result.Add(_muscularGroupManager.UpdateMuscularGroup(muscularGroup));
                     }
+                    CommitTransaction();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update muscular group list", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update muscular group list", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }

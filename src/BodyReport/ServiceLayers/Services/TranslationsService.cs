@@ -43,21 +43,23 @@ namespace BodyReport.ServiceLayers.Services
         {
             TranslationVal result = null;
             //Create data in database
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _translationManager.UpdateTranslation(translation);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update translation", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _translationManager.UpdateTranslation(translation);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update translation", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -66,28 +68,30 @@ namespace BodyReport.ServiceLayers.Services
         {
             List<TranslationVal> results = null;
             //Create data in database
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
+                if (translations != null && translations.Count > 0)
                 {
-                    if (translations != null && translations.Count > 0)
+                    results = new List<TranslationVal>();
+                    foreach (var translation in translations)
                     {
-                        results = new List<TranslationVal>();
-                        foreach (var translation in translations)
-                        {
-                            results.Add(_translationManager.UpdateTranslation(translation));
-                        }
-                        transaction.Commit();
-                        //invalidate cache
-                        InvalidateCache(_cacheName);
+                        results.Add(_translationManager.UpdateTranslation(translation));
                     }
+                    CommitTransaction();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update translation list", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update translation list", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return results;
         }

@@ -1,6 +1,7 @@
 ﻿using BodyReport.Data;
 using BodyReport.Resources;
 using BodyReport.ServiceLayers.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -68,5 +69,39 @@ namespace BodyReport.ServiceLayers
                 _cacheService.RemoveCache(CompleteCacheKeyWithCulture(cacheKey, cultureName));
             }
         }
+
+        #region Manage database transaction
+
+        private bool _isParentTransaction = true;
+        protected void BeginTransaction()
+        {
+            _isParentTransaction = _dbContext.Database.CurrentTransaction == null;
+            if (_isParentTransaction)
+            {
+                _dbContext.Database.BeginTransaction();
+            }
+        }
+
+        protected void CommitTransaction()
+        {
+            if (_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+                _dbContext.Database.CurrentTransaction.Commit();
+        }
+
+        protected void RollbackTransaction()
+        {
+            if (_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+                _dbContext.Database.CurrentTransaction.Rollback();
+        }
+
+        protected void EndTransaction()
+        {
+            if(_isParentTransaction && _dbContext.Database.CurrentTransaction != null)
+            {
+                _dbContext.Database.CurrentTransaction.Dispose();
+            }
+        }
+
+        #endregion
     }
 }

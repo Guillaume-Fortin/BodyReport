@@ -55,22 +55,24 @@ namespace BodyReport.ServiceLayers.Services
         public UserRole UpdateUserRole(UserRole userRole)
         {
             UserRole result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _userRoleManager.UpdateUserRole(userRole);
-                    //todo delete user infos, exercise etc.
-                    transaction.Commit();
-                    //Invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete user", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _userRoleManager.UpdateUserRole(userRole);
+                //todo delete user infos, exercise etc.
+                CommitTransaction();
+                //Invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete user", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }

@@ -29,19 +29,21 @@ namespace BodyReport.ServiceLayers.Services
         public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             TrainingExercise result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingExerciseManager.CreateTrainingExercise(trainingExercise);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create training exercises", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingExerciseManager.CreateTrainingExercise(trainingExercise);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create training exercises", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -49,19 +51,21 @@ namespace BodyReport.ServiceLayers.Services
         public TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem)
         {
             TrainingExercise result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _trainingExerciseManager.UpdateTrainingExercise(trainingExercise, manageDeleteLinkItem);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update training exercises", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _trainingExerciseManager.UpdateTrainingExercise(trainingExercise, manageDeleteLinkItem);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update training exercises", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -77,19 +81,21 @@ namespace BodyReport.ServiceLayers.Services
 
         public void DeleteTrainingExercise(TrainingExerciseKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _trainingExerciseManager.DeleteTrainingExercise(key);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete training exercises", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _trainingExerciseManager.DeleteTrainingExercise(key);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete training exercises", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
     }

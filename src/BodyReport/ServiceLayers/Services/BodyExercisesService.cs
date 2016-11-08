@@ -29,21 +29,23 @@ namespace BodyReport.ServiceLayers.Services
         public BodyExercise CreateBodyExercise(BodyExercise bodyExercise)
         {
             BodyExercise result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _bodyExerciseManager.CreateBodyExercise(bodyExercise);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create bodyexercise", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _bodyExerciseManager.CreateBodyExercise(bodyExercise);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create bodyexercise", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -75,69 +77,75 @@ namespace BodyReport.ServiceLayers.Services
         public BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)
         {
             BodyExercise result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _bodyExerciseManager.UpdateBodyExercise(bodyExercise);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update bodyexercise", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _bodyExerciseManager.UpdateBodyExercise(bodyExercise);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update bodyexercise", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
         public List<BodyExercise> UpdateBodyExerciseList(List<BodyExercise> bodyExercises)
         {
             List<BodyExercise> results = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
+                if (bodyExercises != null && bodyExercises.Count() > 0)
                 {
-                    if (bodyExercises != null && bodyExercises.Count() > 0)
+                    results = new List<BodyExercise>();
+                    foreach (var bodyExercise in bodyExercises)
                     {
-                        results = new List<BodyExercise>();
-                        foreach (var bodyExercise in bodyExercises)
-                        {
-                            results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
-                        }
-                        transaction.Commit();
-                        //invalidate cache
-                        InvalidateCache(_cacheName);
+                        results.Add(_bodyExerciseManager.UpdateBodyExercise(bodyExercise));
                     }
+                    CommitTransaction();
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create bodyexercise", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create bodyexercise", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return results;
         }
         public void DeleteBodyExercise(BodyExerciseKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _bodyExerciseManager.DeleteBodyExercise(key);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete bodyexercise", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _bodyExerciseManager.DeleteBodyExercise(key);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete bodyexercise", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
     }

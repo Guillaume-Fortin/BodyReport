@@ -55,21 +55,23 @@ namespace BodyReport.ServiceLayers.Services
         public Muscle CreateMuscle(Muscle muscle)
         {
             Muscle result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _muscleManager.CreateMuscle(muscle);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to create muscle", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _muscleManager.CreateMuscle(muscle);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to create muscle", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -77,21 +79,23 @@ namespace BodyReport.ServiceLayers.Services
         public Muscle UpdateMuscle(Muscle muscle)
         {
             Muscle result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _muscleManager.UpdateMuscle(muscle);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update muscle", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _muscleManager.UpdateMuscle(muscle);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update muscle", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
@@ -99,49 +103,53 @@ namespace BodyReport.ServiceLayers.Services
         public List<Muscle> UpdateMuscleList(List<Muscle> muscles)
         {
             List<Muscle> results = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
+                if (muscles != null && muscles.Count() > 0)
                 {
-                    if (muscles != null && muscles.Count() > 0)
+                    results = new List<Muscle>();
+                    foreach (var muscle in muscles)
                     {
-                        results = new List<Muscle>();
-                        foreach (var muscle in muscles)
-                        {
-                            results.Add(_muscleManager.UpdateMuscle(muscle));
-                        }
+                        results.Add(_muscleManager.UpdateMuscle(muscle));
                     }
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
                 }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update muscle list", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update muscle list", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return results;
         }
 
         public void DeleteMuscle(MuscleKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _muscleManager.DeleteMuscle(key);
-                    transaction.Commit();
-                    //invalidate cache
-                    InvalidateCache(_cacheName);
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete muscle", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _muscleManager.DeleteMuscle(key);
+                CommitTransaction();
+                //invalidate cache
+                InvalidateCache(_cacheName);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete muscle", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
     }

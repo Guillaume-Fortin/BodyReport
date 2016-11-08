@@ -36,38 +36,42 @@ namespace BodyReport.ServiceLayers.Services
         }
         public void DeleteUser(UserKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _userManager.DeleteUser(key);
-                    //todo delete user infos, exercise etc.
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete user", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                _userManager.DeleteUser(key);
+                //todo delete user infos, exercise etc.
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete user", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
         public User UpdateUser(User user)
         {
             User result = null;
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    result = _userManager.UpdateUser(user);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to update user", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                result = _userManager.UpdateUser(user);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to update user", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
             return result;
         }
