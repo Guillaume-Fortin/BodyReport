@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class TrainingExerciseSetManager : ServiceManager
+    public class TrainingExerciseSetManager : BodyReportManager
     {
         TrainingExerciseSetModule _trainingExerciseSetModule = null;
 

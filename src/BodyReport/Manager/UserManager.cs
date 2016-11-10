@@ -13,7 +13,7 @@ namespace BodyReport.Manager
     /// <summary>
     /// Manage Users
     /// </summary>
-    public class UserManager : ServiceManager
+    public class UserManager : BodyReportManager
     {
         UserModule _userModule = null;
         IUserRolesService _usersRoleService;

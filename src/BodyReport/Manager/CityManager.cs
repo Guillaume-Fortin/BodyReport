@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class CityManager : ServiceManager
+    public class CityManager : BodyReportManager
     {
         CityModule _module = null;
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class TranslationManager : ServiceManager
+    public class TranslationManager : BodyReportManager
     {
         TranslationModule _module = null;
 

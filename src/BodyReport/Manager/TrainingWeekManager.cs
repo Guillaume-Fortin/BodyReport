@@ -17,7 +17,7 @@ namespace BodyReport.Manager
     /// <summary>
     /// Manage training journal
     /// </summary>
-    public class TrainingWeekManager : ServiceManager
+    public class TrainingWeekManager : BodyReportManager
     {
         TrainingWeekModule _trainingWeekModule = null;
         public TrainingWeekManager(ApplicationDbContext dbContext) : base(dbContext)

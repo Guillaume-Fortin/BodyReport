@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class ServiceManager
+    public class BodyReportManager
     {
         /// <summary>
         /// DataBase context with transaction
@@ -18,7 +18,7 @@ namespace BodyReport.Manager
         /// Constructor
         /// </summary>
         /// <param name="dbContext">db context</param>
-        public ServiceManager(ApplicationDbContext dbContext)
+        public BodyReportManager(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class UserInfoManager : ServiceManager
+    public class UserInfoManager : BodyReportManager
     {
         UserInfoModule _userInfoModule = null;
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class TrainingDayManager : ServiceManager
+    public class TrainingDayManager : BodyReportManager
     {
         TrainingDayModule _trainingDayModule = null;
 

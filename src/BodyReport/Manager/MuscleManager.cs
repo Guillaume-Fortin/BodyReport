@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class MuscleManager : ServiceManager
+    public class MuscleManager : BodyReportManager
     {
         MuscleModule _muscleModule;
         public MuscleManager(ApplicationDbContext dbContext) : base(dbContext)

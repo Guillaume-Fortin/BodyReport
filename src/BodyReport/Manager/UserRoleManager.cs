@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BodyReport.Manager
 {
-    public class UserRoleManager : ServiceManager
+    public class UserRoleManager : BodyReportManager
     {
         UserRoleModule _userRoleModule = null;
 

@@ -14,7 +14,7 @@ namespace BodyReport.Manager
     /// <summary>
     /// Manage Muscular groups
     /// </summary>
-    public class MuscularGroupManager : ServiceManager
+    public class MuscularGroupManager : BodyReportManager
     {
         MuscularGroupModule _muscularGroupModule;
         public MuscularGroupManager(ApplicationDbContext dbContext) : base(dbContext)

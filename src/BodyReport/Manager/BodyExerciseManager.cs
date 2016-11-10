@@ -14,7 +14,7 @@ namespace BodyReport.Manager
     /// <summary>
     /// Manage Body Exercises
     /// </summary>
-    public class BodyExerciseManager : ServiceManager
+    public class BodyExerciseManager : BodyReportManager
     {
         BodyExerciseModule _bodyExerciseModule = null;
 
