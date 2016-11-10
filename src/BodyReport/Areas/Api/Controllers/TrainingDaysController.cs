@@ -157,6 +157,30 @@ namespace BodyReport.Areas.Api.Controllers
             }
         }
 
+        // Post api/TrainingDays/Delete
+        [HttpPost]
+        public IActionResult Delete([FromBody]TrainingDayKey trainingDayKey)
+        {
+            try
+            {
+                if (trainingDayKey == null || string.IsNullOrWhiteSpace(trainingDayKey.UserId) || trainingDayKey.Year == 0)
+                    return BadRequest();
+
+                //Verify valid week of year
+                if (trainingDayKey.WeekOfYear > 0 && trainingDayKey.WeekOfYear <= 52)
+                {
+                    _trainingDaysService.DeleteTrainingDay(trainingDayKey);
+                    return new OkObjectResult(true); // Boolean
+                }
+                else
+                    return BadRequest();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            }
+        }
+
         // Post api/TrainingDays/SwitchDay
         [HttpPost]
         public IActionResult SwitchDay([FromBody]SwitchDayParameter switchDayParameter)
