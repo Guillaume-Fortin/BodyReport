@@ -3,32 +3,35 @@ using BodyReport.Data;
 using BodyReport.Models;
 using BodyReport.Framework;
 using BodyReport.Message;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.ServiceLayers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BodyReport.Manager
 {
     public class TrainingExerciseManager : BodyReportManager
     {
         TrainingExerciseModule _trainingDayExerciseModule = null;
-        UserInfoModule _userInfoModule = null;
-        TrainingExerciseSetManager _trainingExerciseSetManager = null;
+        TrainingExerciseSetModule _trainingExerciseSetModule = null;
+        IUserInfosService _userInfosService = null;
 
         public TrainingExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _trainingDayExerciseModule = new TrainingExerciseModule(_dbContext);
-            _userInfoModule = new UserInfoModule(_dbContext);
-            _trainingExerciseSetManager = new TrainingExerciseSetManager(_dbContext);
+            _trainingExerciseSetModule = new TrainingExerciseSetModule(_dbContext);
+
+            _userInfosService = WebAppConfiguration.ServiceProvider.GetService<IUserInfosService>();
+            ((BodyReportService)_userInfosService).SetDbContext(_dbContext); // for use same transaction
         }
 
         private TUnitType GetUserUnit(string userId)
         {
             TUnitType unit = TUnitType.Imperial;
-            var userInfo = _userInfoModule.Get(new UserInfoKey() { UserId = userId });
+            var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
             if (userInfo != null)
                 unit = userInfo.Unit;
             return unit;
@@ -45,7 +48,7 @@ namespace BodyReport.Manager
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {
-                    trainingExerciseSet = _trainingExerciseSetManager.CreateTrainingExerciseSet(set);
+                    trainingExerciseSet = _trainingExerciseSetModule.Create(set);
                     result.TrainingExerciseSets.Add(trainingExerciseSet);
                 }
             }
@@ -62,7 +65,7 @@ namespace BodyReport.Manager
             {
                 if(manageDeleteLinkItem)
                 {
-                    var setList = _trainingExerciseSetManager.FindTrainingExerciseSet(new TrainingExerciseSetCriteria()
+                    var setList = _trainingExerciseSetModule.Find(new TrainingExerciseSetCriteria()
                     {
                         UserId = new StringCriteria() { Equal = trainingExercise.UserId },
                         Year = new IntegerCriteria() { Equal = trainingExercise.Year },
@@ -76,7 +79,7 @@ namespace BodyReport.Manager
                     {
                         foreach (var set in setList)
                         {
-                            _trainingExerciseSetManager.DeleteTrainingExerciseSet(set);
+                            _trainingExerciseSetModule.Delete(set);
                         }
                     }
                 }
@@ -84,7 +87,7 @@ namespace BodyReport.Manager
                 result.TrainingExerciseSets = new List<TrainingExerciseSet>();
                 foreach (var set in trainingExercise.TrainingExerciseSets)
                 {
-                    result.TrainingExerciseSets.Add(_trainingExerciseSetManager.UpdateTrainingExerciseSet(set));
+                    result.TrainingExerciseSets.Add(_trainingExerciseSetModule.Update(set));
                 }
             }
 
@@ -104,7 +107,7 @@ namespace BodyReport.Manager
                     TrainingDayId = new IntegerCriteria() { Equal = trainingExercise.TrainingDayId },
                     TrainingExerciseId = new IntegerCriteria() { Equal = trainingExercise.Id }
                 };
-                trainingExercise.TrainingExerciseSets = _trainingExerciseSetManager.FindTrainingExerciseSet(criteria);
+                trainingExercise.TrainingExerciseSets = _trainingExerciseSetModule.Find(criteria);
             }
         }
 
@@ -147,7 +150,7 @@ namespace BodyReport.Manager
                 {
                     foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
                     {
-                        _trainingExerciseSetManager.DeleteTrainingExerciseSet(trainingExerciseSet);
+                        _trainingExerciseSetModule.Delete(trainingExerciseSet);
                     }
                 }
             }

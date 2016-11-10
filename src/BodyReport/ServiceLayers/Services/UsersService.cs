@@ -21,9 +21,7 @@ namespace BodyReport.ServiceLayers.Services
         UserManager _userManager = null;
         public UsersService(ApplicationDbContext dbContext, IUserRolesService userRolesService, IRolesService rolesService, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _userManager = new UserManager(_dbContext, userRolesService, rolesService);
-            ((BodyReportService)userRolesService).SetDbContext(dbContext); // for use same transaction
-            ((BodyReportService)rolesService).SetDbContext(dbContext);// for use same transaction
+            _userManager = new UserManager(_dbContext);
         }
 
         public User GetUser(UserKey key, bool manageRole = true)

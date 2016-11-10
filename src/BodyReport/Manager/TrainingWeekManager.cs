@@ -1,16 +1,15 @@
 ﻿using BodyReport.Crud.Module;
 using BodyReport.Data;
-using BodyReport.Models;
-using BodyReport.Framework;
 using BodyReport.Message;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BodyReport.Message.Web;
 using BodyReport.Framework.Exceptions;
 using BodyReport.Resources;
+using BodyReport.Framework;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.ServiceLayers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BodyReport.Manager
 {
@@ -19,10 +18,15 @@ namespace BodyReport.Manager
     /// </summary>
     public class TrainingWeekManager : BodyReportManager
     {
+        ITrainingDaysService _trainingDaysService = null;
+
         TrainingWeekModule _trainingWeekModule = null;
         public TrainingWeekManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _trainingWeekModule = new TrainingWeekModule(_dbContext);
+
+            _trainingDaysService = WebAppConfiguration.ServiceProvider.GetService<ITrainingDaysService>();
+            ((BodyReportService)_trainingDaysService).SetDbContext(_dbContext); // for use same transaction
         }
         
         internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
@@ -32,11 +36,10 @@ namespace BodyReport.Manager
 
             if (trainingWeek.TrainingDays != null)
             {
-                var trainingDayManager = new TrainingDayManager(_dbContext);
                 trainingWeekResult.TrainingDays = new List<TrainingDay>();
                 foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    trainingWeekResult.TrainingDays.Add(trainingDayManager.CreateTrainingDay(trainingDay));
+                    trainingWeekResult.TrainingDays.Add(_trainingDaysService.CreateTrainingDay(trainingDay));
                 }
             }
             return trainingWeekResult;
@@ -49,7 +52,6 @@ namespace BodyReport.Manager
 
             if (trainingWeekScenario != null && trainingWeekScenario.ManageTrainingDay)
             {
-                var trainingDayManager = new TrainingDayManager(_dbContext);
                 var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
 
                 var trainingDayCriteria = new TrainingDayCriteria()
@@ -58,11 +60,11 @@ namespace BodyReport.Manager
                     Year = new IntegerCriteria() { Equal = trainingWeek.Year },
                     WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear }
                 };
-                var trainingDaysDb = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                var trainingDaysDb = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
                 if (trainingDaysDb != null && trainingDaysDb.Count > 0)
                 {
                     foreach (var trainingDayDb in trainingDaysDb)
-                        trainingDayManager.DeleteTrainingDay(trainingDayDb);
+                        _trainingDaysService.DeleteTrainingDay(trainingDayDb);
                 }
 
                 if (trainingWeek.TrainingDays != null)
@@ -70,7 +72,7 @@ namespace BodyReport.Manager
                     trainingWeekResult.TrainingDays = new List<TrainingDay>();
                     foreach (var trainingDay in trainingWeek.TrainingDays)
                     {
-                        trainingWeekResult.TrainingDays.Add(trainingDayManager.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
+                        trainingWeekResult.TrainingDays.Add(_trainingDaysService.UpdateTrainingDay(trainingDay, trainingWeekScenario.TrainingDayScenario));
                     }
                 }
             }
@@ -92,14 +94,13 @@ namespace BodyReport.Manager
         {
             if (trainingWeek != null)
             {
-                var trainingDayManager = new TrainingDayManager(_dbContext);
                 var trainingDayCriteria = new TrainingDayCriteria()
                 {
                     UserId = new StringCriteria() { Equal = trainingWeek.UserId },
                     Year = new IntegerCriteria() { Equal = trainingWeek.Year },
                     WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear },
                 };
-                trainingWeek.TrainingDays = trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                trainingWeek.TrainingDays = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
             }
         }
 
@@ -137,10 +138,9 @@ namespace BodyReport.Manager
 
                 if (trainingWeek.TrainingDays != null)
                 {
-                    var trainingDayManager = new TrainingDayManager(_dbContext);
                     foreach (var trainingDay in trainingWeek.TrainingDays)
                     {
-                        trainingDayManager.DeleteTrainingDay(trainingDay);
+                        _trainingDaysService.DeleteTrainingDay(trainingDay);
                     }
                 }
             }
@@ -190,11 +190,10 @@ namespace BodyReport.Manager
             if (copyTrainingWeek.WeekOfYear > 0 && copyTrainingWeek.WeekOfYear <= 52 &&
                 !(copyTrainingWeek.Year == copyTrainingWeek.OriginYear && copyTrainingWeek.WeekOfYear == copyTrainingWeek.OriginWeekOfYear))
             {
-                var trainingWeekManager = new TrainingWeekManager(_dbContext);
                 //check if new trainingWeek exist
                 var trainingWeekScenario = new TrainingWeekScenario() { ManageTrainingDay = false };
                 var trainingWeekKey = new TrainingWeekKey() { UserId = copyTrainingWeek.UserId, Year = copyTrainingWeek.Year, WeekOfYear = copyTrainingWeek.WeekOfYear };
-                var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                var trainingWeek = GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                 if (trainingWeek != null)
                     throw new ErrorException(string.Format(Translation.P0_ALREADY_EXIST, Translation.TRAINING_WEEK));
@@ -206,7 +205,7 @@ namespace BodyReport.Manager
                     TrainingDayScenario = new TrainingDayScenario() { ManageExercise = true }
                 };
                 trainingWeekKey = new TrainingWeekKey() { UserId = copyTrainingWeek.UserId, Year = copyTrainingWeek.OriginYear, WeekOfYear = copyTrainingWeek.OriginWeekOfYear };
-                trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
+                trainingWeek = GetTrainingWeek(trainingWeekKey, trainingWeekScenario);
 
                 if (trainingWeek == null)
                     throw new ErrorException(string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_WEEK));
@@ -215,7 +214,7 @@ namespace BodyReport.Manager
                 ChangeIDForNewTrainingWeek(trainingWeek, copyTrainingWeek.OriginYear, copyTrainingWeek.OriginWeekOfYear, copyTrainingWeek.Year, copyTrainingWeek.WeekOfYear);
 
                 // Create data in database (with update for Security existing old data in database)
-                trainingWeek = trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                trainingWeek = UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
 
                 if (trainingWeek == null)
                 {

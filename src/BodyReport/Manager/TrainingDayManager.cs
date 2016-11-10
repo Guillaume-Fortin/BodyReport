@@ -4,20 +4,28 @@ using BodyReport.Models;
 using BodyReport.Message;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BodyReport.Framework;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.ServiceLayers;
 
 namespace BodyReport.Manager
 {
     public class TrainingDayManager : BodyReportManager
     {
         TrainingDayModule _trainingDayModule = null;
+        ITrainingExercisesService _trainingWeeksService = null;
 
         public TrainingDayManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _trainingDayModule = new TrainingDayModule(_dbContext);
+
+            _trainingWeeksService = WebAppConfiguration.ServiceProvider.GetService<ITrainingExercisesService>();
+            ((BodyReportService)_trainingWeeksService).SetDbContext(_dbContext); // for use same transaction
         }
 
         internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
@@ -49,11 +57,10 @@ namespace BodyReport.Manager
 
             if (trainingDay.TrainingExercises != null)
             {
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                 trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                 foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {
-                    trainingDayResult.TrainingExercises.Add(trainingExerciseManager.CreateTrainingExercise(trainingExercise));
+                    trainingDayResult.TrainingExercises.Add(_trainingWeeksService.CreateTrainingExercise(trainingExercise));
                 }
             }
 
@@ -72,8 +79,7 @@ namespace BodyReport.Manager
                     DayOfWeek = new IntegerCriteria() { Equal = trainingJournalDay.DayOfWeek },
                     TrainingDayId = new IntegerCriteria() { Equal = trainingJournalDay.TrainingDayId }
                 };
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-                trainingJournalDay.TrainingExercises = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+                trainingJournalDay.TrainingExercises = _trainingWeeksService.FindTrainingExercise(trainingExerciseCriteria);
             }
         }
 
@@ -113,8 +119,6 @@ namespace BodyReport.Manager
 
             if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
-                var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
-
                 var trainingExerciseCriteria = new TrainingExerciseCriteria()
                 {
                     UserId = new StringCriteria() { Equal = trainingDay.UserId },
@@ -123,11 +127,11 @@ namespace BodyReport.Manager
                     DayOfWeek = new IntegerCriteria() { Equal = trainingDay.DayOfWeek },
                     TrainingDayId = new IntegerCriteria() { Equal = trainingDay.TrainingDayId }
                 };
-                var trainingExercisesDb = trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+                var trainingExercisesDb = _trainingWeeksService.FindTrainingExercise(trainingExerciseCriteria);
                 if (trainingExercisesDb != null && trainingExercisesDb.Count > 0)
                 {
                     foreach(var trainingExerciseDb in trainingExercisesDb)
-                        trainingExerciseManager.DeleteTrainingExercise(trainingExerciseDb);
+                        _trainingWeeksService.DeleteTrainingExercise(trainingExerciseDb);
                 }
 
                 if (trainingDay.TrainingExercises != null)
@@ -135,7 +139,7 @@ namespace BodyReport.Manager
                     trainingDayResult.TrainingExercises = new List<TrainingExercise>();
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
-                        trainingDayResult.TrainingExercises.Add(trainingExerciseManager.UpdateTrainingExercise(trainingExercise, true));
+                        trainingDayResult.TrainingExercises.Add(_trainingWeeksService.UpdateTrainingExercise(trainingExercise, true));
                     }
                 }
             }
@@ -154,10 +158,9 @@ namespace BodyReport.Manager
 
                 if (trainingDay.TrainingExercises != null)
                 {
-                    var trainingExerciseManager = new TrainingExerciseManager(_dbContext);
                     foreach (var trainingExercise in trainingDay.TrainingExercises)
                     {
-                        trainingExerciseManager.DeleteTrainingExercise(trainingExercise);
+                        _trainingWeeksService.DeleteTrainingExercise(trainingExercise);
                     }
                 }
             }

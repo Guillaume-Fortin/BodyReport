@@ -1,6 +1,9 @@
 ﻿using BodyReport.Data;
 using BodyReport.Framework;
 using BodyReport.Message;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.ServiceLayers.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,27 +55,29 @@ namespace BodyReport.Manager
 
         private static void UpdateTrainingWeekModificationDate(ApplicationDbContext dbContext, DateTime modificationDate, TrainingWeekKey trainingWeekKey)
         {
-            var trainingWeekManager = new TrainingWeekManager(dbContext);
+            var trainingWeeksService = WebAppConfiguration.ServiceProvider.GetService<ITrainingWeeksService>();
+            ((BodyExercisesService)trainingWeeksService).SetDbContext(dbContext);
 
             var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
-            var trainingWeek = trainingWeekManager.GetTrainingWeek(trainingWeekKey, scenario);
+            var trainingWeek = trainingWeeksService.GetTrainingWeek(trainingWeekKey, scenario);
             if (trainingWeek != null && trainingWeek.ModificationDate != null && modificationDate != null &&
                (modificationDate - trainingWeek.ModificationDate).TotalSeconds > 2) // don't spam database
             {
-                trainingWeekManager.UpdateTrainingWeek(trainingWeek, scenario);
+                trainingWeeksService.UpdateTrainingWeek(trainingWeek, scenario);
             }
         }
 
         private static void UpdateTrainingDayModificationDate(ApplicationDbContext dbContext, DateTime modificationDate, TrainingDayKey trainingDayKey)
         {
-            var trainingDayManager = new TrainingDayManager(dbContext);
+            var trainingDaysService = WebAppConfiguration.ServiceProvider.GetService<ITrainingDaysService>();
+            ((BodyExercisesService)trainingDaysService).SetDbContext(dbContext);
             
             var scenario = new TrainingDayScenario() { ManageExercise = false };
-            var trainingDay = trainingDayManager.GetTrainingDay(trainingDayKey, scenario);
+            var trainingDay = trainingDaysService.GetTrainingDay(trainingDayKey, scenario);
             if(trainingDay != null && trainingDay.ModificationDate != null && modificationDate != null &&
                (modificationDate - trainingDay.ModificationDate).TotalSeconds > 2) // don't spam database
             {
-                trainingDayManager.UpdateTrainingDay(trainingDay, scenario);
+                trainingDaysService.UpdateTrainingDay(trainingDay, scenario);
             }
         }
     }

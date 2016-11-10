@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Framework;
+using BodyReport.ServiceLayers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BodyReport.Manager
 {
@@ -19,13 +22,15 @@ namespace BodyReport.Manager
         IUserRolesService _usersRoleService;
         IRolesService _rolesService;
 
-        public UserManager(ApplicationDbContext dbContext,
-                           IUserRolesService usersRoleService,
-                           IRolesService rolesService) : base(dbContext)
+        public UserManager(ApplicationDbContext dbContext) : base(dbContext)
         {
             _userModule = new UserModule(_dbContext);
-            _usersRoleService = usersRoleService;
-            _rolesService = rolesService;
+
+            _usersRoleService = WebAppConfiguration.ServiceProvider.GetService<IUserRolesService>();
+            ((BodyReportService)_usersRoleService).SetDbContext(_dbContext); // for use same transaction
+
+            _rolesService = WebAppConfiguration.ServiceProvider.GetService<IRolesService>();
+            ((BodyReportService)_rolesService).SetDbContext(_dbContext); // for use same transaction
         }
 
         private void CompleteUserRole(User user)

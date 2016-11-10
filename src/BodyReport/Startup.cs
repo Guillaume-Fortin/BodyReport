@@ -155,6 +155,8 @@ namespace BodyReport
             {
                 DefineLocalization(options);
             });
+
+            WebAppConfiguration.ServiceProvider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -264,10 +266,11 @@ namespace BodyReport
         /// <summary>
         /// Populate data in database
         /// </summary>
-        private void PopulateDataBase()
+        private Task PopulateDataBase()
         {
             var dataInitialzer = new ApplicationDataInitializer(new ApplicationDbContext(), _env);
             dataInitialzer.InitializeData();
+            return Task.CompletedTask;
         }
 
         /// <summary>
