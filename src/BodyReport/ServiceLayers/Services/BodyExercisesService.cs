@@ -99,17 +99,18 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                if (bodyExercises != null && bodyExercises.Count() > 0)
+                if (bodyExercises != null && bodyExercises.Count > 0)
                 {
                     results = new List<BodyExercise>();
                     foreach (var bodyExercise in bodyExercises)
                     {
                         results.Add(GetBodyExerciseManager().UpdateBodyExercise(bodyExercise));
                     }
-                    CommitTransaction();
                     //invalidate cache
                     InvalidateCache(_cacheName);
                 }
+                CommitTransaction();
+                
             }
             catch (Exception exception)
             {

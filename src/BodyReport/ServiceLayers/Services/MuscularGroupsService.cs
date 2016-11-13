@@ -124,17 +124,18 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                if (muscularGroups != null && muscularGroups.Count() > 0)
+                if (muscularGroups != null && muscularGroups.Count > 0)
                 {
                     result = new List<MuscularGroup>();
                     foreach (var muscularGroup in muscularGroups)
                     {
                         result.Add(GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup));
                     }
-                    CommitTransaction();
                     //invalidate cache
                     InvalidateCache(_cacheName);
                 }
+
+                CommitTransaction();
             }
             catch (Exception exception)
             {

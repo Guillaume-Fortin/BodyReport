@@ -101,17 +101,17 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                if (muscles != null && muscles.Count() > 0)
+                if (muscles != null && muscles.Count > 0)
                 {
                     results = new List<Muscle>();
                     foreach (var muscle in muscles)
                     {
                         results.Add(GetMuscleManager().UpdateMuscle(muscle));
                     }
+                    //invalidate cache
+                    InvalidateCache(_cacheName);
                 }
                 CommitTransaction();
-                //invalidate cache
-                InvalidateCache(_cacheName);
             }
             catch (Exception exception)
             {

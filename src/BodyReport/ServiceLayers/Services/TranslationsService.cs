@@ -74,10 +74,10 @@ namespace BodyReport.ServiceLayers.Services
                     {
                         results.Add(GetTranslationManager().UpdateTranslation(translation));
                     }
-                    CommitTransaction();
                     //invalidate cache
                     InvalidateCache(_cacheName);
                 }
+                CommitTransaction();
             }
             catch (Exception exception)
             {
