@@ -18,13 +18,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UserInfosService));
-        /// <summary>
-        /// User info Manager
-        /// </summary>
-        UserInfoManager _userInfoManager = null;
+
         public UserInfosService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _userInfoManager = new UserInfoManager(_dbContext);
         }
 
         public UserInfo GetUserInfo(UserInfoKey key)
@@ -33,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "UserInfoKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out userInfo))
             {
-                userInfo = _userInfoManager.GetUserInfo(key);
+                userInfo = GetUserInfoManager().GetUserInfo(key);
                 SetCacheData(_cacheName, cacheKey, userInfo);
             }
             return userInfo;
@@ -45,7 +41,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _userInfoManager.UpdateUserInfo(userInfo);
+                result = GetUserInfoManager().UpdateUserInfo(userInfo);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);

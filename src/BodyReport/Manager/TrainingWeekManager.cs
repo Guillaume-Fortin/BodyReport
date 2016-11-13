@@ -23,10 +23,10 @@ namespace BodyReport.Manager
         TrainingWeekModule _trainingWeekModule = null;
         public TrainingWeekManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _trainingWeekModule = new TrainingWeekModule(_dbContext);
+            _trainingWeekModule = new TrainingWeekModule(DbContext);
 
             _trainingDaysService = WebAppConfiguration.ServiceProvider.GetService<ITrainingDaysService>();
-            ((BodyReportService)_trainingDaysService).SetDbContext(_dbContext); // for use same transaction
+            ((BodyReportService)_trainingDaysService).SetDbContext(DbContext); // for use same transaction
         }
         
         internal TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)

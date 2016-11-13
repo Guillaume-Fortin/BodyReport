@@ -16,7 +16,7 @@ namespace BodyReport.Manager
 
         public UserInfoManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _userInfoModule = new UserInfoModule(_dbContext);
+            _userInfoModule = new UserInfoModule(DbContext);
         }
 
         internal UserInfo GetUserInfo(UserInfoKey key)

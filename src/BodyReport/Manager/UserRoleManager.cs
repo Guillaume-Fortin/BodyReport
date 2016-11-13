@@ -14,7 +14,7 @@ namespace BodyReport.Manager
 
         public UserRoleManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _userRoleModule = new UserRoleModule(_dbContext);
+            _userRoleModule = new UserRoleModule(DbContext);
         }
 
         public UserRole Get(UserRoleKey key)

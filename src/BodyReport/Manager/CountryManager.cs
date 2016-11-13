@@ -15,7 +15,7 @@ namespace BodyReport.Manager
 
         public CountryManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _module = new CountryModule(_dbContext);
+            _module = new CountryModule(DbContext);
         }
 
         internal Country GetCountry(CountryKey key)

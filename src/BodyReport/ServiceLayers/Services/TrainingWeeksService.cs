@@ -19,13 +19,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(TrainingWeeksService));
-        /// <summary>
-        /// TrainingWeek Manager
-        /// </summary>
-        TrainingWeekManager _trainingWeekManager = null;
+
         public TrainingWeeksService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _trainingWeekManager = new TrainingWeekManager(_dbContext);
         }
 
         public TrainingWeek CreateTrainingWeek(TrainingWeek trainingWeek)
@@ -35,7 +31,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingWeekManager.CreateTrainingWeek(trainingWeek);
+                result = GetTrainingWeekManager().CreateTrainingWeek(trainingWeek);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -57,7 +53,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingWeekManager.UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
+                result = GetTrainingWeekManager().UpdateTrainingWeek(trainingWeek, trainingWeekScenario);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -75,17 +71,17 @@ namespace BodyReport.ServiceLayers.Services
 
         public TrainingWeek GetTrainingWeek(TrainingWeekKey key, TrainingWeekScenario trainingWeekScenario)
         {
-            return _trainingWeekManager.GetTrainingWeek(key, trainingWeekScenario);
+            return GetTrainingWeekManager().GetTrainingWeek(key, trainingWeekScenario);
         }
 
         public List<TrainingWeek> FindTrainingWeek(TrainingWeekCriteria trainingWeekCriteria, TrainingWeekScenario trainingWeekScenario)
         {
-            return _trainingWeekManager.FindTrainingWeek(trainingWeekCriteria, trainingWeekScenario);
+            return GetTrainingWeekManager().FindTrainingWeek(trainingWeekCriteria, trainingWeekScenario);
         }
 
         public List<TrainingWeek> FindTrainingWeek(CriteriaList<TrainingWeekCriteria> trainingWeekCriteriaList, TrainingWeekScenario trainingWeekScenario)
         {
-            return _trainingWeekManager.FindTrainingWeek(trainingWeekCriteriaList, trainingWeekScenario);
+            return GetTrainingWeekManager().FindTrainingWeek(trainingWeekCriteriaList, trainingWeekScenario);
         }
 
         public void DeleteTrainingWeek(TrainingWeekKey key)
@@ -93,7 +89,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                _trainingWeekManager.DeleteTrainingWeek(key);
+                GetTrainingWeekManager().DeleteTrainingWeek(key);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -114,7 +110,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingWeekManager.CopyTrainingWeek(currentUserId, copyTrainingWeek, out newTrainingWeek);
+                result = GetTrainingWeekManager().CopyTrainingWeek(currentUserId, copyTrainingWeek, out newTrainingWeek);
                 CommitTransaction();
                 result = true;
             }

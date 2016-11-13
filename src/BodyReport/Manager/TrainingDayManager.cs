@@ -22,10 +22,10 @@ namespace BodyReport.Manager
 
         public TrainingDayManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _trainingDayModule = new TrainingDayModule(_dbContext);
+            _trainingDayModule = new TrainingDayModule(DbContext);
 
             _trainingWeeksService = WebAppConfiguration.ServiceProvider.GetService<ITrainingExercisesService>();
-            ((BodyReportService)_trainingWeeksService).SetDbContext(_dbContext); // for use same transaction
+            ((BodyReportService)_trainingWeeksService).SetDbContext(DbContext); // for use same transaction
         }
 
         internal TrainingDay CreateTrainingDay(TrainingDay trainingDay)
@@ -53,7 +53,7 @@ namespace BodyReport.Manager
 
             TrainingDay trainingDayResult = null;
             trainingDayResult = _trainingDayModule.Create(trainingDay);
-            SynchroManager.TrainingDayChange(_dbContext, trainingDayResult);
+            SynchroManager.TrainingDayChange(DbContext, trainingDayResult);
 
             if (trainingDay.TrainingExercises != null)
             {
@@ -115,7 +115,7 @@ namespace BodyReport.Manager
             TrainingDay trainingDayResult = null;
             
             trainingDayResult = _trainingDayModule.Update(trainingDay);
-            SynchroManager.TrainingDayChange(_dbContext, trainingDayResult);
+            SynchroManager.TrainingDayChange(DbContext, trainingDayResult);
 
             if (trainingDayScenario != null && trainingDayScenario.ManageExercise)
             {
@@ -154,7 +154,7 @@ namespace BodyReport.Manager
             if (trainingDay != null)
             {
                 _trainingDayModule.Delete(trainingDay);
-                SynchroManager.TrainingDayChange(_dbContext, trainingDay, true);
+                SynchroManager.TrainingDayChange(DbContext, trainingDay, true);
 
                 if (trainingDay.TrainingExercises != null)
                 {

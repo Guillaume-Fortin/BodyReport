@@ -12,7 +12,7 @@ namespace BodyReport.Manager
         /// <summary>
         /// DataBase context with transaction
         /// </summary>
-        protected ApplicationDbContext _dbContext = null;
+        private ApplicationDbContext _dbContext = null;
 
         /// <summary>
         /// Constructor
@@ -21,6 +21,14 @@ namespace BodyReport.Manager
         public BodyReportManager(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public ApplicationDbContext DbContext
+        {
+            get
+            {
+                return _dbContext;
+            }
         }
     }
 }

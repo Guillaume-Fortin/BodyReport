@@ -17,13 +17,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(TrainingDaysService));
-        /// <summary>
-        /// TrainingDay Manager
-        /// </summary>
-        TrainingDayManager _trainingDayManager = null;
+
         public TrainingDaysService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _trainingDayManager = new TrainingDayManager(_dbContext);
         }
 
         public TrainingDay CreateTrainingDay(TrainingDay trainingDay)
@@ -32,7 +28,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingDayManager.CreateTrainingDay(trainingDay);
+                result = GetTrainingDayManager().CreateTrainingDay(trainingDay);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -50,12 +46,12 @@ namespace BodyReport.ServiceLayers.Services
 
         public TrainingDay GetTrainingDay(TrainingDayKey key, TrainingDayScenario trainingDayScenario)
         {
-            return _trainingDayManager.GetTrainingDay(key, trainingDayScenario);
+            return GetTrainingDayManager().GetTrainingDay(key, trainingDayScenario);
         }
 
         public List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
         {
-            return _trainingDayManager.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+            return GetTrainingDayManager().FindTrainingDay(trainingDayCriteria, trainingDayScenario);
         }
 
         public TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)
@@ -64,7 +60,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingDayManager.UpdateTrainingDay(trainingDay, trainingDayScenario);
+                result = GetTrainingDayManager().UpdateTrainingDay(trainingDay, trainingDayScenario);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -82,38 +78,42 @@ namespace BodyReport.ServiceLayers.Services
 
         public void DeleteTrainingDay(TrainingDayKey key)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _trainingDayManager.DeleteTrainingDay(key);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to delete training day", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                GetTrainingDayManager().DeleteTrainingDay(key);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to delete training day", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
             }
         }
 
         public void SwitchDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int switchDayOfWeek)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
+            BeginTransaction();
+            try
             {
-                try
-                {
-                    _trainingDayManager.SwitchDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, switchDayOfWeek);
-                    transaction.Commit();
-                }
-                catch (Exception exception)
-                {
-                    _logger.LogCritical("Unable to SwitchDayOnTrainingDay", exception);
-                    transaction.Rollback();
-                    throw exception;
-                }
+                GetTrainingDayManager().SwitchDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, switchDayOfWeek);
+                CommitTransaction();
             }
-        }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to SwitchDayOnTrainingDay", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
+            }
+            }
     }
 }

@@ -15,7 +15,7 @@ namespace BodyReport.Manager
 
         public CityManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _module = new CityModule(_dbContext);
+            _module = new CityModule(DbContext);
         }
 
         internal City GetCity(CityKey key)

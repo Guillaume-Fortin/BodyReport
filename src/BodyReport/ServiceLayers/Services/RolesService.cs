@@ -18,14 +18,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(RolesService));
-        /// <summary>
-        /// Role Manager
-        /// </summary>
-        RoleManager _roleManager = null;
 
         public RolesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _roleManager = new RoleManager(_dbContext);
         }
 
         public Role CreateRole(Role role)
@@ -34,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _roleManager.CreateRole(role);
+                result = GetRoleManager().CreateRole(role);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -58,7 +53,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "RoleKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out role))
             {
-                role = _roleManager.GetRole(key);
+                role = GetRoleManager().GetRole(key);
                 SetCacheData(_cacheName, cacheKey, role);
             }
             return role;
@@ -70,7 +65,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = criteria == null ? "RoleCriteria_null" : criteria.GetCacheKey();
             if (!TryGetCacheData(cacheKey, out roleList))
             {
-                roleList = _roleManager.FindRoles(criteria);
+                roleList = GetRoleManager().FindRoles(criteria);
                 SetCacheData(_cacheName, cacheKey, roleList);
             }
             return roleList;
@@ -82,7 +77,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _roleManager.UpdateRole(role);
+                result = GetRoleManager().UpdateRole(role);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -105,7 +100,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                _roleManager.DeleteRole(key);
+                GetRoleManager().DeleteRole(key);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);

@@ -21,11 +21,11 @@ namespace BodyReport.Manager
 
         public TrainingExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _trainingDayExerciseModule = new TrainingExerciseModule(_dbContext);
-            _trainingExerciseSetModule = new TrainingExerciseSetModule(_dbContext);
+            _trainingDayExerciseModule = new TrainingExerciseModule(DbContext);
+            _trainingExerciseSetModule = new TrainingExerciseSetModule(DbContext);
 
             _userInfosService = WebAppConfiguration.ServiceProvider.GetService<IUserInfosService>();
-            ((BodyReportService)_userInfosService).SetDbContext(_dbContext); // for use same transaction
+            ((BodyReportService)_userInfosService).SetDbContext(DbContext); // for use same transaction
         }
 
         private TUnitType GetUserUnit(string userId)
@@ -40,7 +40,7 @@ namespace BodyReport.Manager
         public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
         {
             var result = _trainingDayExerciseModule.Create(trainingExercise);
-            SynchroManager.TrainingExerciseChange(_dbContext, result);
+            SynchroManager.TrainingExerciseChange(DbContext, result);
 
             if (result != null && trainingExercise.TrainingExerciseSets != null)
             {
@@ -59,7 +59,7 @@ namespace BodyReport.Manager
         public TrainingExercise UpdateTrainingExercise(TrainingExercise trainingExercise, bool manageDeleteLinkItem)
         {
             var result = _trainingDayExerciseModule.Update(trainingExercise);
-            SynchroManager.TrainingExerciseChange(_dbContext, result);
+            SynchroManager.TrainingExerciseChange(DbContext, result);
 
             if (result != null && trainingExercise.TrainingExerciseSets != null)
             {
@@ -144,7 +144,7 @@ namespace BodyReport.Manager
             if (trainingExercise != null)
             {
                 _trainingDayExerciseModule.Delete(trainingExercise);
-                SynchroManager.TrainingExerciseChange(_dbContext, trainingExercise, true);
+                SynchroManager.TrainingExerciseChange(DbContext, trainingExercise, true);
 
                 if (trainingExercise.TrainingExerciseSets != null)
                 {

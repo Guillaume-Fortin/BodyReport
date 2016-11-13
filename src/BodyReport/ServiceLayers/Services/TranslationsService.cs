@@ -17,13 +17,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = Framework.WebAppConfiguration.CreateLogger(typeof(TranslationsService));
-        /// <summary>
-        /// Body Exercise Manager
-        /// </summary>
-        TranslationManager _translationManager = null;
+
         public TranslationsService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _translationManager = new TranslationManager(_dbContext);
         }
 
         public List<TranslationVal> FindTranslation()
@@ -33,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = string.Format("TranslationValCriteria_null");
             if (!TryGetCacheData(cacheKey, out translationList))
             {
-                translationList = _translationManager.FindTranslation();
+                translationList = GetTranslationManager().FindTranslation();
                 SetCacheData(_cacheName, cacheKey, translationList);
             }
             return translationList;
@@ -46,7 +42,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _translationManager.UpdateTranslation(translation);
+                result = GetTranslationManager().UpdateTranslation(translation);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -76,7 +72,7 @@ namespace BodyReport.ServiceLayers.Services
                     results = new List<TranslationVal>();
                     foreach (var translation in translations)
                     {
-                        results.Add(_translationManager.UpdateTranslation(translation));
+                        results.Add(GetTranslationManager().UpdateTranslation(translation));
                     }
                     CommitTransaction();
                     //invalidate cache

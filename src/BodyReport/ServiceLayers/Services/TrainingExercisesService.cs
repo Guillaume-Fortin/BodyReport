@@ -17,13 +17,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(TrainingExercisesService));
-        /// <summary>
-        /// Training Exercise Manager
-        /// </summary>
-        TrainingExerciseManager _trainingExerciseManager = null;
+
         public TrainingExercisesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _trainingExerciseManager = new TrainingExerciseManager(_dbContext);
         }
 
         public TrainingExercise CreateTrainingExercise(TrainingExercise trainingExercise)
@@ -32,7 +28,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingExerciseManager.CreateTrainingExercise(trainingExercise);
+                result = GetTrainingExerciseManager().CreateTrainingExercise(trainingExercise);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -54,7 +50,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _trainingExerciseManager.UpdateTrainingExercise(trainingExercise, manageDeleteLinkItem);
+                result = GetTrainingExerciseManager().UpdateTrainingExercise(trainingExercise, manageDeleteLinkItem);
                 CommitTransaction();
             }
             catch (Exception exception)
@@ -72,11 +68,11 @@ namespace BodyReport.ServiceLayers.Services
 
         public TrainingExercise GetTrainingExercise(TrainingExerciseKey key)
         {
-            return _trainingExerciseManager.GetTrainingExercise(key);
+            return GetTrainingExerciseManager().GetTrainingExercise(key);
         }
         public List<TrainingExercise> FindTrainingExercise(TrainingExerciseCriteria trainingExerciseCriteria)
         {
-            return _trainingExerciseManager.FindTrainingExercise(trainingExerciseCriteria);
+            return GetTrainingExerciseManager().FindTrainingExercise(trainingExerciseCriteria);
         }
 
         public void DeleteTrainingExercise(TrainingExerciseKey key)
@@ -84,7 +80,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                _trainingExerciseManager.DeleteTrainingExercise(key);
+                GetTrainingExerciseManager().DeleteTrainingExercise(key);
                 CommitTransaction();
             }
             catch (Exception exception)

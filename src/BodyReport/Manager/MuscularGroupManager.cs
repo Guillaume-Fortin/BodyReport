@@ -19,7 +19,7 @@ namespace BodyReport.Manager
         MuscularGroupModule _muscularGroupModule;
         public MuscularGroupManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _muscularGroupModule = new MuscularGroupModule(_dbContext);
+            _muscularGroupModule = new MuscularGroupModule(DbContext);
         }
 
         private void SaveTranslation(MuscularGroup muscularGroup)
@@ -27,7 +27,7 @@ namespace BodyReport.Manager
             if (muscularGroup != null)
             {
                 string trKey = MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id);
-                Translation.UpdateInDB(trKey, muscularGroup.Name, _dbContext);
+                Translation.UpdateInDB(trKey, muscularGroup.Name, DbContext);
             }
         }
 
@@ -36,7 +36,7 @@ namespace BodyReport.Manager
             if (muscularGroup != null)
             {
                 string trKey = MuscularGroupTransformer.GetTranslationKey(muscularGroup.Id);
-                muscularGroup.Name = Translation.GetInDB(trKey, _dbContext);
+                muscularGroup.Name = Translation.GetInDB(trKey, DbContext);
             }
         }
 
@@ -74,7 +74,7 @@ namespace BodyReport.Manager
         internal void DeleteMuscularGroup(MuscularGroupKey key)
         {
             //Update Translation Name
-            Translation.DeleteInDB(MuscularGroupTransformer.GetTranslationKey(key.Id), _dbContext);
+            Translation.DeleteInDB(MuscularGroupTransformer.GetTranslationKey(key.Id), DbContext);
             _muscularGroupModule.Delete(key);
         }
 

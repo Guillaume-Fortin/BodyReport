@@ -16,7 +16,7 @@ namespace BodyReport.Manager
         MuscleModule _muscleModule;
         public MuscleManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _muscleModule = new MuscleModule(_dbContext);
+            _muscleModule = new MuscleModule(DbContext);
         }
 
         private void SaveTranslation(Muscle muscle)
@@ -24,7 +24,7 @@ namespace BodyReport.Manager
             if (muscle != null)
             {
                 string trKey = BodyExerciseTransformer.GetTranslationKey(muscle.Id);
-                Translation.UpdateInDB(trKey, muscle.Name, _dbContext);
+                Translation.UpdateInDB(trKey, muscle.Name, DbContext);
             }
         }
 
@@ -33,7 +33,7 @@ namespace BodyReport.Manager
             if (muscle != null)
             {
                 string trKey = BodyExerciseTransformer.GetTranslationKey(muscle.Id);
-                muscle.Name = Translation.GetInDB(trKey, _dbContext);
+                muscle.Name = Translation.GetInDB(trKey, DbContext);
             }
         }
 
@@ -71,7 +71,7 @@ namespace BodyReport.Manager
         internal void DeleteMuscle(MuscleKey key)
         {
             //Update Translation Name
-            Translation.DeleteInDB(MuscleTransformer.GetTranslationKey(key.Id), _dbContext);
+            Translation.DeleteInDB(MuscleTransformer.GetTranslationKey(key.Id), DbContext);
             _muscleModule.Delete(key);
         }
 

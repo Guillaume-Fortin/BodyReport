@@ -18,14 +18,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(RolesService));
-        /// <summary>
-        /// User role Manager
-        /// </summary>
-        UserRoleManager _userRoleManager = null;
 
         public UserRolesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _userRoleManager = new UserRoleManager(_dbContext);
         }
 
         public UserRole GetUserRole(UserRoleKey key)
@@ -34,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "UserRoleKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out userRole))
             {
-                userRole = _userRoleManager.Get(key);
+                userRole = GetUserRoleManager().Get(key);
                 SetCacheData(_cacheName, cacheKey, userRole);
             }
             return userRole;
@@ -46,7 +41,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = criteria == null ? "UserRoleCriteria_null" : criteria.GetCacheKey();
             if (!TryGetCacheData(cacheKey, out userRoleList))
             {
-                userRoleList = _userRoleManager.Find(criteria);
+                userRoleList = GetUserRoleManager().Find(criteria);
                 SetCacheData(_cacheName, cacheKey, userRoleList);
             }
             return userRoleList;
@@ -58,7 +53,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _userRoleManager.UpdateUserRole(userRole);
+                result = GetUserRoleManager().UpdateUserRole(userRole);
                 //todo delete user infos, exercise etc.
                 CommitTransaction();
                 //Invalidate cache

@@ -18,13 +18,8 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(CitiesService));
-        /// <summary>
-        /// City Manager
-        /// </summary>
-        CityManager _cityManager = null;
         public CitiesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _cityManager = new CityManager(_dbContext);
         }
         public City GetCity(CityKey key)
         {
@@ -32,7 +27,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "CityKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out city))
             {
-                city = _cityManager.GetCity(key);
+                city = GetCityManager().GetCity(key);
                 SetCacheData(_cacheName, cacheKey, city);
             }
             return city;
@@ -44,7 +39,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = criteria == null ? "CityCriteria_null" : criteria.GetCacheKey();
             if (!TryGetCacheData(cacheKey, out cityList))
             {
-                cityList = _cityManager.FindCities(criteria);
+                cityList = GetCityManager().FindCities(criteria);
                 SetCacheData(_cacheName, cacheKey, cityList);
             }
             return cityList;

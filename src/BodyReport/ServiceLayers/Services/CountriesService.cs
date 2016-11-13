@@ -18,13 +18,8 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(CountriesService));
-        /// <summary>
-        /// City Manager
-        /// </summary>
-        CountryManager _countryManager = null;
         public CountriesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _countryManager = new CountryManager(_dbContext);
         }
 
         public Country GetCountry(CountryKey key)
@@ -33,7 +28,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "CountryKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out country))
             {
-                country = _countryManager.GetCountry(key);
+                country = GetCountryManager().GetCountry(key);
                 SetCacheData(_cacheName, cacheKey, country);
             }
             return country;
@@ -45,7 +40,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = criteria == null ? "CountryCriteria_null" : criteria.GetCacheKey();
             if (!TryGetCacheData(cacheKey, out countryList))
             {
-                countryList = _countryManager.FindCountries(criteria);
+                countryList = GetCountryManager().FindCountries(criteria);
                 SetCacheData(_cacheName, cacheKey, countryList);
             }
             return countryList;

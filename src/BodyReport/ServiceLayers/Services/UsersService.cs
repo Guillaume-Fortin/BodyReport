@@ -15,29 +15,25 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UsersService));
-        /// <summary>
-        /// User info Manager
-        /// </summary>
-        UserManager _userManager = null;
+
         public UsersService(ApplicationDbContext dbContext, IUserRolesService userRolesService, IRolesService rolesService, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _userManager = new UserManager(_dbContext);
         }
 
         public User GetUser(UserKey key, bool manageRole = true)
         {
-            return _userManager.GetUser(key, manageRole);
+            return GetUserManager().GetUser(key, manageRole);
         }
         public List<User> FindUsers(out int totalRecords, UserCriteria userCriteria = null, bool manageRole = true, int currentRecordIndex = 0, int maxRecord = 0)
         {
-            return _userManager.FindUsers(out totalRecords, userCriteria, manageRole, currentRecordIndex, maxRecord);
+            return GetUserManager().FindUsers(out totalRecords, userCriteria, manageRole, currentRecordIndex, maxRecord);
         }
         public void DeleteUser(UserKey key)
         {
             BeginTransaction();
             try
             {
-                _userManager.DeleteUser(key);
+                GetUserManager().DeleteUser(key);
                 //todo delete user infos, exercise etc.
                 CommitTransaction();
             }
@@ -58,7 +54,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _userManager.UpdateUser(user);
+                result = GetUserManager().UpdateUser(user);
                 CommitTransaction();
             }
             catch (Exception exception)

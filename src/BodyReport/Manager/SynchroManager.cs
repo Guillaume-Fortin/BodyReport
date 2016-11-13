@@ -1,6 +1,7 @@
 ﻿using BodyReport.Data;
 using BodyReport.Framework;
 using BodyReport.Message;
+using BodyReport.ServiceLayers;
 using BodyReport.ServiceLayers.Interfaces;
 using BodyReport.ServiceLayers.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +57,7 @@ namespace BodyReport.Manager
         private static void UpdateTrainingWeekModificationDate(ApplicationDbContext dbContext, DateTime modificationDate, TrainingWeekKey trainingWeekKey)
         {
             var trainingWeeksService = WebAppConfiguration.ServiceProvider.GetService<ITrainingWeeksService>();
-            ((BodyExercisesService)trainingWeeksService).SetDbContext(dbContext);
+            ((BodyReportService)trainingWeeksService).SetDbContext(dbContext);
 
             var scenario = new TrainingWeekScenario() { ManageTrainingDay = false };
             var trainingWeek = trainingWeeksService.GetTrainingWeek(trainingWeekKey, scenario);
@@ -70,7 +71,7 @@ namespace BodyReport.Manager
         private static void UpdateTrainingDayModificationDate(ApplicationDbContext dbContext, DateTime modificationDate, TrainingDayKey trainingDayKey)
         {
             var trainingDaysService = WebAppConfiguration.ServiceProvider.GetService<ITrainingDaysService>();
-            ((BodyExercisesService)trainingDaysService).SetDbContext(dbContext);
+            ((BodyReportService)trainingDaysService).SetDbContext(dbContext);
             
             var scenario = new TrainingDayScenario() { ManageExercise = false };
             var trainingDay = trainingDaysService.GetTrainingDay(trainingDayKey, scenario);

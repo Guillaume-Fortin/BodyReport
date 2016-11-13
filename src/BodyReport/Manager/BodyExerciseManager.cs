@@ -20,7 +20,7 @@ namespace BodyReport.Manager
 
         public BodyExerciseManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _bodyExerciseModule = new BodyExerciseModule(_dbContext);
+            _bodyExerciseModule = new BodyExerciseModule(DbContext);
         }
 
         private void SaveTranslation(BodyExercise bodyExercise)
@@ -28,7 +28,7 @@ namespace BodyReport.Manager
             if (bodyExercise != null)
             {
                 string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
-                Translation.UpdateInDB(trKey, bodyExercise.Name, _dbContext);
+                Translation.UpdateInDB(trKey, bodyExercise.Name, DbContext);
             }
         }
 
@@ -37,7 +37,7 @@ namespace BodyReport.Manager
             if (bodyExercise != null)
             {
                 string trKey = BodyExerciseTransformer.GetTranslationKey(bodyExercise.Id);
-                bodyExercise.Name = Translation.GetInDB(trKey, _dbContext);
+                bodyExercise.Name = Translation.GetInDB(trKey, DbContext);
             }
         }
 
@@ -77,7 +77,7 @@ namespace BodyReport.Manager
             _bodyExerciseModule.Delete(key);
 
             //Update Translation Name
-            Translation.DeleteInDB(BodyExerciseTransformer.GetTranslationKey(key.Id), _dbContext);
+            Translation.DeleteInDB(BodyExerciseTransformer.GetTranslationKey(key.Id), DbContext);
         }
 
         internal BodyExercise UpdateBodyExercise(BodyExercise bodyExercise)

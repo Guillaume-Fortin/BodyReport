@@ -18,13 +18,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(MuscularGroupsService));
-        /// <summary>
-        /// Muscular Group Manager
-        /// </summary>
-        MuscularGroupManager _muscularGroupManager = null;
+
         public MuscularGroupsService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _muscularGroupManager = new MuscularGroupManager(_dbContext);
         }
 
         public MuscularGroup CreateMuscularGroup(MuscularGroup muscularGroup)
@@ -33,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _muscularGroupManager.CreateMuscularGroup(muscularGroup);
+                result = GetMuscularGroupManager().CreateMuscularGroup(muscularGroup);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -57,7 +53,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "MuscularGroupKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out muscularGroup))
             {
-                muscularGroup = _muscularGroupManager.GetMuscularGroup(key);
+                muscularGroup = GetMuscularGroupManager().GetMuscularGroup(key);
                 SetCacheData(_cacheName, cacheKey, muscularGroup);
             }
             return muscularGroup;
@@ -70,7 +66,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = "MuscularGroupCriteria_null";
             if (!TryGetCacheData(cacheKey, out muscularGroupList))
             {
-                muscularGroupList = _muscularGroupManager.FindMuscularGroups();
+                muscularGroupList = GetMuscularGroupManager().FindMuscularGroups();
                 SetCacheData(_cacheName, cacheKey, muscularGroupList);
             }
             return muscularGroupList;
@@ -81,7 +77,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                _muscularGroupManager.DeleteMuscularGroup(key);
+                GetMuscularGroupManager().DeleteMuscularGroup(key);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -104,7 +100,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _muscularGroupManager.UpdateMuscularGroup(muscularGroup);
+                result = GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -133,7 +129,7 @@ namespace BodyReport.ServiceLayers.Services
                     result = new List<MuscularGroup>();
                     foreach (var muscularGroup in muscularGroups)
                     {
-                        result.Add(_muscularGroupManager.UpdateMuscularGroup(muscularGroup));
+                        result.Add(GetMuscularGroupManager().UpdateMuscularGroup(muscularGroup));
                     }
                     CommitTransaction();
                     //invalidate cache

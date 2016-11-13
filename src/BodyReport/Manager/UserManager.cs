@@ -24,13 +24,13 @@ namespace BodyReport.Manager
 
         public UserManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _userModule = new UserModule(_dbContext);
+            _userModule = new UserModule(DbContext);
 
             _usersRoleService = WebAppConfiguration.ServiceProvider.GetService<IUserRolesService>();
-            ((BodyReportService)_usersRoleService).SetDbContext(_dbContext); // for use same transaction
+            ((BodyReportService)_usersRoleService).SetDbContext(DbContext); // for use same transaction
 
             _rolesService = WebAppConfiguration.ServiceProvider.GetService<IRolesService>();
-            ((BodyReportService)_rolesService).SetDbContext(_dbContext); // for use same transaction
+            ((BodyReportService)_rolesService).SetDbContext(DbContext); // for use same transaction
         }
 
         private void CompleteUserRole(User user)

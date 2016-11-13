@@ -15,7 +15,7 @@ namespace BodyReport.Manager
 
         public TranslationManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _module = new TranslationModule(_dbContext);
+            _module = new TranslationModule(DbContext);
         }
 
         internal TranslationVal GetTranslation(TranslationValKey key)

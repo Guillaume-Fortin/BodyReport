@@ -14,7 +14,7 @@ namespace BodyReport.Manager
 
         public RoleManager(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _roleModule = new RoleModule(_dbContext);
+            _roleModule = new RoleModule(DbContext);
         }
 
         public List<Role> FindRoles(RoleCriteria roleCriteria = null)

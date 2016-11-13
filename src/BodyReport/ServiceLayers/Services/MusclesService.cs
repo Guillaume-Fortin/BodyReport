@@ -18,14 +18,9 @@ namespace BodyReport.ServiceLayers.Services
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(MusclesService));
-        /// <summary>
-        /// Body Exercise Manager
-        /// </summary>
-        MuscleManager _muscleManager = null;
 
         public MusclesService(ApplicationDbContext dbContext, ICachesService cacheService) : base(dbContext, cacheService)
         {
-            _muscleManager = new MuscleManager(_dbContext);
         }
 
         public Muscle GetMuscle(MuscleKey key)
@@ -34,7 +29,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = key == null ? "MuscleKey_null" : key.GetCacheKey();
             if (key != null && !TryGetCacheData(cacheKey, out muscle))
             {
-                muscle = _muscleManager.GetMuscle(key);
+                muscle = GetMuscleManager().GetMuscle(key);
                 SetCacheData(_cacheName, cacheKey, muscle);
             }
             return muscle;
@@ -46,7 +41,7 @@ namespace BodyReport.ServiceLayers.Services
             string cacheKey = criteria == null ? "MuscleCriteria_null" : criteria.GetCacheKey();
             if (!TryGetCacheData(cacheKey, out muscleList))
             {
-                muscleList = _muscleManager.FindMuscles(criteria);
+                muscleList = GetMuscleManager().FindMuscles(criteria);
                 SetCacheData(_cacheName, cacheKey, muscleList);
             }
             return muscleList;
@@ -58,7 +53,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _muscleManager.CreateMuscle(muscle);
+                result = GetMuscleManager().CreateMuscle(muscle);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -82,7 +77,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                result = _muscleManager.UpdateMuscle(muscle);
+                result = GetMuscleManager().UpdateMuscle(muscle);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
@@ -111,7 +106,7 @@ namespace BodyReport.ServiceLayers.Services
                     results = new List<Muscle>();
                     foreach (var muscle in muscles)
                     {
-                        results.Add(_muscleManager.UpdateMuscle(muscle));
+                        results.Add(GetMuscleManager().UpdateMuscle(muscle));
                     }
                 }
                 CommitTransaction();
@@ -136,7 +131,7 @@ namespace BodyReport.ServiceLayers.Services
             BeginTransaction();
             try
             {
-                _muscleManager.DeleteMuscle(key);
+                GetMuscleManager().DeleteMuscle(key);
                 CommitTransaction();
                 //invalidate cache
                 InvalidateCache(_cacheName);
