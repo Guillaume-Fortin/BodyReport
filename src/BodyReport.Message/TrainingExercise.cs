@@ -31,6 +31,32 @@ namespace BodyReport.Message
         /// Id of training exercise
         /// </summary>
         public int Id { get; set; }
+
+        public TrainingExerciseKey()
+        { }
+
+        public TrainingExerciseKey(TrainingExerciseKey key)
+        {
+            UserId = key.UserId;
+            Year = key.Year;
+            WeekOfYear = key.WeekOfYear;
+            DayOfWeek = key.DayOfWeek;
+            TrainingDayId = key.TrainingDayId;
+            Id = key.Id;
+        }
+
+        public TrainingExerciseKey Clone()
+        {
+            var copy = new TrainingExerciseKey();
+            copy.UserId = UserId;
+            copy.Year = Year;
+            copy.WeekOfYear = WeekOfYear;
+            copy.DayOfWeek = DayOfWeek;
+            copy.TrainingDayId = TrainingDayId;
+            copy.Id = Id;
+            return copy;
+        }
+
         /// <summary>
         /// Equals by key
         /// </summary>
@@ -68,6 +94,33 @@ namespace BodyReport.Message
         }
 
         public List<TrainingExerciseSet> TrainingExerciseSets { get; set; }
+
+        public TrainingExercise()
+        { }
+
+        public TrainingExercise(TrainingExerciseKey key) : base(key)
+        {
+        }
+
+        new public TrainingExercise Clone()
+        {
+            var copy = new TrainingExercise(this);
+            copy.BodyExerciseId = BodyExerciseId;
+            copy.RestTime = RestTime;
+            copy.ModificationDate = ModificationDate;
+            if (TrainingExerciseSets != null)
+            {
+                copy.TrainingExerciseSets = new List<TrainingExerciseSet>();
+                foreach (var trainingExerciseSet in TrainingExerciseSets)
+                {
+                    if (trainingExerciseSet == null)
+                        copy.TrainingExerciseSets.Add(null);
+                    else
+                        copy.TrainingExerciseSets.Add(trainingExerciseSet.Clone());
+                }
+            }
+            return copy;
+        }
     }
 
     public class TrainingExerciseCriteria : CriteriaField

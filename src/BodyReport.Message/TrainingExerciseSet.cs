@@ -36,6 +36,33 @@ namespace BodyReport.Message
         /// </summary>
         public int Id { get; set; }
 
+        public TrainingExerciseSetKey()
+        {
+        }
+
+        public TrainingExerciseSetKey(TrainingExerciseSetKey key)
+        {
+            UserId = key.UserId;
+            Year = key.Year;
+            WeekOfYear = key.WeekOfYear;
+            DayOfWeek = key.DayOfWeek;
+            TrainingDayId = key.TrainingDayId;
+            TrainingExerciseId = key.TrainingExerciseId;
+            Id = key.Id;
+        }
+        public TrainingExerciseSetKey Clone()
+        {
+            var copy = new TrainingExerciseSetKey();
+            copy.UserId = UserId;
+            copy.Year = Year;
+            copy.WeekOfYear = WeekOfYear;
+            copy.DayOfWeek = DayOfWeek;
+            copy.TrainingDayId = TrainingDayId;
+            copy.TrainingExerciseId = TrainingExerciseId;
+            copy.Id = Id;
+            return copy;
+        }
+
         public override string GetCacheKey()
         {
             return string.Format("TrainingExerciseSetKey_{0}_{1}_{2}_{3}_{4}_{5}_{6}",
@@ -73,6 +100,25 @@ namespace BodyReport.Message
         {
             get;
             set;
+        }
+
+        public TrainingExerciseSet()
+        { }
+
+        public TrainingExerciseSet(TrainingExerciseSetKey key) : base(key)
+        {
+        }
+
+        new public TrainingExerciseSet Clone()
+        {
+            var copy = new TrainingExerciseSet(this);
+            copy.Unit = Unit;
+            copy.NumberOfSets = NumberOfSets;
+            copy.NumberOfReps = NumberOfReps;
+            copy.Weight = Weight;
+            copy.ModificationDate = ModificationDate;
+
+            return copy;
         }
     }
 

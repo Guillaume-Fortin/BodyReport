@@ -28,6 +28,30 @@ namespace BodyReport.Message
         /// </summary>
         public int TrainingDayId { get; set; }
 
+        public TrainingDayKey()
+        {
+        }
+
+        public TrainingDayKey(TrainingDayKey key)
+        {
+            UserId = key.UserId;
+            Year = key.Year;
+            WeekOfYear = key.WeekOfYear;
+            DayOfWeek = key.DayOfWeek;
+            TrainingDayId = key.TrainingDayId;
+        }
+
+        public TrainingDayKey Clone()
+        {
+            var copy = new TrainingDayKey();
+            copy.UserId = UserId;
+            copy.Year = Year;
+            copy.WeekOfYear = WeekOfYear;
+            copy.DayOfWeek = DayOfWeek;
+            copy.TrainingDayId = TrainingDayId;
+            return copy;
+        }
+
         /// <summary>
         /// Equals by key
         /// </summary>
@@ -40,7 +64,7 @@ namespace BodyReport.Message
 
         public override string GetCacheKey()
         {
-            return string.Format("TrainingDayKey_{0}_{1}_{2}_{3}_{4}", 
+            return string.Format("TrainingDayKey_{0}_{1}_{2}_{3}_{4}",
                 UserId, Year.ToString(), WeekOfYear.ToString(), DayOfWeek.ToString(), TrainingDayId.ToString());
         }
     }
@@ -67,6 +91,33 @@ namespace BodyReport.Message
         /// Training journal day exercises
         /// </summary>
         public List<TrainingExercise> TrainingExercises { get; set; }
+
+        public TrainingDay()
+        { }
+
+        public TrainingDay(TrainingDayKey key) : base(key)
+        {
+        }
+        
+        new public TrainingDay Clone()
+        {
+            var copy = new TrainingDay(this);
+            copy.BeginHour = BeginHour;
+            copy.EndHour = EndHour;
+            copy.ModificationDate = ModificationDate;
+            if (TrainingExercises != null)
+            {
+                copy.TrainingExercises = new List<TrainingExercise>();
+                foreach (var trainingExercise in TrainingExercises)
+                {
+                    if (trainingExercise == null)
+                        copy.TrainingExercises.Add(null);
+                    else
+                        copy.TrainingExercises.Add(trainingExercise.Clone());
+                }
+            }
+            return copy;
+        }
     }
 
     public class TrainingDayCriteria : CriteriaField
