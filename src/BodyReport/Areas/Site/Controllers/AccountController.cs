@@ -96,8 +96,9 @@ namespace BodyReport.Areas.Site.Controllers
                     ModelState.AddModelError("", Translation.INVALID_LOGIN_ATTEMPT);
                     return View(model);
                 }
-                //Add this to check if the email was confirmed.
-                if (!await _identityUserManager.IsEmailConfirmedAsync(user))
+                //Add this to check if the email was confirmed after 30 days.
+                if (!await _identityUserManager.IsEmailConfirmedAsync(user) &&
+                    (user.RegistrationDate == null || (DateTime.Now.Date - user.RegistrationDate.Date).TotalDays >= 30))
                 {
                     ModelState.AddModelError("", Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL);
                     return View(model);

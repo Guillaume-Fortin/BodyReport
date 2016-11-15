@@ -75,8 +75,9 @@ namespace BodyReport.Areas.Api.Controllers
             {
                 return BadRequest(new WebApiException(Translation.INVALID_LOGIN_ATTEMPT));
             }
-            //Add this to check if the email was confirmed.
-            if (!await _identityUserManager.IsEmailConfirmedAsync(user))
+            //Add this to check if the email was confirmed after 30 days.
+            if (!await _identityUserManager.IsEmailConfirmedAsync(user) && 
+                (user.RegistrationDate == null || (DateTime.Now.Date - user.RegistrationDate.Date).TotalDays >= 30))
             {
                 return BadRequest(new WebApiException(Translation.YOU_NEED_TO_CONFIRM_YOUR_EMAIL));
             }
