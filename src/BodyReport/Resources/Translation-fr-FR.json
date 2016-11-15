@@ -168,5 +168,7 @@
   "RESET_PASSWORD_CONFIRMATION": "Confirmation de réinitialisation de mot de passe",
   "YOUR_PASSWORD_HAS_BEEN_RESET": "Votre mot de passe a été réinitialisé",
   "CONFIRM_EMAIL": "Confirmer email",
-  "EMAIL_CONFIRMED": "Email confirmé"
+  "EMAIL_CONFIRMED": "Email confirmé",
+  "UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P": "Impossible de se connecter au serveur. Merci de tenter à nouveau.",
+  "TIMEOUT": "Timeout"
 }

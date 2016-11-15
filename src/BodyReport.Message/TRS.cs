@@ -857,5 +857,15 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Email confirmed")]
         public const string EMAIL_CONFIRMED = "EMAIL_CONFIRMED";
+        /// <summary>
+        /// Unable to connect to server. Please retry.
+        /// </summary>
+        [Translation("Unable to connect to server. Please retry.")]
+        public const string UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P = "UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P";
+        /// <summary>
+        /// Timeout
+        /// </summary>
+        [Translation("Timeout")]
+        public const string TIMEOUT = "TIMEOUT";
     }
 }

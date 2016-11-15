@@ -170,5 +170,7 @@
   "RESET_PASSWORD_CONFIRMATION": "Reset password confirmation",
   "YOUR_PASSWORD_HAS_BEEN_RESET": "Your password has been reset",
   "CONFIRM_EMAIL": "Confirm email",
-  "EMAIL_CONFIRMED": "Email confirmed"
+  "EMAIL_CONFIRMED": "Email confirmed",
+  "UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P": "Unable to connect to server. Please retry.",
+  "TIMEOUT": "Timeout"
 }
