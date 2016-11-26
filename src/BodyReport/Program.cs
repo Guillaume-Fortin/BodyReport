@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace BodyReport
 {
@@ -27,7 +26,7 @@ namespace BodyReport
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
-            
+
             host.Run();
         }
     }

@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using BodyReport.Data;
 using BodyReport.Models;
 using BodyReport.Services;
-using System.Globalization;
-using Microsoft.Extensions.Localization;
 using BodyReport.Framework;
-using BodyReport.Resources;
-using System.IO;
-using BodyReport.Models.Initializer;
-using BodyReport.Message;
-using Microsoft.AspNetCore.Hosting;
-using BodyReport.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Globalization;
 using Microsoft.AspNetCore.Localization;
-using BodyReport.WebApiServices;
+using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BodyReport.Resources;
+using BodyReport.Message;
+using BodyReport.Models.Initializer;
 using BodyReport.ServiceLayers.Interfaces;
 using BodyReport.ServiceLayers.Services;
 
@@ -35,9 +34,10 @@ namespace BodyReport
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(Startup));
 
+        private IHostingEnvironment _env;
+
         public Startup(IHostingEnvironment env)
         {
-            // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -46,9 +46,9 @@ namespace BodyReport
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                builder.AddUserSecrets("aspnet-BodyReport-9b4c756c-e178-49cb-9314-50fd338dbd9a");
             }
-            
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
@@ -59,8 +59,7 @@ namespace BodyReport
             PopulateTranslationFile();
         }
 
-        public IConfigurationRoot Configuration { get; set; }
-        private IHostingEnvironment _env;
+        public IConfigurationRoot Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -83,8 +82,6 @@ namespace BodyReport
             else
                 _logger.LogError("Unknown database connection type");
 
-            //Configure identity policies
-            // Add Identity services to the services container.
             services.AddIdentity<ApplicationUser, IdentityRole>(
                 o => {
                     o.Password.RequireDigit = false;
@@ -131,6 +128,7 @@ namespace BodyReport
                 };
             });
 
+
             /*
             services.Configure<CookieAuthenticationOptions>(opt =>
             {
@@ -141,7 +139,7 @@ namespace BodyReport
             */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
-            
+
             //Add service for manage cache data
             services.AddMemoryCache();
 
@@ -164,34 +162,22 @@ namespace BodyReport
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            
+
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Site/Home/Error");
-
-                // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
-                /*try
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                        .CreateScope())
-                    {
-                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
-                             .Database.Migrate();
-                    }
-                }
-                catch { }*/
             }
 
             DefineLocalization(app);
-            
+
             app.UseStaticFiles();
-            
+
             app.UseStaticFiles(new StaticFileOptions()
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "images")),
@@ -201,7 +187,7 @@ namespace BodyReport
             app.UseIdentity();
             app.UseCookieAuthentication();
 
-            // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
+            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>
             {
@@ -209,7 +195,7 @@ namespace BodyReport
                 routes.MapRoute(name: "Area",
                     template: "{area:exists}/{controller}/{action}",
                     defaults: new { area="Site", controller = "Home", action = "Index" });
-                
+
                 /*routes.MapRoute(
                     name: "default",
                     template: "{controller=Site/Home}/{action=Index}/{id?}");*/
@@ -247,7 +233,7 @@ namespace BodyReport
             DefineLocalization(requestLocalizationOptions);
             app.UseRequestLocalization(requestLocalizationOptions);
         }
-        
+
         /// <summary>
         /// Create or Update JSON translation files for web application
         /// </summary>
@@ -283,7 +269,7 @@ namespace BodyReport
             services.AddTransient<ICitiesService, CitiesService>();
             services.AddTransient<ICountriesService, CountriesService>();
             services.AddTransient<IMusclesService, MusclesService>();
-            services.AddTransient<IMuscularGroupsService, MuscularGroupsService> ();
+            services.AddTransient<IMuscularGroupsService, MuscularGroupsService>();
             services.AddTransient<ITrainingDaysService, TrainingDaysService>();
             services.AddTransient<ITrainingExercisesService, TrainingExercisesService>();
             services.AddTransient<ITrainingWeeksService, TrainingWeeksService>();

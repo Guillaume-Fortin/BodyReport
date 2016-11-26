@@ -26,7 +26,7 @@ namespace BodyReport.Services
         string _exportPath;
         string _importPath;
         bool _insertOnly = true;
-        bool _dataExported = false;
+        //bool _dataExported = false;
         string _fileName;
         char _tableSeparator = (char)1;
         char _headerTableBeginner = (char)2;

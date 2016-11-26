@@ -11,7 +11,7 @@ namespace BodyReport.WebApiServices
 
     public class WebApiWrapper
     {
-        private IServiceProvider _serviceProvider = null;
+        //private IServiceProvider _serviceProvider = null;
         private HttpClientPoolManager _httpClientPoolManager = null;
         public WebApiWrapper(Uri webApiBaseAdress, int webServicesMaxPoolSize)
         {
@@ -33,7 +33,7 @@ namespace BodyReport.WebApiServices
     public static class MusclesWS
     {
         private const string _baseUrl = "Api/Muscles/";
-        public static async Task<List<Muscle>> Find(WebApiWrapper webApiWrapper, string userId, Cookie cookie)
+        public static async Task<List<Muscle>> FindAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie)
         {
             return await webApiWrapper.HttpClientPoolManager.GetAsync<List<Muscle>>(userId, cookie, _baseUrl + "Find");
         }
@@ -45,29 +45,29 @@ namespace BodyReport.WebApiServices
     public static class BodyExercisesWS
     {
         private const string _baseUrl = "Api/BodyExercises/";
-        public static async Task<BodyExercise> Get(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExerciseKey key)
+        public static async Task<BodyExercise> GetAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExerciseKey key)
         {
             Dictionary<string, string> datas = new Dictionary<string, string>();
             datas.Add("Id", key.Id.ToString());
             return await webApiWrapper.HttpClientPoolManager.GetAsync<BodyExercise>(userId, cookie, _baseUrl + "Get", datas);
         }
-        public static async Task<BodyExercise> Create(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExercise bodyExercice)
+        public static async Task<BodyExercise> CreateAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExercise bodyExercice)
         {
             return await webApiWrapper.HttpClientPoolManager.PostAsync<BodyExercise, BodyExercise>(userId, cookie, _baseUrl + "Create", bodyExercice);
         }
-        public static async Task<List<BodyExercise>> Find(WebApiWrapper webApiWrapper, string userId, Cookie cookie)
+        public static async Task<List<BodyExercise>> FindAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie)
         {
             return await webApiWrapper.HttpClientPoolManager.GetAsync<List<BodyExercise>>(userId, cookie, _baseUrl + "Find");
         }
-        public static async Task<BodyExercise> Update(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExercise bodyExercice)
+        public static async Task<BodyExercise> UpdateAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExercise bodyExercice)
         {
             return await webApiWrapper.HttpClientPoolManager.PostAsync<BodyExercise, BodyExercise>(userId, cookie, _baseUrl + "Update", bodyExercice);
         }
-        public static async Task<List<BodyExercise>> UpdateList(WebApiWrapper webApiWrapper, string userId, Cookie cookie, List<BodyExercise> bodyExercices)
+        public static async Task<List<BodyExercise>> UpdateListAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie, List<BodyExercise> bodyExercices)
         {
             return await webApiWrapper.HttpClientPoolManager.PostAsync<List<BodyExercise>, List<BodyExercise>>(userId, cookie, _baseUrl + "UpdateList", bodyExercices);
         }
-        public static async Task<bool> Delete(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExerciseKey key)
+        public static async Task<bool> DeleteAsync(WebApiWrapper webApiWrapper, string userId, Cookie cookie, BodyExerciseKey key)
         {
             return await webApiWrapper.HttpClientPoolManager.PostAsync<BodyExerciseKey, bool>(userId, cookie, _baseUrl + "Delete", key);
         }
