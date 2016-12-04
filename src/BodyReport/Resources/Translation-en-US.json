@@ -172,5 +172,7 @@
   "CONFIRM_EMAIL": "Confirm email",
   "EMAIL_CONFIRMED": "Email confirmed",
   "UNABLE_TO_CONNECT_TO_SERVER_P_PLEASE_RETRY_P": "Unable to connect to server. Please retry.",
-  "TIMEOUT": "Timeout"
+  "TIMEOUT": "Timeout",
+  "PRINT": "Print",
+  "PDF": "PDF"
 }

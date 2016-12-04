@@ -14,6 +14,7 @@ using BodyReport.Framework.Exceptions;
 using BodyReport.Models;
 using BodyReport.Resources;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Areas.User.ViewModels.Transformer;
 
 namespace BodyReport.Areas.User.Controllers
 {
@@ -101,7 +102,7 @@ namespace BodyReport.Areas.User.Controllers
             {
                 foreach (var trainingWeek in trainingWeekList)
                 {
-                    viewModel.Add(TransformTrainingWeekToViewModel(trainingWeek));
+                    viewModel.Add(TrainingViewModelTransformer.TrainingWeekToViewModel(trainingWeek, _usersService));
                 }
             }
 
@@ -132,7 +133,7 @@ namespace BodyReport.Areas.User.Controllers
             trainingWeek.Unit = userInfo.Unit;
 
             ViewBag.UserUnit = userInfo.Unit;
-            return View(TransformTrainingWeekToViewModel(trainingWeek));
+            return View(TrainingViewModelTransformer.TrainingWeekToViewModel(trainingWeek, _usersService));
         }
 
         // Create a training journal week
@@ -199,7 +200,7 @@ namespace BodyReport.Areas.User.Controllers
             if (trainingJournal == null) // no data found
                 return RedirectToAction("Index");
 
-            return View(TransformTrainingWeekToViewModel(trainingJournal));
+            return View(TrainingViewModelTransformer.TrainingWeekToViewModel(trainingJournal, _usersService));
         }
 
         // Edit a training journal week
@@ -411,7 +412,7 @@ namespace BodyReport.Areas.User.Controllers
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
             trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, trainingWeek.UserWeight);
             
-            var trainingWeekViewModel = TransformTrainingWeekToViewModel(trainingWeek);
+            var trainingWeekViewModel = TrainingViewModelTransformer.TrainingWeekToViewModel(trainingWeek, _usersService);
             List<TrainingDayViewModel> trainingDayViewModels = null;
             List<TrainingExerciseViewModel> trainingExerciseViewModels = null;
             if (trainingWeek != null && trainingWeek.TrainingDays != null && trainingWeek.TrainingDays.Count > 0)
@@ -419,7 +420,7 @@ namespace BodyReport.Areas.User.Controllers
                 trainingDayViewModels = new List<TrainingDayViewModel>();
                 foreach (var trainingDay in trainingWeek.TrainingDays)
                 {
-                    trainingDayViewModels.Add(TransformTrainingDayToViewModel(trainingDay, userInfo));
+                    trainingDayViewModels.Add(TrainingViewModelTransformer.TrainingDayToViewModel(trainingDay, userInfo));
 
                     if (dayOfWeekSelected.HasValue && trainingDay.DayOfWeek == dayOfWeekSelected)
                     { // Get only current
@@ -437,7 +438,7 @@ namespace BodyReport.Areas.User.Controllers
 
                                 if (trainingExerciseViewModels == null)
                                     trainingExerciseViewModels = new List<TrainingExerciseViewModel>();
-                                trainingExerciseViewModels.Add(TransformTrainingExerciseToViewModel(trainingExercise));
+                                trainingExerciseViewModels.Add(TrainingViewModelTransformer.TrainingExerciseToViewModel(trainingExercise, _bodyExercisesService));
                             }
                         }
                     }
@@ -481,73 +482,6 @@ namespace BodyReport.Areas.User.Controllers
             return trainingJournal;
         }
 
-        private TrainingWeekViewModel TransformTrainingWeekToViewModel(TrainingWeek trainingWeek)
-        {
-            TrainingWeekViewModel trainingJournalVM = new TrainingWeekViewModel();
-
-            trainingJournalVM.UserId = trainingWeek.UserId;
-            trainingJournalVM.Year = trainingWeek.Year;
-            trainingJournalVM.WeekOfYear = trainingWeek.WeekOfYear;
-            trainingJournalVM.UserHeight = trainingWeek.UserHeight;
-            trainingJournalVM.UserWeight = trainingWeek.UserWeight;
-            trainingJournalVM.Unit = (int)trainingWeek.Unit;
-            
-            var user = _usersService.GetUser(new UserKey() { Id = trainingWeek.UserId });
-            if (user != null)
-                trainingJournalVM.UserName = user.Name;
-
-            return trainingJournalVM;
-        }
-
-        private TrainingDayViewModel TransformTrainingDayToViewModel(TrainingDay trainingDay, UserInfo userInfo)
-        {
-            var result = new TrainingDayViewModel()
-            {
-                UserId = trainingDay.UserId,
-                Year = trainingDay.Year,
-                WeekOfYear = trainingDay.WeekOfYear,
-                DayOfWeek = trainingDay.DayOfWeek,
-                TrainingDayId = trainingDay.TrainingDayId
-            };
-
-            //convert date to user timezone
-            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
-            if (timeZoneInfo == null)
-                timeZoneInfo = TimeZoneInfo.Local;
-            result.BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo);
-            result.EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo);
-
-            return result;
-        }
-
-        private TrainingExerciseViewModel TransformTrainingExerciseToViewModel(TrainingExercise trainingExercise)
-        {
-            var bodyExercise = _bodyExercisesService.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
-
-            var viewModel = new TrainingExerciseViewModel()
-            {
-                UserId = trainingExercise.UserId,
-                Year = trainingExercise.Year,
-                WeekOfYear = trainingExercise.WeekOfYear,
-                DayOfWeek = trainingExercise.DayOfWeek,
-                TrainingDayId = trainingExercise.TrainingDayId,
-                TrainingExerciseId = trainingExercise.Id,
-                BodyExerciseId = trainingExercise.BodyExerciseId,
-                RestTime = trainingExercise.RestTime,
-                BodyExerciseName = bodyExercise != null && !string.IsNullOrWhiteSpace(bodyExercise.Name) ? bodyExercise.Name : string.Empty,
-                BodyExerciseImage = string.Format("/images/bodyexercises/{0}.png", trainingExercise.BodyExerciseId)
-            };
-
-            viewModel.TupleSetReps = new List<Tuple<int, int, double>>();
-            if (trainingExercise.TrainingExerciseSets != null)
-            {
-                foreach (var set in trainingExercise.TrainingExerciseSets)
-                    viewModel.TupleSetReps.Add(new Tuple<int, int, double>(set.NumberOfSets, set.NumberOfReps, set.Weight));
-            }
-
-            return viewModel;
-        }
-
         // Create a training day
         // GET: /User/TrainingJournal/CreateTrainingDay
         [HttpGet]
@@ -586,7 +520,7 @@ namespace BodyReport.Areas.User.Controllers
             };
 
             ViewBag.UserUnit = userInfo.Unit;
-            return View(TransformTrainingDayToViewModel(trainingDay, userInfo));
+            return View(TrainingViewModelTransformer.TrainingDayToViewModel(trainingDay, userInfo));
         }
         
         // Create a training day
@@ -656,7 +590,7 @@ namespace BodyReport.Areas.User.Controllers
             var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 userInfo = new UserInfo();
-            return View(TransformTrainingDayToViewModel(trainingDay, userInfo));
+            return View(TrainingViewModelTransformer.TrainingDayToViewModel(trainingDay, userInfo));
         }
 
         // Edit a training day

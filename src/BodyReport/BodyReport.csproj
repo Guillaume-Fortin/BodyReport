@@ -124,7 +124,7 @@
     <ProjectReference Include="..\BodyReport.Message\BodyReport.Message.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\CustomAttributes\" />
+    <Folder Include="Areas\Report\ViewModels\" />
     <Folder Include="Framework\Exceptions\" />
     <Folder Include="Framework\Extensions\" />
     <Folder Include="Framework\ViewComponents\" />

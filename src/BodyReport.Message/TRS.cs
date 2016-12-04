@@ -867,5 +867,15 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Timeout")]
         public const string TIMEOUT = "TIMEOUT";
+        /// <summary>
+        /// Print
+        /// </summary>
+        [Translation("Print")]
+        public const string PRINT = "PRINT";
+        /// <summary>
+        /// PDF
+        /// </summary>
+        [Translation("PDF")]
+        public const string PDF = "PDF";
     }
 }

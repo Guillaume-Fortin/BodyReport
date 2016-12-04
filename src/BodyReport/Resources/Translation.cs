@@ -277,5 +277,7 @@ namespace BodyReport.Resources
         public static string YOUR_PASSWORD_HAS_BEEN_RESET { get { return Get(TRS.YOUR_PASSWORD_HAS_BEEN_RESET); } }
         public static string CONFIRM_EMAIL { get { return Get(TRS.CONFIRM_EMAIL); } }
         public static string EMAIL_CONFIRMED { get { return Get(TRS.EMAIL_CONFIRMED); } }
+        public static string PRINT { get { return Get(TRS.PRINT); } }
+        public static string PDF { get { return Get(TRS.PDF); } }
     }
 }

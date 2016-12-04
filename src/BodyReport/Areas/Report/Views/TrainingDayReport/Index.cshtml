@@ -1,0 +1,145 @@
+﻿@model Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>, List<TrainingExerciseViewModel>>
+@using BodyReport.Framework
+@using System.Linq
+
+@{ //Remove header
+    Layout = "_ReportLayout";
+}
+
+@{
+    ViewData["Title"] = Translation.TRAINING_DAY;
+    string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
+
+    if (ViewBag.ViewerUnit == (int)TUnitType.Imperial)
+    {
+        weightUnit = Translation.POUND;
+        lengthUnit = Translation.INCH;
+        unit = Translation.IMPERIAL;
+    }
+
+    List<DayOfWeek> dayOfWeekList = new List<DayOfWeek>()
+    {
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday,
+        DayOfWeek.Saturday,
+        DayOfWeek.Sunday
+    };
+
+    string date = "";
+
+    try
+    {
+        if (Model.Item1 != null)
+        {
+            DateTime dateTime = Utils.YearWeekToPlanningDateTime(Model.Item1.Year, Model.Item1.WeekOfYear);
+            date = dateTime.ToString("D");
+        }
+    }
+    catch
+    {
+    }
+
+    List<TrainingDayViewModel> trainingDayList = null;
+    if (Model.Item2 != null)
+    {
+        trainingDayList = Model.Item2.OrderBy(c => c.BeginHour).ToList();
+    }
+}
+
+<table border="0" style="margin:8px">
+    <thead>
+        <tr>
+            <th border="0">@date</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td border="0">
+                <p>&copy; 2016 - BodyReport</p>
+            </td>
+        </tr>
+    </tfoot>
+    <tbody>
+
+    @foreach (TrainingDayViewModel trainingDay in trainingDayList)
+    {   
+        <tr class="page-break">
+            <td border="0">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="5">
+                                 @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
+                            </th>
+                        </tr>
+                        <tr>
+                            @if (ViewBag.displayImages)
+                            {
+                            <th>
+                                Image
+                            </th>
+                            }
+                            <th>
+                                @Translation.BODY_EXERCISES
+                            </th>
+                            <th>
+                                @Translation.SETS / @Translation.REPS
+                            </th>
+                            <th>
+                                @Translation.WEIGHT<br />(@weightUnit)
+                            </th>
+                            <th>
+                                @Translation.REST_TIME
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Item3 != null)
+                        {
+                            @for (int i = 0; i < Model.Item3.Count; i++)
+                            {
+                                TrainingExerciseViewModel trainingExercise = Model.Item3[i];
+                                @if (trainingDay.TrainingDayId == trainingExercise.TrainingDayId)
+                                {
+                                    <tr>
+                                        @if (ViewBag.displayImages)
+                                        {
+                                            <td>
+                                                <img src="@trainingExercise.BodyExerciseImage" style="height:100px; width:100px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+                                            </td>
+                                        }
+                                        <td>
+                                            @trainingExercise.BodyExerciseName
+                                        </td>
+                                        <td>
+                                            @if (trainingExercise.TupleSetReps != null)
+                                            {
+                                                @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
+                                                {
+                                                    @tupleSetRep.Item1 @: x @tupleSetRep.Item2<br />
+                            }
+                                            }
+                                        </td>
+                                        <td>
+                                            @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
+                                            {
+                                                @Math.Round(tupleSetRep.Item3, 3)<br />
+                                            }
+                                        </td>
+                                        <td>
+                                            @trainingExercise.RestTime sec
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -24,6 +24,8 @@ using BodyReport.Message;
 using BodyReport.Models.Initializer;
 using BodyReport.ServiceLayers.Interfaces;
 using BodyReport.ServiceLayers.Services;
+using Microsoft.AspNetCore.Authorization;
+using BodyReport.Framework.CustomAttributes;
 
 namespace BodyReport
 {
@@ -139,6 +141,13 @@ namespace BodyReport
             */
 
             services.AddMvc().AddViewLocalization(options => options.ResourcesPath = "Resources").AddDataAnnotationsLocalization();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AllowLocalhost",
+                                  policy => policy.Requirements.Add(new LoopBackAuthorizeRequirement()));
+            });
+            services.AddSingleton<IAuthorizationHandler, LoopBackAuthorizeHandler>();
 
             //Add service for manage cache data
             services.AddMemoryCache();

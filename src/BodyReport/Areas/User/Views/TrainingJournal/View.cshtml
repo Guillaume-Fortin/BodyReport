@@ -141,6 +141,8 @@ else
     {
         <p>
             <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE</a>
+            | <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true">@Translation.PRINT</a>
+            | <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true">@Translation.PDF</a>
         </p>
     }
 
