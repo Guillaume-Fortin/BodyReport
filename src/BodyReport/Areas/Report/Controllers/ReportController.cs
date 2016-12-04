@@ -53,7 +53,7 @@ namespace BodyReport.Areas.Report.Controllers
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            string[] files = Directory.GetFiles(reportRootPath, "phantomjs.*");
+            string[] files = Directory.GetFiles(reportRootPath, "phantomjs*");
             if (files == null || files.Length == 0)
             {
                 _logger.LogCritical("phantomjs not found at path : " + reportRootPath);

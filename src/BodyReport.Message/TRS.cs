@@ -877,5 +877,25 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("PDF")]
         public const string PDF = "PDF";
+		/// <summary>
+		/// Print with images
+		/// </summary>
+		[Translation("Print with images")]
+		public const string PRINT_WITH_IMAGES = "PRINT_WITH_IMAGES";
+		/// <summary>
+		/// Print without images
+		/// </summary>
+		[Translation("Print without images")]
+		public const string PRINT_WITHOUT_IMAGES = "PRINT_WITHOUT_IMAGES";
+		/// <summary>
+		/// Pdf with images
+		/// </summary>
+		[Translation("Pdf with images")]
+		public const string PDF_WITH_IMAGES = "PDF_WITH_IMAGES";
+		/// <summary>
+		/// Pdf without images
+		/// </summary>
+		[Translation("Pdf without images")]
+		public const string PDF_WITHOUT_IMAGES = "PDF_WITHOUT_IMAGES";
     }
 }

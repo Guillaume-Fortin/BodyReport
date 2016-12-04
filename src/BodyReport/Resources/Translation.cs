@@ -279,5 +279,10 @@ namespace BodyReport.Resources
         public static string EMAIL_CONFIRMED { get { return Get(TRS.EMAIL_CONFIRMED); } }
         public static string PRINT { get { return Get(TRS.PRINT); } }
         public static string PDF { get { return Get(TRS.PDF); } }
+		public static string QUESTION { get { return Get(TRS.QUESTION); } }
+		public static string PRINT_WITH_IMAGES { get { return Get(TRS.PRINT_WITH_IMAGES); } }
+		public static string PRINT_WITHOUT_IMAGES { get { return Get(TRS.PRINT_WITHOUT_IMAGES); } }
+		public static string PDF_WITH_IMAGES { get { return Get(TRS.PDF_WITH_IMAGES); } }
+		public static string PDF_WITHOUT_IMAGES { get { return Get(TRS.PDF_WITHOUT_IMAGES); } }
     }
 }

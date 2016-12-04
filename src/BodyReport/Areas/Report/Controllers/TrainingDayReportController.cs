@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace BodyReport.Areas.Report.Controllers
 {
@@ -174,8 +175,8 @@ namespace BodyReport.Areas.Report.Controllers
         {
             string outputFileName = string.Format("TrainingDayReport_{0}_{1}_{2}_{3}.pdf", year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "all");
             string reportPath = System.IO.Path.Combine("trainingDay", userId);
-            string reportUrl = string.Format("http://localhost:5000/Report/TrainingDayReport/Index?userId={0}&year={1}&weekOfYear={2}&dayOfWeek={3}&displayImages={4}",
-                                             userId, year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "null", displayImages); 
+			string reportUrl = string.Format("http://localhost:5000/Report/TrainingDayReport/Index?userId={0}&year={1}&weekOfYear={2}&dayOfWeek={3}&trainingDayId{4}&displayImages={5}&culture={6}",
+                                             userId, year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "null", displayImages, CultureInfo.CurrentUICulture.ToString()); 
             return RedirectToAction("Pdf", "Report", new { area = "Report", reportPath = reportPath, reportUrl = reportUrl, outputFileName = outputFileName });
         }
     }
