@@ -32,7 +32,7 @@ namespace BodyReport.Manager
         {
             if (muscle != null)
             {
-                string trKey = BodyExerciseTransformer.GetTranslationKey(muscle.Id);
+                string trKey = MuscleTransformer.GetTranslationKey(muscle.Id);
                 muscle.Name = Translation.GetInDB(trKey, DbContext);
             }
         }
