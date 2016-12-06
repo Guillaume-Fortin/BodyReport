@@ -178,5 +178,6 @@
   "PRINT_WITH_IMAGES": "Print with images",
   "PRINT_WITHOUT_IMAGES": "Print without images",
   "PDF_WITH_IMAGES": "Pdf with images",
-  "PDF_WITHOUT_IMAGES": "Pdf without images"
+  "PDF_WITHOUT_IMAGES": "Pdf without images",
+  "IMPOSSIBLE_ACTION": "Impossible action"
 }

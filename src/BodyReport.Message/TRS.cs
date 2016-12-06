@@ -897,5 +897,10 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Pdf without images")]
 		public const string PDF_WITHOUT_IMAGES = "PDF_WITHOUT_IMAGES";
+        /// <summary>
+		/// Impossible action
+		/// </summary>
+		[Translation("Impossible action")]
+        public const string IMPOSSIBLE_ACTION = "IMPOSSIBLE_ACTION";
     }
 }
