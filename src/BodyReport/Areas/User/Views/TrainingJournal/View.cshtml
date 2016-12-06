@@ -4,7 +4,7 @@
 
 @{
     string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
-
+    
     if (ViewBag.ViewerUnit == (int)TUnitType.Imperial)
     {
         weightUnit = Translation.POUND;
@@ -136,10 +136,10 @@
 						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false">@Translation.PRINT_WITHOUT_IMAGES</a>
 					</li>
 					<li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true">@Translation.PDF_WITH_IMAGES</a>
+						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITH_IMAGES</a>
 				   	</li>
 					<li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false">@Translation.PDF_WITHOUT_IMAGES</a>
+						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITHOUT_IMAGES</a>
 				   	</li>
             </ul>
         </div>

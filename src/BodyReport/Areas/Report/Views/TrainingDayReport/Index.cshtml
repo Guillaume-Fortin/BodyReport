@@ -34,7 +34,8 @@
     {
         if (Model.Item1 != null)
         {
-            DateTime dateTime = Utils.YearWeekToPlanningDateTime(Model.Item1.Year, Model.Item1.WeekOfYear);
+            int day = ((DayOfWeek)ViewBag.DayOfWeek) == DayOfWeek.Sunday ? 6 : ViewBag.DayOfWeek - 1;
+            DateTime dateTime = Utils.YearWeekToPlanningDateTime(Model.Item1.Year, Model.Item1.WeekOfYear).AddDays(day);
             date = dateTime.ToString("D");
         }
     }

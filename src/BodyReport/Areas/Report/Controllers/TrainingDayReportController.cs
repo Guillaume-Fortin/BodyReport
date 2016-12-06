@@ -98,7 +98,7 @@ namespace BodyReport.Areas.Report.Controllers
 
         //
         // GET: /Report/TrainingDayReport/Index
-        public IActionResult Index(string userId, int year, int weekOfYear, int dayOfWeek, int? trainingDayId, bool displayImages)
+        public IActionResult Index(string userId, int year, int weekOfYear, int dayOfWeek, int? trainingDayId, bool displayImages, string userIdViewer)
         {
             var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
             if (userInfo == null)
@@ -122,7 +122,10 @@ namespace BodyReport.Areas.Report.Controllers
                 trainingWeek = new TrainingWeek();
 
             //Unit viewer convertion
-            string userIdViewer = SessionUserId;
+            if (string.IsNullOrEmpty(userIdViewer))
+            {
+                userIdViewer = SessionUserId;
+            }
             var viewerUnit = GetUserUnit(userIdViewer);
             var userUnit = GetUserUnit(userId);
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
@@ -164,6 +167,7 @@ namespace BodyReport.Areas.Report.Controllers
                 }
             }
 
+            ViewBag.DayOfWeek = dayOfWeek;
             ViewBag.displayImages = displayImages;
             ViewBag.ViewerUnit = viewerUnit;
             return View(new Tuple<TrainingWeekViewModel, List<TrainingDayViewModel>, List<TrainingExerciseViewModel>>(trainingWeekViewModel, trainingDayViewModels, trainingExerciseViewModels));
@@ -175,8 +179,8 @@ namespace BodyReport.Areas.Report.Controllers
         {
             string outputFileName = string.Format("TrainingDayReport_{0}_{1}_{2}_{3}.pdf", year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "all");
             string reportPath = System.IO.Path.Combine("trainingDay", userId);
-			string reportUrl = string.Format("http://localhost:5000/Report/TrainingDayReport/Index?userId={0}&year={1}&weekOfYear={2}&dayOfWeek={3}&trainingDayId{4}&displayImages={5}&culture={6}",
-                                             userId, year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "null", displayImages, CultureInfo.CurrentUICulture.ToString()); 
+			string reportUrl = string.Format("http://localhost:5000/Report/TrainingDayReport/Index?userId={0}&year={1}&weekOfYear={2}&dayOfWeek={3}&trainingDayId{4}&displayImages={5}&culture={6}&userIdViewer={7}",
+                                             userId, year, weekOfYear, dayOfWeek, trainingDayId.HasValue ? trainingDayId.Value.ToString() : "null", displayImages, CultureInfo.CurrentUICulture.ToString(), SessionUserId); 
             return RedirectToAction("Pdf", "Report", new { area = "Report", reportPath = reportPath, reportUrl = reportUrl, outputFileName = outputFileName });
         }
     }

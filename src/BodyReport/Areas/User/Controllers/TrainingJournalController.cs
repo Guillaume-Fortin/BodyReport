@@ -445,6 +445,7 @@ namespace BodyReport.Areas.User.Controllers
                 }
             }
 
+            ViewBag.UserIdViewer = userIdViewer;
             ViewBag.CurrentDayOfWeek = currentDayOfWeek;
             ViewBag.ViewerUnit = viewerUnit;
             ViewBag.Editable = userId == userIdViewer;
