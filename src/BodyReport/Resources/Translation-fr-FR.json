@@ -177,5 +177,6 @@
   "PRINT_WITHOUT_IMAGES": "Imprimer sans images",
   "PDF_WITH_IMAGES": "PDF avec images",
   "PDF_WITHOUT_IMAGES": "PDF sans images",
-  "IMPOSSIBLE_ACTION": "Action impossible"
+  "IMPOSSIBLE_ACTION": "Action impossible",
+  "CANT_OPEN_DOCUMENT": "Impossible d'ouvrir le document"
 }
