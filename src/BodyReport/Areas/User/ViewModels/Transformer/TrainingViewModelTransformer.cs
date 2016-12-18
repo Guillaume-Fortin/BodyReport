@@ -63,6 +63,10 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
                 TrainingExerciseId = trainingExercise.Id,
                 BodyExerciseId = trainingExercise.BodyExerciseId,
                 RestTime = trainingExercise.RestTime,
+                EccentricContractionTempo = trainingExercise.EccentricContractionTempo,
+                StretchPositionTempo = trainingExercise.StretchPositionTempo,
+                ConcentricContractionTempo = trainingExercise.ConcentricContractionTempo,
+                ContractedPositionTempo = trainingExercise.ContractedPositionTempo,
                 BodyExerciseName = bodyExercise != null && !string.IsNullOrWhiteSpace(bodyExercise.Name) ? bodyExercise.Name : string.Empty,
                 BodyExerciseImage = string.Format("/images/bodyexercises/{0}.png", trainingExercise.BodyExerciseId)
             };

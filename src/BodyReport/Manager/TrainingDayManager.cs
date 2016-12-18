@@ -131,7 +131,11 @@ namespace BodyReport.Manager
                 if (trainingExercisesDb != null && trainingExercisesDb.Count > 0)
                 {
                     foreach(var trainingExerciseDb in trainingExercisesDb)
-                        _trainingWeeksService.DeleteTrainingExercise(trainingExerciseDb);
+                    {
+                        //remove only training exercises who do not present (for keep exercise tempos: retrocompatibility)
+                        if (trainingDay.TrainingExercises == null || !trainingDay.TrainingExercises.Any(te => te.Id == trainingExerciseDb.Id))
+                            _trainingWeeksService.DeleteTrainingExercise(trainingExerciseDb);
+                    }
                 }
 
                 if (trainingDay.TrainingExercises != null)

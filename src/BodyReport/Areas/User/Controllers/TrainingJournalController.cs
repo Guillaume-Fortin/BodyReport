@@ -953,6 +953,10 @@ namespace BodyReport.Areas.User.Controllers
             viewModel.BodyExerciseName = bodyExercise.Name;
             viewModel.BodyExerciseImage = bodyExercise.ImageName;
             viewModel.RestTime = trainingExercise.RestTime;
+            viewModel.EccentricContractionTempo = trainingExercise.EccentricContractionTempo;
+            viewModel.StretchPositionTempo = trainingExercise.StretchPositionTempo;
+            viewModel.ConcentricContractionTempo = trainingExercise.ConcentricContractionTempo;
+            viewModel.ContractedPositionTempo = trainingExercise.ContractedPositionTempo;
             viewModel.Unit = (int)GetUserUnit(userId);
 
             if (trainingExercise.TrainingExerciseSets != null)
@@ -1067,6 +1071,12 @@ namespace BodyReport.Areas.User.Controllers
 
                 trainingExercise.BodyExerciseId = viewModel.BodyExerciseId;
                 trainingExercise.RestTime = viewModel.RestTime;
+                
+                //Tempos
+                trainingExercise.EccentricContractionTempo = viewModel.EccentricContractionTempo;
+                trainingExercise.StretchPositionTempo = viewModel.StretchPositionTempo;
+                trainingExercise.ConcentricContractionTempo = viewModel.ConcentricContractionTempo;
+                trainingExercise.ContractedPositionTempo = viewModel.ContractedPositionTempo;
 
                 if (viewModel.Reps != null && viewModel.Reps.Count > 0)
                 {

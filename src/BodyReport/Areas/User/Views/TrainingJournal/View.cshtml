@@ -199,7 +199,10 @@ else
                                 @Translation.WEIGHT<br/>(@weightUnit)
                             </th>
                             <th>
-                                @Translation.REST_TIME
+                                @Translation.TEMPO<br/>(sec)
+                            </th>
+                            <th>
+                                @Translation.REST_TIME<br />(sec)
                             </th>
                             @if (ViewBag.Editable)
                             {
@@ -239,8 +242,13 @@ else
                                         }
                                     </td>
                                     <td>
-                                        @trainingExercise.RestTime sec
+                                        @trainingExercise.RestTime
                                     </td>
+
+                                    <td>
+                                        @trainingExercise.EccentricContractionTempo - @trainingExercise.StretchPositionTempo - @trainingExercise.ConcentricContractionTempo - @trainingExercise.ContractedPositionTempo
+                                    </td>
+
                                     @if (ViewBag.Editable)
                                     {
                                     <td>

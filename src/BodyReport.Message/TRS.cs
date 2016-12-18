@@ -902,5 +902,30 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Impossible action")]
         public const string IMPOSSIBLE_ACTION = "IMPOSSIBLE_ACTION";
+        /// <summary>
+		/// Tempo
+		/// </summary>
+		[Translation("Tempo")]
+        public const string TEMPO = "TEMPO";
+        /// <summary>
+		/// Eccentric contraction
+		/// </summary>
+		[Translation("Eccentric contraction")]
+        public const string ECCENTRIC_CONTRACTION = "ECCENTRIC_CONTRACTION";
+        /// <summary>
+		/// Stretch position
+		/// </summary>
+		[Translation("Stretch position")]
+        public const string STRETCH_POSITION = "STRETCH_POSITION";
+        /// <summary>
+		/// Concentric contraction
+		/// </summary>
+		[Translation("Concentric contraction")]
+        public const string CONCENTRIC_CONTRACTION = "CONCENTRIC_CONTRACTION";
+        /// <summary>
+		/// Contracted position
+		/// </summary>
+		[Translation("Contracted position")]
+        public const string CONTRACTED_POSITION = "CONTRACTED_POSITION";
     }
 }

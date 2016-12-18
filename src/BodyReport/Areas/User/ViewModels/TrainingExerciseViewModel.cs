@@ -37,6 +37,26 @@ namespace BodyReport.Areas.User.ViewModels
         [Display(Name = TRS.REST_TIME, ResourceType = typeof(Translation))]
         public int RestTime { get; set; }
 
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.ECCENTRIC_CONTRACTION, ResourceType = typeof(Translation))]
+        public int EccentricContractionTempo { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.STRETCH_POSITION, ResourceType = typeof(Translation))]
+        public int StretchPositionTempo { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.CONCENTRIC_CONTRACTION, ResourceType = typeof(Translation))]
+        public int ConcentricContractionTempo { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.CONTRACTED_POSITION, ResourceType = typeof(Translation))]
+        public int ContractedPositionTempo { get; set; }
+
         [Display(Name = TRS.REPS, ResourceType = typeof(Translation))]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public List<int?> Reps { get; set; } = new List<int?>();

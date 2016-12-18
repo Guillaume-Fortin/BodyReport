@@ -27,29 +27,65 @@
     <input asp-for="BodyExerciseId" hidden="hidden" />
 
     <div class="form-group">
-        <label asp-for="BodyExerciseName" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            @Model.BodyExerciseName
-            <br/>
-            <img src="@string.Format("/images/bodyexercises/{0}.png", Model.BodyExerciseId)" style="height:150px; width:150px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
-        </div>
-    </div>
-    
-    
+            <table class="table">
+                <tr>
+                    <th>@Model.BodyExerciseName</th>
+                    <th>@Translation.TEMPO</th>
+                    <th>sec</th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                    <img src="@string.Format("/images/bodyexercises/{0}.png", Model.BodyExerciseId)" style="height:150px; width:150px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+                    </td>
+                    <td>
+                        <label asp-for="RestTime" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="RestTime" class="form-control" type="number" />
+                    </td>
+                </tr>
 
-    <div class="form-group">
-        <label asp-for="RestTime" class="col-md-2 control-label">@Translation.REST_TIME (s)</label>
-        <div class="col-md-10">
-            <input asp-for="RestTime" class="form-control" type="number" /> 
-            <span asp-validation-for="RestTime" class="text-danger"></span>
+                <tr>
+                    <td>
+                        <label asp-for="EccentricContractionTempo" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="EccentricContractionTempo" class="form-control" type="number" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label asp-for="StretchPositionTempo" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="StretchPositionTempo" class="form-control" type="number" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label asp-for="ConcentricContractionTempo" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="ConcentricContractionTempo" class="form-control" type="number" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label asp-for="ContractedPositionTempo" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="ContractedPositionTempo" class="form-control" type="number" />
+                    </td>
+                </tr>
+            </table>              
         </div>
     </div>
 
     @if (Model.Reps != null && Model.Weights != null)
     {
         <div class="form-group">
-            <label class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <table class="table">
                     <tr>
                         <th>
@@ -89,10 +125,11 @@
                         <td/>
                     </tr>
                     }
-</table>
-</div>
+            </table>
+            </div>
         </div>
     }
+
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">

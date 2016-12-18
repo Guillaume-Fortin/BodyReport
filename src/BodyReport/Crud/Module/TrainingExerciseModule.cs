@@ -35,7 +35,28 @@ namespace BodyReport.Crud.Module
             TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
             _dbContext.TrainingExercise.Add(row);
             _dbContext.SaveChanges();
-            return TrainingExerciseTransformer.ToBean(row);
+            return GetBean(row);
+        }
+
+        private TrainingExercise GetBean(TrainingExerciseRow row)
+        {
+            if (row == null)
+                return null;
+
+            var trainingExercise = TrainingExerciseTransformer.ToBean(row);
+            if (row != null && trainingExercise != null)
+            {
+                if (!row.EccentricContractionTempo.HasValue)
+                    trainingExercise.EccentricContractionTempo = 1;
+                if (!row.StretchPositionTempo.HasValue)
+                    trainingExercise.StretchPositionTempo = 0;
+                if (!row.ConcentricContractionTempo.HasValue)
+                    trainingExercise.ConcentricContractionTempo = 1;
+                if (!row.ContractedPositionTempo.HasValue)
+                    trainingExercise.ContractedPositionTempo = 0;
+            }
+
+            return trainingExercise;
         }
 
         /// <summary>
@@ -55,7 +76,7 @@ namespace BodyReport.Crud.Module
             var row = rowQuery.FirstOrDefault();
             if (row != null)
             {
-                return TrainingExerciseTransformer.ToBean(row);
+                return GetBean(row);
             }
             return null;
         }
@@ -76,7 +97,7 @@ namespace BodyReport.Crud.Module
                 resultList = new List<TrainingExercise>();
                 foreach (var row in rowList)
                 {
-                    resultList.Add(TrainingExerciseTransformer.ToBean(row));
+                    resultList.Add(GetBean(row));
                 }
             }
             return resultList;
@@ -108,7 +129,7 @@ namespace BodyReport.Crud.Module
             { //Modify Data in database
                 TrainingExerciseTransformer.ToRow(trainingJournalDayExercise, row);
                 _dbContext.SaveChanges();
-                return TrainingExerciseTransformer.ToBean(row);
+                return GetBean(row);
             }
         }
 

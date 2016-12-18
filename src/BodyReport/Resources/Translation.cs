@@ -284,5 +284,10 @@ namespace BodyReport.Resources
 		public static string PRINT_WITHOUT_IMAGES { get { return Get(TRS.PRINT_WITHOUT_IMAGES); } }
 		public static string PDF_WITH_IMAGES { get { return Get(TRS.PDF_WITH_IMAGES); } }
 		public static string PDF_WITHOUT_IMAGES { get { return Get(TRS.PDF_WITHOUT_IMAGES); } }
+        public static string TEMPO { get { return Get(TRS.TEMPO); } }
+        public static string ECCENTRIC_CONTRACTION { get { return Get(TRS.ECCENTRIC_CONTRACTION); } }
+        public static string STRETCH_POSITION { get { return Get(TRS.STRETCH_POSITION); } }
+        public static string CONCENTRIC_CONTRACTION { get { return Get(TRS.CONCENTRIC_CONTRACTION); } }
+        public static string CONTRACTED_POSITION { get { return Get(TRS.CONTRACTED_POSITION); } }
     }
 }

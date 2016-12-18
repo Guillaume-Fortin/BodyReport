@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -85,6 +87,22 @@ namespace BodyReport.Message
         /// </summary>
         public int RestTime { get; set; }
         /// <summary>
+        /// Eccentric Contraction Tempo (second)
+        /// </summary>
+        public int EccentricContractionTempo { get; set; }
+        /// <summary>
+        /// Stretch Position Tempo (second)
+        /// </summary>
+        public int StretchPositionTempo { get; set; }
+        /// <summary>
+        /// Concentric Contraction Tempo (second)
+        /// </summary>
+        public int ConcentricContractionTempo { get; set; }
+        /// <summary>
+        /// contracted Position Tempo (second)
+        /// </summary>
+        public int ContractedPositionTempo { get; set; }
+        /// <summary>
 		/// Modification Date
 		/// </summary>
 		public DateTime ModificationDate
@@ -93,10 +111,20 @@ namespace BodyReport.Message
             set;
         }
 
+        /// <summary>
+        /// Version number of object for internal use
+        /// 0: initial value
+        /// 1: tempo values
+        /// </summary>
+        [DefaultValue(0)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)] // poupalte default value attribute if not present
+        public int ObjectVersionNumber { get; set; } = 1;
+
         public List<TrainingExerciseSet> TrainingExerciseSets { get; set; }
 
         public TrainingExercise()
-        { }
+        {
+        }
 
         public TrainingExercise(TrainingExerciseKey key) : base(key)
         {

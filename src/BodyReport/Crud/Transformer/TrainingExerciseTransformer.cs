@@ -19,6 +19,13 @@ namespace BodyReport.Crud.Transformer
             row.Id = bean.Id;
             row.BodyExerciseId = bean.BodyExerciseId;
             row.RestTime = bean.RestTime;
+            if (bean.ObjectVersionNumber > 0) // Retrocompatibility
+            {
+                row.EccentricContractionTempo = bean.EccentricContractionTempo;
+                row.StretchPositionTempo = bean.StretchPositionTempo;
+                row.ConcentricContractionTempo = bean.ConcentricContractionTempo;
+                row.ContractedPositionTempo = bean.ContractedPositionTempo;
+            }
             row.ModificationDate = DbUtils.DateToUtc(Utils.DateTimeWithoutMs); // Set modificationDate
         }
 
@@ -36,6 +43,10 @@ namespace BodyReport.Crud.Transformer
             bean.Id = row.Id;
             bean.BodyExerciseId = row.BodyExerciseId;
             bean.RestTime = row.RestTime;
+            bean.EccentricContractionTempo = row.EccentricContractionTempo.HasValue ? row.EccentricContractionTempo.Value : 0;
+            bean.StretchPositionTempo = row.StretchPositionTempo.HasValue ? row.StretchPositionTempo.Value : 0;
+            bean.ConcentricContractionTempo = row.ConcentricContractionTempo.HasValue ? row.ConcentricContractionTempo.Value : 0;
+            bean.ContractedPositionTempo = row.ContractedPositionTempo.HasValue ? row.ContractedPositionTempo.Value : 0;
             bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
             return bean;
         }

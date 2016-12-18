@@ -179,5 +179,10 @@
   "PRINT_WITHOUT_IMAGES": "Print without images",
   "PDF_WITH_IMAGES": "Pdf with images",
   "PDF_WITHOUT_IMAGES": "Pdf without images",
-  "IMPOSSIBLE_ACTION": "Impossible action"
+  "IMPOSSIBLE_ACTION": "Impossible action",
+  "TEMPO": "Tempo",
+  "ECCENTRIC_CONTRACTION": "Eccentric contraction",
+  "STRETCH_POSITION": "Stretch position",
+  "CONCENTRIC_CONTRACTION": "Concentric contraction",
+  "CONTRACTED_POSITION": "Contracted position"
 }

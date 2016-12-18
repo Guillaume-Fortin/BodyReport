@@ -72,7 +72,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th colspan="5">
+                            <th colspan="6">
                                  @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
                             </th>
                         </tr>
@@ -90,11 +90,12 @@
                                 @Translation.SETS / @Translation.REPS
                             </th>
                             <th>
-                                @Translation.WEIGHT<br />(@weightUnit)
+                                @Translation.WEIGHT (@weightUnit)
                             </th>
                             <th>
-                                @Translation.REST_TIME
+                                @Translation.REST_TIME (sec)
                             </th>
+                            <th>@Translation.TEMPO (sec)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,7 +132,10 @@
                                             }
                                         </td>
                                         <td>
-                                            @trainingExercise.RestTime sec
+                                            @trainingExercise.RestTime
+                                        </td>
+                                        <td>
+                                            @trainingExercise.EccentricContractionTempo - @trainingExercise.StretchPositionTempo - @trainingExercise.ConcentricContractionTempo - @trainingExercise.ContractedPositionTempo
                                         </td>
                                     </tr>
                                 }
