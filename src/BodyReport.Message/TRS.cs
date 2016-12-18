@@ -903,6 +903,11 @@ namespace BodyReport.Message
 		[Translation("Impossible action")]
         public const string IMPOSSIBLE_ACTION = "IMPOSSIBLE_ACTION";
         /// <summary>
+        /// Can't open document
+        /// </summary>
+        [Translation("Can't open document")]
+        public const string CANT_OPEN_DOCUMENT = "CANT_OPEN_DOCUMENT";
+        /// <summary>
 		/// Tempo
 		/// </summary>
 		[Translation("Tempo")]

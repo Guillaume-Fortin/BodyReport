@@ -180,6 +180,7 @@
   "PDF_WITH_IMAGES": "Pdf with images",
   "PDF_WITHOUT_IMAGES": "Pdf without images",
   "IMPOSSIBLE_ACTION": "Impossible action",
+  "CANT_OPEN_DOCUMENT": "Can't open document",
   "TEMPO": "Tempo",
   "ECCENTRIC_CONTRACTION": "Eccentric contraction",
   "STRETCH_POSITION": "Stretch position",
