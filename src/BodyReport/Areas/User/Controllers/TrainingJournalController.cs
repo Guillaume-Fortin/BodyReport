@@ -778,7 +778,21 @@ namespace BodyReport.Areas.User.Controllers
                 foreach (var bodyExercise in bodyExerciseSelectedList)
                 {
                     //Only manage add in this page
-                    trainingExercise = new TrainingExercise() { UserId = viewModel.UserId, Year = viewModel.Year, WeekOfYear = viewModel.WeekOfYear, DayOfWeek = viewModel.DayOfWeek, TrainingDayId = viewModel.TrainingDayId, Id = maxId, BodyExerciseId = bodyExercise.Id };
+                    trainingExercise = new TrainingExercise()
+                    {
+                        UserId = viewModel.UserId,
+                        Year = viewModel.Year,
+                        WeekOfYear = viewModel.WeekOfYear,
+                        DayOfWeek = viewModel.DayOfWeek,
+                        TrainingDayId = viewModel.TrainingDayId,
+                        Id = maxId,
+                        BodyExerciseId = bodyExercise.Id,
+                        RestTime = 0,
+                        EccentricContractionTempo = 1,
+                        StretchPositionTempo = 0,
+                        ConcentricContractionTempo = 1,
+                        ContractedPositionTempo = 0
+                    };
                     trainingDay.TrainingExercises.Add(trainingExercise);
                     maxId++;
                 }
