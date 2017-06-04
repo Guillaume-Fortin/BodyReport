@@ -66,5 +66,12 @@ namespace BodyReport.Areas.Site.Controllers
             }
             return Json(dataList);
         }
+
+        //
+        // GET: /Site/Home/ConfidentialityRules
+        public IActionResult ConfidentialityRules()
+        {
+            return View();
+        }
     }
 }

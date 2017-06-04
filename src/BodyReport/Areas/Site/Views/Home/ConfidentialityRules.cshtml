@@ -1,0 +1,31 @@
+﻿@using System.Globalization
+@{
+    ViewData["Title"] = Translation.CONFIDENTIALITY_RULES;
+}
+
+@if (CultureInfo.CurrentCulture.Name == "fr-FR")
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@Translation.CONFIDENTIALITY_RULES</h2>
+            <ul>
+                <li>Les comptes utilisateurs ne sont pas communiqués à un service tiers.</li>
+                <li>Les mots de passe utilisateurs sont cryptés.</li>
+                <li>La caméra est seulement utilisée pour compléter votre profil.</li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@Translation.CONFIDENTIALITY_RULES</h2>
+            <ul>
+                <li>User accounts are not communicated to a third party service.</li>
+                <li>User passwords are encrypted.</li>
+                <li>The camera is only used to set up your profile.</li>
+            </ul>
+        </div>
+    </div>
+}

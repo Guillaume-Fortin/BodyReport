@@ -42,7 +42,8 @@
 					@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
 					{
 						<li><a asp-route-area="Admin" asp-controller="Home" asp-action="Index">@Translation.ADMIN</a></li>
-					}
+                    }
+                    <li><a asp-route-area="Site" asp-controller="Home" asp-action="ConfidentialityRules">@Translation.CONFIDENTIALITY_RULES</a></li>
 				</ul>
 				@await Html.PartialAsync("_LoginPartial")
 			</div>
