@@ -61,6 +61,11 @@ namespace BodyReport.Framework
             return startOfYear.AddDays(7 * (week - 1));
         }
 
+        public static IEnumerable<T> GetEnumValues<T>()
+        {
+            return Enum.GetValues(typeof(T)).Cast<T>();
+        }
+
         public static TEnum IntToEnum<TEnum>(int value)
         {
             Type type = typeof(TEnum);

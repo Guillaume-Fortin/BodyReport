@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using BodyReport.Services;
 using System;
 using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Resources;
 
 namespace BodyReport.Areas.Admin.Controllers
 {
@@ -32,6 +33,10 @@ namespace BodyReport.Areas.Admin.Controllers
         /// </summary>
         private readonly IRolesService _rolesService;
         /// <summary>
+        /// Report service
+        /// </summary>
+        private readonly IReportService _reportService;
+        /// <summary>
         /// Logger
         /// </summary>
         private static ILogger _logger = WebAppConfiguration.CreateLogger(typeof(UserController));
@@ -48,15 +53,22 @@ namespace BodyReport.Areas.Admin.Controllers
                               UserManager<ApplicationUser> userManager,
                               IUsersService usersService,
                               IUserInfosService userInfosService,
-                              IRolesService rolesService) : base(userManager)
+                              IRolesService rolesService,
+                              IReportService reportService) : base(userManager)
         {
             _env = env;
             _emailSender = emailSender;
             _usersService = usersService;
             _userInfosService = userInfosService;
             _rolesService = rolesService;
+            _reportService = reportService;
         }
 
+        /// <summary>
+        /// Aply sort on user criteria search
+        /// </summary>
+        /// <param name="userCriteria">user search criteria</param>
+        /// <param name="sortOrder">order type</param>
         private void ApplyUserSort(ref UserCriteria userCriteria, string sortOrder)
         {
             if (userCriteria == null)
@@ -264,7 +276,7 @@ namespace BodyReport.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        //
+        // Confirm user email
         // GET: /Admin/User/ConfirmUserEmail
         [HttpGet]
         public async Task<IActionResult> ConfirmUserEmail(string id)
@@ -308,6 +320,9 @@ namespace BodyReport.Areas.Admin.Controllers
 
                     try
                     {
+                        string reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                        await _emailSender.SendEmailAsync(appUser.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
+
                         await _emailSender.SendEmailAsync(appUser.Email, "Account validated",
                             "Your account validated by admin");
                     }

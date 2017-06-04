@@ -7,7 +7,7 @@ namespace BodyReport.Message
 {
     public enum TSexType : int
     {
-        MAN=0, WOMAN=1
+        MAN = 0, WOMAN = 1
     }
 
     public enum TExerciseType
@@ -44,17 +44,17 @@ namespace BodyReport.Message
         PostgreSQL
     }
 
-	public enum TEditMode
-	{
-		Create,
-		Edit
-	}
+    public enum TEditMode
+    {
+        Create,
+        Edit
+    }
 
-	public enum LangType
-	{
-		en_US,
-		fr_FR
-	}
+    public enum LangType
+    {
+        en_US,
+        fr_FR
+    }
 
     public enum TTraceLevel
     {
@@ -69,5 +69,13 @@ namespace BodyReport.Message
         None,
         Asc,
         Desc
+    }
+    
+    public enum TMailingTestType
+    {
+        USER_RESET_PASSWORD,
+        USER_CONFIRM_ACCOUNT,
+        USER_ACCOUNT_VALIDATED,
+        ADMIN_NEW_USER_ACCOUNT
     }
 }

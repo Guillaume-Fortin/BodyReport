@@ -185,5 +185,15 @@
   "ECCENTRIC_CONTRACTION": "Eccentric contraction",
   "STRETCH_POSITION": "Stretch position",
   "CONCENTRIC_CONTRACTION": "Concentric contraction",
-  "CONTRACTED_POSITION": "Contracted position"
+  "CONTRACTED_POSITION": "Contracted position",
+  "MAIL": "Mail",
+  "USER_REGISTER": "User register",
+  "FORGOT_PASSWORD": "Forgot password",
+  "MAILING_TEST": "Mailing test",
+  "TEST": "Test",
+  "PREVIEW": "Preview",
+  "SEND": "Send",
+  "CONFIRM_USER_ACCOUNT": "Confirm user account",
+  "USER_ACCOUNT_VALIDATED": "User account validated",
+  "CONFIDENTIALITY_RULES": "Confidentiality rules"
 }

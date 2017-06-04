@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewData["Title"] = Translation.MAILING_TEST;
+    var enumList = Utils.GetEnumValues<TMailingTestType>();
+}
+
+<h2>@Translation.ADMIN : @ViewData["Title"].</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Translation.NAME
+        </th>
+        <th>@Translation.ACTION</th>
+    </tr>
+
+    @foreach (TMailingTestType mailingTestType in enumList)
+    {
+    <tr>
+        <td>
+@{
+    switch (mailingTestType)
+    {
+        case TMailingTestType.ADMIN_NEW_USER_ACCOUNT:
+            @:@Translation.CREATE_NEW_ACCOUNT
+            break;
+        case TMailingTestType.USER_RESET_PASSWORD:
+            @:@Translation.RESET_YOUR_PASSWORD
+            break;
+        case TMailingTestType.USER_ACCOUNT_VALIDATED:
+            @:@Translation.USER_ACCOUNT_VALIDATED
+            break;
+        case TMailingTestType.USER_CONFIRM_ACCOUNT:
+            @:@Translation.CONFIRM_USER_ACCOUNT
+            break;
+        default:
+            @:@mailingTestType.ToString()
+            break;
+    }
+}
+        </td>
+        <td>
+            <a asp-route-type="@((int)mailingTestType)" asp-route-preview="true">@Translation.PREVIEW</a> | 
+            <a asp-route-type="@((int)mailingTestType)">@Translation.SEND</a>
+        </td>
+    </tr>
+    }
+</table>
+
+@if (ViewBag.TestResult != null)
+{
+    <hr/>
+    <p>Status : @ViewBag.TestResult</p>
+}
+
+@if (ViewBag.TestException != null)
+{
+    <hr />
+    <p>@Translation.ERROR :</p>
+    <p>
+        @ViewBag.TestException.Message;
+        <br/>
+        @ViewBag.TestException.ToString();
+    </p>
+}
+
+@if (ViewBag.PreviewResult != null)
+{
+    <hr />
+    <p>@Translation.PREVIEW :</p>
+    <iframe width="1024" height="1024" srcdoc="@ViewBag.PreviewResult">
+    </iframe>
+}
+
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

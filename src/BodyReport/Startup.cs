@@ -26,6 +26,7 @@ using BodyReport.ServiceLayers.Interfaces;
 using BodyReport.ServiceLayers.Services;
 using Microsoft.AspNetCore.Authorization;
 using BodyReport.Framework.CustomAttributes;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace BodyReport
 {
@@ -155,6 +156,7 @@ namespace BodyReport
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            services.AddTransient<ViewHelper>();
 
             ConfigureServiceDataLayer(services);
 
@@ -162,7 +164,7 @@ namespace BodyReport
             {
                 DefineLocalization(options);
             });
-
+            
             WebAppConfiguration.ServiceProvider = services.BuildServiceProvider();
         }
 
@@ -288,6 +290,7 @@ namespace BodyReport
             services.AddTransient<IUserRolesService, UserRolesService>();
             services.AddTransient<IRolesService, RolesService>();
             services.AddTransient<ICachesService, CachesService>();
+            services.AddTransient<IReportService, ReportService>();
         }
     }
 }

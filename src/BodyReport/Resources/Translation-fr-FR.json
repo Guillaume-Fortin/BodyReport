@@ -161,7 +161,7 @@
   "THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL": "Merci d'avoir confirmer votre email",
   "CLICK_HERE_TO_LOG_IN": "Cliquer ici pour se connecter",
   "ENTER_YOUR_EMAIL": "Entrer votre email",
-  "FORGOT_PASSWORD_CONFIRMATION": "Confirmation de mot de pass oublié",
+  "FORGOT_PASSWORD_CONFIRMATION": "Confirmation de mot de passe oublié",
   "PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD": "Merci de vérifier votre boîte mail pour réinitialiser votre mot de passe",
   "LOCKED_OUT": "Banni",
   "THIS_ACCOUNT_HAS_BEEN_LOCKED_OUT_P_PLEASE_TRY_AGAIN_LATER": "Votre compte a été banni. Merci d'essayer plus tard",
@@ -183,5 +183,15 @@
   "ECCENTRIC_CONTRACTION": "Contraction eccentrique",
   "STRETCH_POSITION": "Position étirée",
   "CONCENTRIC_CONTRACTION": "Contraction concentrique",
-  "CONTRACTED_POSITION": "Position contractée"
+  "CONTRACTED_POSITION": "Position contractée",
+  "MAIL": "Mail",
+  "USER_REGISTER": "Enregistrement utilisateur",
+  "FORGOT_PASSWORD": "Mot de passe oublié",
+  "MAILING_TEST": "Test d'envoi de mail",
+  "TEST": "Test",
+  "PREVIEW": "Prévisualiser",
+  "SEND": "Envoyer",
+  "CONFIRM_USER_ACCOUNT": "Confirmer le compte utilisateur",
+  "USER_ACCOUNT_VALIDATED": "Compte utilisateur validé",
+  "CONFIDENTIALITY_RULES": "Règles de confidentialité"
 }

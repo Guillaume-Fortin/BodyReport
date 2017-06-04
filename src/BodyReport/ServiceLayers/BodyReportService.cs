@@ -2,13 +2,9 @@
 using BodyReport.Manager;
 using BodyReport.Resources;
 using BodyReport.ServiceLayers.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BodyReport.ServiceLayers
 {

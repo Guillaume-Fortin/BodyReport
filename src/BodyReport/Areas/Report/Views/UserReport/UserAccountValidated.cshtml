@@ -1,0 +1,60 @@
+﻿@model BodyReport.Areas.Report.ViewModels.UserReport.UserAccountValidatedViewModel
+@using BodyReport.Framework
+@using System.Globalization
+@using Microsoft.AspNetCore.Http
+
+@{
+/*take at : https://github.com/leemunroe/responsive-html-email-template/blob/master/email.html */
+ViewData["Title"] = Translation.USER_ACCOUNT_VALIDATED;
+Layout = "_MailingReportLayout";
+}
+
+<table border="0" cellpadding="0" cellspacing="0" class="body">
+<tr>
+    <td>&nbsp;</td>
+    <td class="container">
+        <div class="content">
+
+            <!-- START CENTERED WHITE CONTAINER -->
+            <table class="main">
+
+                <!-- START MAIN CONTENT AREA -->
+                <tr>
+                    <td class="wrapper">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <p>Hello, @Model.UserName</p>
+                                    <p>Your account validated by admin</p>
+                                    <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                        <tbody>
+                                            <tr>
+                                                <td align="left">
+                                                    <table border="0" cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="http://www.bodyreport.org" target="_blank">Connect to Website</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- END MAIN CONTENT AREA -->
+            </table>
+        </div>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+</table>
+
+

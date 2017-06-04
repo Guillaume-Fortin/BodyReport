@@ -823,6 +823,11 @@ namespace BodyReport.Message
         [Translation("Forgot Password Confirmation")]
         public const string FORGOT_PASSWORD_CONFIRMATION = "FORGOT_PASSWORD_CONFIRMATION";
         /// <summary>
+        /// Forgot password
+        /// </summary>
+        [Translation("Forgot password")]
+        public const string FORGOT_PASSWORD = "FORGOT_PASSWORD";
+        /// <summary>
         /// Please check your email to reset your password
         /// </summary>
         [Translation("Please check your email to reset your password")]
@@ -932,5 +937,46 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Contracted position")]
         public const string CONTRACTED_POSITION = "CONTRACTED_POSITION";
+        /// <summary>
+		/// User register
+		/// </summary>
+		[Translation("User register")]
+        public const string USER_REGISTER = "USER_REGISTER";
+        /// <summary>
+		/// Mailing test
+		/// </summary>
+		[Translation("Mailing test")]
+        public const string MAILING_TEST = "MAILING_TEST";
+        /// <summary>
+		/// Test
+		/// </summary>
+		[Translation("Test")]
+        public const string TEST = "TEST";
+        // <summary>
+        /// Preview
+        /// </summary>
+        [Translation("Preview")]
+        public const string PREVIEW = "PREVIEW";
+        // <summary>
+        /// Send
+        /// </summary>
+        [Translation("Send")]
+        public const string SEND = "SEND";
+        // <summary>
+        /// Confirm user account
+        /// </summary>
+        [Translation("Confirm user account")]
+        public const string CONFIRM_USER_ACCOUNT = "CONFIRM_USER_ACCOUNT";
+        // <summary>
+        /// User account validated
+        /// </summary>
+        [Translation("User account validated")]
+        public const string USER_ACCOUNT_VALIDATED = "USER_ACCOUNT_VALIDATED";
+        /// <summary>
+		/// Confidentiality rules
+		/// </summary>
+		[Translation("Confidentiality rules")]
+        public const string CONFIDENTIALITY_RULES = "CONFIDENTIALITY_RULES";
+
     }
 }

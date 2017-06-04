@@ -40,6 +40,10 @@ namespace BodyReport.Areas.Site.Controllers
         /// Service layer roles
         /// </summary>
         private readonly IRolesService _rolesService;
+        /// <summary>
+        /// Report service
+        /// </summary>
+        private readonly IReportService _reportService;
 
         public AccountController(ApplicationDbContext dbContext,
                                  UserManager<ApplicationUser> userManager,
@@ -49,7 +53,8 @@ namespace BodyReport.Areas.Site.Controllers
                                  IRolesService rolesService,
                                  IEmailSender emailSender,
                                  ISmsSender smsSender,
-                                 ILoggerFactory loggerFactory) : base(userManager, dbContext)
+                                 ILoggerFactory loggerFactory,
+                                 IReportService reportService) : base(userManager, dbContext)
         {
             _signInManager = signInManager;
             _usersService = usersService;
@@ -57,6 +62,7 @@ namespace BodyReport.Areas.Site.Controllers
             _rolesService = rolesService;
             _emailSender = emailSender;
             _smsSender = smsSender;
+            _reportService = reportService;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
@@ -161,6 +167,7 @@ namespace BodyReport.Areas.Site.Controllers
                 var result = await _identityUserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    string reportData;
                     user.RegistrationDate = DateTime.Now;
                     await _identityUserManager.UpdateAsync(user);
                     //await _signInManager.SignInAsync(user, isPersistent: false);
@@ -171,15 +178,16 @@ namespace BodyReport.Areas.Site.Controllers
                         // Send an email with this link
                         var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                            "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(this.ControllerContext, user.Id, callbackUrl);
+                        await _emailSender.SendEmailAsync(model.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
                     }
                     catch (Exception except)
                     {
                         _logger.LogError(0, except, "Can't send email");
                     }
                     //SendEmail to admin
-                    ControllerUtils.SendEmailToAdmin(_dbContext, _usersService, _emailSender, "BodyReport : New WebSite user", "New user register with website");
+                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                    await ControllerUtils.SendEmailToAdminAsync(_usersService, _emailSender, "Nouvel utilisateur site", reportData);
                     return RedirectToAction(nameof(AccountController.Login), "Account");
                 }
                 AddErrors(result);
@@ -372,8 +380,8 @@ namespace BodyReport.Areas.Site.Controllers
                     // Send an email with this link
                     var code = await _identityUserManager.GeneratePasswordResetTokenAsync(user);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                       "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                    string reportData = await _reportService.CreateReportForResetUserPasswordAsync(this.ControllerContext, user.Id, callbackUrl);
+                    await _emailSender.SendEmailAsync(model.Email, Translation.FORGOT_PASSWORD, reportData);
                 }
                 catch (Exception except)
                 {
@@ -399,9 +407,18 @@ namespace BodyReport.Areas.Site.Controllers
         // GET: /Site/Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public async Task<IActionResult> ResetPassword(string userId, string code)
         {
-            return code == null ? View("Error") : View();
+            ResetPasswordViewModel model = null;
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                var user = await _identityUserManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    model = new ResetPasswordViewModel() { Code = code, Email = user.Email };
+                }
+            }
+            return View(model);
         }
 
         //

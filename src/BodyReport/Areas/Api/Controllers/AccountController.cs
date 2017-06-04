@@ -33,17 +33,23 @@ namespace BodyReport.Areas.Api.Controllers
         /// Service layer userInfos
         /// </summary>
         private readonly IUserInfosService _userInfosService;
+        /// <summary>
+        /// Report service
+        /// </summary>
+        private readonly IReportService _reportService;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                  ApplicationDbContext dbContext,
                                  SignInManager<ApplicationUser> signInManager,
                                  IUsersService usersService,
                                  IUserInfosService userInfosService,
+                                 IReportService reportService,
                                  IEmailSender emailSender, 
                                  ILoggerFactory loggerFactory) : base(userManager, dbContext)
         {
             _usersService = usersService;
             _userInfosService = userInfosService;
+            _reportService = reportService;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
@@ -180,6 +186,7 @@ namespace BodyReport.Areas.Api.Controllers
                 var result = await _identityUserManager.CreateAsync(user, registerAccount.Password);
                 if (result.Succeeded)
                 {
+                    string reportData;
                     user.RegistrationDate = DateTime.Now;
                     await _identityUserManager.UpdateAsync(user);
                     _logger.LogInformation(3, "User created a new account with password.");
@@ -189,8 +196,8 @@ namespace BodyReport.Areas.Api.Controllers
                         // Send an email with this link
                         var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        await _emailSender.SendEmailAsync(registerAccount.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(this.ControllerContext, user.Id, callbackUrl);
+                        await _emailSender.SendEmailAsync(registerAccount.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
                         //await _signInManager.SignInAsync(user, isPersistent: false);
                     }
                     catch (Exception except)
@@ -198,7 +205,8 @@ namespace BodyReport.Areas.Api.Controllers
                         _logger.LogError(3, except, "can't send email ");
                     }
                     //SendEmail to admin
-                    ControllerUtils.SendEmailToAdmin(_dbContext, _usersService, _emailSender, "BodyReport : New mobile user", "New user register with mobile");
+                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                    await ControllerUtils.SendEmailToAdminAsync(_usersService, _emailSender, "Nouvel utilisateur mobile", reportData);
                     return new OkObjectResult(true);
                 }
                 StringBuilder errorMessage = new StringBuilder();

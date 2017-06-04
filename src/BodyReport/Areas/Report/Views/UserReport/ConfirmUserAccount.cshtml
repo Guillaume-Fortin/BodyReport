@@ -1,0 +1,79 @@
+﻿@model BodyReport.Areas.Report.ViewModels.UserReport.ConfirmUserAccountViewModel
+@using BodyReport.Framework
+@using System.Globalization
+@using Microsoft.AspNetCore.Http
+
+@{
+/*take at : https://github.com/leemunroe/responsive-html-email-template/blob/master/email.html */
+ViewData["Title"] = Translation.CONFIRM_EMAIL;
+Layout = "_MailingReportLayout";
+
+string titleText, text1, text2, btnLinkLabel;
+
+if (CultureInfo.CurrentCulture.Name == "fr-FR")
+{
+    titleText = $"Bonjour {Model.UserName}";
+    text1 = "Cliquez sur le lien pour valider votre compte :";
+    text2 = "Si le lien ne s'affiche pas, vous pouvez utiliser à cette adresse:";
+    btnLinkLabel = "Lien";
+}
+else
+{
+    titleText = $"Hello {Model.UserName}";
+    text1 = "Please validate your account by clicking here:";
+    text2 = "If link doesn't show in this email, use this url:";
+    btnLinkLabel = "Link";
+}
+}
+
+<table border="0" cellpadding="0" cellspacing="0" class="body">
+<tr>
+    <td>&nbsp;</td>
+    <td class="container">
+        <div class="content">
+
+            <!-- START CENTERED WHITE CONTAINER -->
+            <span class="preheader">Hello @Model.UserName,</span>
+            <table class="main">
+
+                <!-- START MAIN CONTENT AREA -->
+                <tr>
+                    <td class="wrapper">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <p>@titleText</p>
+                                    <p>@text1</p>
+                                    <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                        <tbody>
+                                            <tr>
+                                                <td align="left">
+                                                    <table border="0" cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="@Model.CallbackUrl" target="_blank">@btnLinkLabel</a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p>@text2 <br /> @Model.CallbackUrl</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- END MAIN CONTENT AREA -->
+            </table>
+        </div>
+    </td>
+    <td>&nbsp;</td>
+</tr>
+</table>
+
+

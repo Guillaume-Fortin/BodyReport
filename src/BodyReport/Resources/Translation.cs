@@ -269,6 +269,7 @@ namespace BodyReport.Resources
         public static string THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL { get { return Get(TRS.THANK_YOU_FOR_CONFIRMING_YOUR_EMAIL); } }
         public static string CLICK_HERE_TO_LOG_IN { get { return Get(TRS.CLICK_HERE_TO_LOG_IN); } }
         public static string ENTER_YOUR_EMAIL { get { return Get(TRS.ENTER_YOUR_EMAIL); } }
+        public static string FORGOT_PASSWORD { get { return Get(TRS.FORGOT_PASSWORD); } }
         public static string FORGOT_PASSWORD_CONFIRMATION { get { return Get(TRS.FORGOT_PASSWORD_CONFIRMATION); } }
         public static string PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD { get { return Get(TRS.PLEASE_CHECK_YOUR_EMAIL_TO_RESET_YOUR_PASSWORD); } }
         public static string LOCKED_OUT { get { return Get(TRS.LOCKED_OUT); } }
@@ -289,5 +290,13 @@ namespace BodyReport.Resources
         public static string STRETCH_POSITION { get { return Get(TRS.STRETCH_POSITION); } }
         public static string CONCENTRIC_CONTRACTION { get { return Get(TRS.CONCENTRIC_CONTRACTION); } }
         public static string CONTRACTED_POSITION { get { return Get(TRS.CONTRACTED_POSITION); } }
+        public static string CONFIDENTIALITY_RULES { get { return Get(TRS.CONFIDENTIALITY_RULES); } }
+        public static string MAILING_TEST { get { return Get(TRS.MAILING_TEST); } }
+        public static string TEST { get { return Get(TRS.TEST); } }
+        public static string ERROR { get { return Get(TRS.ERROR); } }
+        public static string PREVIEW { get { return Get(TRS.PREVIEW); } }
+        public static string SEND { get { return Get(TRS.SEND); } }
+        public static string CONFIRM_USER_ACCOUNT { get { return Get(TRS.CONFIRM_USER_ACCOUNT); } }
+        public static string USER_ACCOUNT_VALIDATED { get { return Get(TRS.USER_ACCOUNT_VALIDATED); } }
     }
 }

@@ -1,20 +1,18 @@
 ﻿using BodyReport.Areas.User.ViewModels;
-using BodyReport.Resources;
-using BodyReport.Framework;
 using BodyReport.Message;
+using BodyReport.Resources;
+using BodyReport.ServiceLayers.Interfaces;
+using BodyReport.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BodyReport.Services;
-using BodyReport.Data;
-using BodyReport.Manager;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 using System.Net;
-using BodyReport.ServiceLayers.Interfaces;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BodyReport.Framework
 {
@@ -169,7 +167,15 @@ namespace BodyReport.Framework
             return trainingDay;
         }
 
-        public static void SendEmailToAdmin(ApplicationDbContext dbContext, IUsersService usersService, IEmailSender emailSender, string subject, string message)
+        /// <summary>
+        /// Send Emailto Admin member
+        /// </summary>
+        /// <param name="usersService">user service</param>
+        /// <param name="emailSender">email sender</param>
+        /// <param name="subject">Subjet of mail</param>
+        /// <param name="message">Message of mail</param>
+        /// <returns></returns>
+        public static async Task SendEmailToAdminAsync(IUsersService usersService, IEmailSender emailSender, string subject, string message)
         {
             int totalRecords;
             var users = usersService.FindUsers(out totalRecords, null, true);
@@ -183,7 +189,7 @@ namespace BodyReport.Framework
                 {
                     try
                     {
-                        emailSender.SendEmailAsync(user.Email, subject, message);
+                        await emailSender.SendEmailAsync(user.Email, subject, message);
                     }
                     catch (Exception except)
                     {
