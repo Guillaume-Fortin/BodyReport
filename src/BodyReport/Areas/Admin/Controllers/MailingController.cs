@@ -87,7 +87,7 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             var user = _usersService.GetUser(new UserKey() { Id = SessionUserId });
             var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "Site", userId = user.Id, code = "nothing" }, protocol: HttpContext.Request.Scheme);
-            string reportData = await _reportService.CreateReportForResetUserPasswordAsync(this.ControllerContext, user.Id, callbackUrl);
+            string reportData = await _reportService.CreateReportForResetUserPasswordAsync(user.Id, callbackUrl);
             if(!preview)
                 await _emailSender.SendEmailAsync(user.Email, Translation.RESET_YOUR_PASSWORD, reportData);
             return new MailTestResult() { Result = true, MailData = reportData };
@@ -105,7 +105,7 @@ namespace BodyReport.Areas.Admin.Controllers
             var code = "1234567890123456789";
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
 
-            string reportData = await _reportService.CreateReportForConfirmUserAccountAsync(this.ControllerContext, user.Id, callbackUrl);
+            string reportData = await _reportService.CreateReportForConfirmUserAccountAsync(user.Id, callbackUrl);
             if (!preview)
                 await _emailSender.SendEmailAsync(user.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
             return new MailTestResult() { Result = true, MailData = reportData };
@@ -120,7 +120,7 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             var user = _usersService.GetUser(new UserKey() { Id = SessionUserId });
 
-            string reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+            string reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(user.Id);
             if (!preview)
                 await _emailSender.SendEmailAsync(user.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
             return new MailTestResult() { Result = true, MailData = reportData };
@@ -135,7 +135,7 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             var user = _usersService.GetUser(new UserKey() { Id = SessionUserId });
 
-            string reportData = await _reportService.CreateReportForUserAccountValidatedAsync(this.ControllerContext, user.Id);
+            string reportData = await _reportService.CreateReportForUserAccountValidatedAsync(user.Id);
             if (!preview)
                 await _emailSender.SendEmailAsync(user.Email, Translation.USER_ACCOUNT_VALIDATED, reportData);
             return new MailTestResult() { Result = true, MailData = reportData };

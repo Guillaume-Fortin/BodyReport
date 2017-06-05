@@ -196,7 +196,7 @@ namespace BodyReport.Areas.Api.Controllers
                         // Send an email with this link
                         var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(this.ControllerContext, user.Id, callbackUrl);
+                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(user.Id, callbackUrl);
                         await _emailSender.SendEmailAsync(registerAccount.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
                         //await _signInManager.SignInAsync(user, isPersistent: false);
                     }
@@ -205,7 +205,7 @@ namespace BodyReport.Areas.Api.Controllers
                         _logger.LogError(3, except, "can't send email ");
                     }
                     //SendEmail to admin
-                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(user.Id);
                     await ControllerUtils.SendEmailToAdminAsync(_usersService, _emailSender, "Nouvel utilisateur mobile", reportData);
                     return new OkObjectResult(true);
                 }

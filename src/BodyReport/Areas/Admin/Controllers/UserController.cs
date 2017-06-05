@@ -320,7 +320,7 @@ namespace BodyReport.Areas.Admin.Controllers
 
                     try
                     {
-                        string reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                        string reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(user.Id);
                         await _emailSender.SendEmailAsync(appUser.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
 
                         await _emailSender.SendEmailAsync(appUser.Email, "Account validated",

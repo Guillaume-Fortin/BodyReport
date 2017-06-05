@@ -178,7 +178,7 @@ namespace BodyReport.Areas.Site.Controllers
                         // Send an email with this link
                         var code = await _identityUserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(this.ControllerContext, user.Id, callbackUrl);
+                        reportData = await _reportService.CreateReportForConfirmUserAccountAsync(user.Id, callbackUrl);
                         await _emailSender.SendEmailAsync(model.Email, Translation.CONFIRM_USER_ACCOUNT, reportData);
                     }
                     catch (Exception except)
@@ -186,7 +186,7 @@ namespace BodyReport.Areas.Site.Controllers
                         _logger.LogError(0, except, "Can't send email");
                     }
                     //SendEmail to admin
-                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(this.ControllerContext, user.Id);
+                    reportData = await _reportService.CreateReportForAdminNewUserAccountCreatedAsync(user.Id);
                     await ControllerUtils.SendEmailToAdminAsync(_usersService, _emailSender, "Nouvel utilisateur site", reportData);
                     return RedirectToAction(nameof(AccountController.Login), "Account");
                 }
@@ -380,7 +380,7 @@ namespace BodyReport.Areas.Site.Controllers
                     // Send an email with this link
                     var code = await _identityUserManager.GeneratePasswordResetTokenAsync(user);
                     var callbackUrl = Url.Action("ResetPassword", "Account", new { area = "Site", userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    string reportData = await _reportService.CreateReportForResetUserPasswordAsync(this.ControllerContext, user.Id, callbackUrl);
+                    string reportData = await _reportService.CreateReportForResetUserPasswordAsync(user.Id, callbackUrl);
                     await _emailSender.SendEmailAsync(model.Email, Translation.FORGOT_PASSWORD, reportData);
                 }
                 catch (Exception except)
