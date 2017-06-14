@@ -80,6 +80,8 @@ namespace BodyReport.Areas.Admin.Controllers
                                 Name = bodyExercise.Name,
                                 ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName),
                                 MuscleId = bodyExercise.MuscleId,
+                                ExerciseCategoryType = (int)bodyExercise.ExerciseCategoryType,
+                                ExerciseUnitType = (int)bodyExercise.ExerciseUnitType,
                                 MuscleName = Resources.Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId))
                             });
                         }
@@ -95,6 +97,8 @@ namespace BodyReport.Areas.Admin.Controllers
         public IActionResult Create(string returnUrl = null)
         {
             ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), 0);
+            ViewBag.ExerciseCategories = ControllerUtils.CreateSelectExerciseCategoryTypeItemList(0);
+            ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList(0);
             return View(new BodyExerciseViewModel());
         }
 
@@ -105,7 +109,13 @@ namespace BodyReport.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var bodyExercise = new BodyExercise() { Name = bodyExerciseViewModel.Name, MuscleId = bodyExerciseViewModel.MuscleId };
+                var bodyExercise = new BodyExercise()
+                {
+                    Name = bodyExerciseViewModel.Name,
+                    MuscleId = bodyExerciseViewModel.MuscleId,
+                    ExerciseCategoryType = Utils.IntToEnum<TExerciseCategoryType>(bodyExerciseViewModel.ExerciseCategoryType),
+                    ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(bodyExerciseViewModel.ExerciseUnitType)
+                };
                 bodyExercise = _bodyExercisesService.CreateBodyExercise(bodyExercise);
                 if (bodyExercise == null || bodyExercise.Id == 0)
                 {
@@ -120,6 +130,8 @@ namespace BodyReport.Areas.Admin.Controllers
             }
             
             ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), 0);
+            ViewBag.ExerciseCategories = ControllerUtils.CreateSelectExerciseCategoryTypeItemList(0);
+            ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList(0);
 
             return View(bodyExerciseViewModel);
         }
@@ -140,9 +152,13 @@ namespace BodyReport.Areas.Admin.Controllers
                     bodyExerciseViewModel.Name = bodyExercise.Name;
                     bodyExerciseViewModel.MuscleId = bodyExercise.MuscleId;
                     bodyExerciseViewModel.MuscleName = Translation.GetInDB(MuscleTransformer.GetTranslationKey(bodyExercise.MuscleId));
+                    bodyExerciseViewModel.ExerciseCategoryType = (int)bodyExercise.ExerciseCategoryType;
+                    bodyExerciseViewModel.ExerciseUnitType = (int)bodyExercise.ExerciseUnitType;
                     bodyExerciseViewModel.ImageUrl = ImageUtils.GetImageUrl(_env.WebRootPath, "bodyexercises", bodyExercise.ImageName);
                     
                     ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), bodyExercise.MuscleId);
+                    ViewBag.ExerciseCategories = ControllerUtils.CreateSelectExerciseCategoryTypeItemList((int)bodyExercise.ExerciseCategoryType);
+                    ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList((int)bodyExercise.ExerciseUnitType);
 
                     return View(bodyExerciseViewModel);
                 }
@@ -165,6 +181,8 @@ namespace BodyReport.Areas.Admin.Controllers
                     string oldImageName = bodyExercise.ImageName;
                     bodyExercise.Name = bodyExerciseViewModel.Name;
                     bodyExercise.MuscleId = bodyExerciseViewModel.MuscleId;
+                    bodyExercise.ExerciseCategoryType = Utils.IntToEnum<TExerciseCategoryType>(bodyExerciseViewModel.ExerciseCategoryType);
+                    bodyExercise.ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(bodyExerciseViewModel.ExerciseUnitType);
                     bodyExercise = _bodyExercisesService.UpdateBodyExercise(bodyExercise);
                     //Save a new Image if it's correct
                     if (ImageUtils.CheckUploadedImageIsCorrect(imageFile, "png"))
@@ -176,11 +194,9 @@ namespace BodyReport.Areas.Admin.Controllers
                 }
             }
 
-            int muscleId = 0;
-            if (bodyExerciseViewModel != null)
-                muscleId = bodyExerciseViewModel.MuscleId;
-            
-            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), muscleId);
+            ViewBag.Muscles = ControllerUtils.CreateSelectMuscleItemList(_musclesService.FindMuscles(), bodyExerciseViewModel?.MuscleId ?? 0);
+            ViewBag.ExerciseCategories = ControllerUtils.CreateSelectExerciseCategoryTypeItemList(bodyExerciseViewModel?.ExerciseCategoryType ?? 0);
+            ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList(bodyExerciseViewModel?.ExerciseUnitType ?? 0);
 
             return View(bodyExerciseViewModel);
         }

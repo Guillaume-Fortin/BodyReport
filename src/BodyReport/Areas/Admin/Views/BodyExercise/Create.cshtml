@@ -20,6 +20,20 @@
         </div>
     </div>
     <div class="form-group">
+        <label asp-for="ExerciseCategoryType" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="ExerciseCategoryType" asp-items="ViewBag.ExerciseCategories"></select>
+            <span asp-validation-for="ExerciseCategoryType" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ExerciseUnitType" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="ExerciseUnitType" asp-items="ViewBag.ExerciseUnitTypes"></select>
+            <span asp-validation-for="ExerciseUnitType" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
         <label asp-for="Name" class="col-md-2 control-label"></label>
         <div class="col-md-10">
             <input asp-for="Name" class="form-control" />

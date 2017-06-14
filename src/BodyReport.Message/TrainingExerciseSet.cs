@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -94,6 +96,10 @@ namespace BodyReport.Message
         /// </summary>
         public double Weight { get; set; }
         /// <summary>
+        /// Execution time in second
+        /// </summary>
+        public int ExecutionTime { get; set; }
+        /// <summary>
 		/// Modification Date
 		/// </summary>
 		public DateTime ModificationDate
@@ -101,6 +107,15 @@ namespace BodyReport.Message
             get;
             set;
         }
+
+        /// <summary>
+        /// Version number of object for internal use
+        /// 0: initial value
+        /// 1: ExecutionTime values
+        /// </summary>
+        [DefaultValue(0)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)] // populate default value attribute if not present
+        public int ObjectVersionNumber { get; set; } = 1;
 
         public TrainingExerciseSet()
         { }
@@ -116,6 +131,7 @@ namespace BodyReport.Message
             copy.NumberOfSets = NumberOfSets;
             copy.NumberOfReps = NumberOfReps;
             copy.Weight = Weight;
+            copy.ExecutionTime = ExecutionTime;
             copy.ModificationDate = ModificationDate;
 
             return copy;

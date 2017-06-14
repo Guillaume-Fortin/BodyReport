@@ -46,6 +46,21 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
             result.BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo);
             result.EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo);
 
+            if(trainingDay.TrainingExercises != null)
+            {
+                foreach (var trainingExercise in trainingDay.TrainingExercises)
+                {
+                    if (result.RegroupExerciseUnitType == null)
+                        result.RegroupExerciseUnitType = trainingExercise.ExerciseUnitType;
+                    else if (result.RegroupExerciseUnitType != trainingExercise.ExerciseUnitType)
+                    {
+                        result.RegroupExerciseUnitType = null; // Mixt, stop foreach
+                        break;
+                    }
+                }
+            }
+            
+
             return result;
         }
 
@@ -62,6 +77,7 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
                 TrainingDayId = trainingExercise.TrainingDayId,
                 TrainingExerciseId = trainingExercise.Id,
                 BodyExerciseId = trainingExercise.BodyExerciseId,
+                ExerciseUnitType = (int)trainingExercise.ExerciseUnitType,
                 RestTime = trainingExercise.RestTime,
                 EccentricContractionTempo = trainingExercise.EccentricContractionTempo,
                 StretchPositionTempo = trainingExercise.StretchPositionTempo,
@@ -75,7 +91,12 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
             if (trainingExercise.TrainingExerciseSets != null)
             {
                 foreach (var set in trainingExercise.TrainingExerciseSets)
-                    viewModel.TupleSetReps.Add(new Tuple<int, int, double>(set.NumberOfSets, set.NumberOfReps, set.Weight));
+                {
+                    viewModel.TupleSetReps.Add(new Tuple<int, int, double>(
+                        set.NumberOfSets,
+                        trainingExercise.ExerciseUnitType == TExerciseUnitType.RepetitionNumber ? set.NumberOfReps : set.ExecutionTime,
+                        set.Weight));
+                }
             }
 
             return viewModel;

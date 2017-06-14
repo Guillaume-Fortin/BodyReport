@@ -26,6 +26,10 @@ namespace BodyReport.Crud.Transformer
                 row.ConcentricContractionTempo = bean.ConcentricContractionTempo;
                 row.ContractedPositionTempo = bean.ContractedPositionTempo;
             }
+            if (bean.ObjectVersionNumber > 1) // Retrocompatibility
+            {
+                row.ExerciseUnitType = (int)bean.ExerciseUnitType;
+            }
             row.ModificationDate = DbUtils.DateToUtc(Utils.DateTimeWithoutMs); // Set modificationDate
         }
 
@@ -48,6 +52,7 @@ namespace BodyReport.Crud.Transformer
             bean.ConcentricContractionTempo = row.ConcentricContractionTempo.HasValue ? row.ConcentricContractionTempo.Value : 0;
             bean.ContractedPositionTempo = row.ContractedPositionTempo.HasValue ? row.ContractedPositionTempo.Value : 0;
             bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
+            bean.ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(row.ExerciseUnitType ?? (int)TExerciseUnitType.RepetitionNumber);
             return bean;
         }
     }

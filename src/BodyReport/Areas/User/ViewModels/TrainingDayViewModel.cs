@@ -39,5 +39,10 @@ namespace BodyReport.Areas.User.ViewModels
         [DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true, NullDisplayText = "00:00")]
         [DataType(DataType.Time)]
         public DateTime EndHour { get; set; }
+
+        /// <summary>
+        /// null = mixte, 0=RepetitionNumber, 1=Time
+        /// </summary>
+        public TExerciseUnitType? RegroupExerciseUnitType { get; set; }
     }
 }

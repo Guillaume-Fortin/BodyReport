@@ -33,6 +33,10 @@ namespace BodyReport.Areas.User.ViewModels
         public int BodyExerciseId { get; set; }
 
         [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.EXERCISE_UNIT_TYPE, ResourceType = typeof(Translation))]
+        public int ExerciseUnitType { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
         [Range(0, 300, ErrorMessageResourceName = TRS.THE_FIELD_P0_SHOULD_BE_A_NUMBER_BETWEEN_P1_AND_P2, ErrorMessageResourceType = typeof(Translation))]
         [Display(Name = TRS.REST_TIME, ResourceType = typeof(Translation))]
         public int RestTime { get; set; }
@@ -68,6 +72,10 @@ namespace BodyReport.Areas.User.ViewModels
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public List<double?> Weights { get; set; } = new List<double?>();
+
+        [Display(Name = TRS.EXECUTION_TIME, ResourceType = typeof(Translation))]
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public List<int?> ExecutionTimes { get; set; } = new List<int?>();
 
         [Display(Name = TRS.NAME, ResourceType = typeof(Translation))]
         public string BodyExerciseName { get; set; }

@@ -25,6 +25,14 @@ namespace BodyReport.ViewModels.Admin
         [Display(Name = TRS.MUSCLE, ResourceType = typeof(Translation))]
         public string MuscleName { get; set; } = string.Empty;
 
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.EXERCISE_CATEGORY_TYPE, ResourceType = typeof(Translation))]
+        public int ExerciseCategoryType { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.EXERCISE_UNIT_TYPE, ResourceType = typeof(Translation))]
+        public int ExerciseUnitType { get; set; }
+
         [Display(Name = TRS.IMAGE, ResourceType = typeof(Translation))]
         public string ImageUrl { get; set; } = string.Empty;
     }

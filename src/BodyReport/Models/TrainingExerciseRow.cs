@@ -59,12 +59,16 @@ namespace BodyReport.Models
         /// </summary>
         public int? ContractedPositionTempo { get; set; }
         /// <summary>
-		/// Modification Date
-		/// </summary>
-		public DateTime ModificationDate
+        /// Modification Date
+        /// </summary>
+        public DateTime ModificationDate
         {
             get;
             set;
         }
+        /// <summary>
+        /// Exercise Unit Type
+        /// </summary>
+        public int? ExerciseUnitType { get; set; }
     }
 }

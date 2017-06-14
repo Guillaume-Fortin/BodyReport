@@ -195,5 +195,13 @@
   "SEND": "Send",
   "CONFIRM_USER_ACCOUNT": "Confirm user account",
   "USER_ACCOUNT_VALIDATED": "User account validated",
-  "CONFIDENTIALITY_RULES": "Confidentiality rules"
+  "CONFIDENTIALITY_RULES": "Confidentiality rules",
+  "EXERCISE_CATEGORY_TYPE": "Excercise category type",
+  "EXERCISE_UNIT_TYPE": "Excercise unit type",
+  "BODYBUILDING": "Bodybuilding",
+  "FITNESS": "Fitness",
+  "TIME": "Time",
+  "REPETITION_NUMBER": "Repetition number",
+  "EXECUTION_TIME": "Execution time",
+  "OR": "or"
 }

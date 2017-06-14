@@ -10,9 +10,22 @@ namespace BodyReport.Message
         MAN = 0, WOMAN = 1
     }
 
-    public enum TExerciseType
+    /// <summary>
+    /// Exercise Category Type
+    /// </summary>
+    public enum TExerciseCategoryType
     {
+        Bodybuilding = 0,
+        Fitness = 1
+    }
 
+    /// <summary>
+    /// Repetition number or time (second/minutes)
+    /// </summary>
+    public enum TExerciseUnitType
+    {
+        RepetitionNumber = 0,
+        Time = 1
     }
 
     public enum TUnitType

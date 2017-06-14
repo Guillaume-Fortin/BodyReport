@@ -977,6 +977,45 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Confidentiality rules")]
         public const string CONFIDENTIALITY_RULES = "CONFIDENTIALITY_RULES";
-
+        /// <summary>
+		/// Excercise category type
+		/// </summary>
+		[Translation("Excercise category type")]
+        public const string EXERCISE_CATEGORY_TYPE = "EXERCISE_CATEGORY_TYPE";
+        /// <summary>
+		/// Excercise unit type
+		/// </summary>
+		[Translation("Excercise unit type")]
+        public const string EXERCISE_UNIT_TYPE = "EXERCISE_UNIT_TYPE";
+        /// <summary>
+		/// Bodybuilding
+		/// </summary>
+		[Translation("Bodybuilding")]
+        public const string BODYBUILDING = "BODYBUILDING";
+        /// <summary>
+		/// Fitness
+		/// </summary>
+		[Translation("Fitness")]
+        public const string FITNESS = "FITNESS";
+        /// <summary>
+		/// Time
+		/// </summary>
+		[Translation("Time")]
+        public const string TIME = "TIME";
+        /// <summary>
+		/// Repetition number
+		/// </summary>
+		[Translation("Repetition number")]
+        public const string REPETITION_NUMBER = "REPETITION_NUMBER";
+        /// <summary>
+		/// Execution time
+		/// </summary>
+		[Translation("Execution time")]
+        public const string EXECUTION_TIME = "EXECUTION_TIME";
+        /// <summary>
+		/// or
+		/// </summary>
+		[Translation("or")]
+        public const string OR = "OR";
     }
 }

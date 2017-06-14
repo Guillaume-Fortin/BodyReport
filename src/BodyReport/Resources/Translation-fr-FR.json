@@ -193,5 +193,13 @@
   "SEND": "Envoyer",
   "CONFIRM_USER_ACCOUNT": "Confirmer le compte utilisateur",
   "USER_ACCOUNT_VALIDATED": "Compte utilisateur validé",
-  "CONFIDENTIALITY_RULES": "Règles de confidentialité"
+  "CONFIDENTIALITY_RULES": "Règles de confidentialité",
+  "EXERCISE_CATEGORY_TYPE": "Type de catégorie d'exercice",
+  "EXERCISE_UNIT_TYPE": "Type d'unité d'exercice",
+  "BODYBUILDING": "Musculation",
+  "FITNESS": "Fitness",
+  "TIME": "Temps",
+  "REPETITION_NUMBER": "Nombre de répétitions",
+  "EXECUTION_TIME": "Temps d'execution",
+  "OR": "ou"
 }

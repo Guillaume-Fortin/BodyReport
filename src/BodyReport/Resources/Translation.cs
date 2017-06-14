@@ -298,5 +298,13 @@ namespace BodyReport.Resources
         public static string SEND { get { return Get(TRS.SEND); } }
         public static string CONFIRM_USER_ACCOUNT { get { return Get(TRS.CONFIRM_USER_ACCOUNT); } }
         public static string USER_ACCOUNT_VALIDATED { get { return Get(TRS.USER_ACCOUNT_VALIDATED); } }
+        public static string EXERCISE_CATEGORY_TYPE { get { return Get(TRS.EXERCISE_CATEGORY_TYPE); } }
+        public static string EXERCISE_UNIT_TYPE { get { return Get(TRS.EXERCISE_UNIT_TYPE); } }
+        public static string BODYBUILDING { get { return Get(TRS.BODYBUILDING); } }
+        public static string FITNESS { get { return Get(TRS.FITNESS); } }
+        public static string TIME { get { return Get(TRS.TIME); } }
+        public static string REPETITION_NUMBER { get { return Get(TRS.REPETITION_NUMBER); } }
+        public static string EXECUTION_TIME { get { return Get(TRS.EXECUTION_TIME); } }
+        public static string OR { get { return Get(TRS.OR); } }
     }
 }

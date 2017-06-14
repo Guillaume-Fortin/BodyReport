@@ -2,9 +2,10 @@
 @using BodyReport.Framework
 @using System.Linq
 
+
 @{
     string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
-    
+
     if (ViewBag.ViewerUnit == (int)TUnitType.Imperial)
     {
         weightUnit = Translation.POUND;
@@ -49,6 +50,45 @@
 }
 
 
+@functions
+{
+    string GetRegroupExerciseUnitTypeTitle(TExerciseUnitType? regroupExerciseUnitType)
+    {
+        if (regroupExerciseUnitType.HasValue)
+        {
+            if (regroupExerciseUnitType.Value == TExerciseUnitType.RepetitionNumber)
+                return Translation.REPS;
+            else
+                return Translation.EXECUTION_TIME;
+        }
+        else
+            return $"<br/>({Translation.REPS} {Translation.OR} <br/>{Translation.EXECUTION_TIME})";
+    }
+
+    string FormatRepOrTime(TExerciseUnitType? regroupExerciseUnitType, int repOrExecutionTime, int unit)
+    {
+        if (unit == (int)TExerciseUnitType.Time)
+        {
+            int nbMinute = repOrExecutionTime / 60;
+            int nbSecond = repOrExecutionTime - nbMinute * 60;
+            if (nbMinute > 0 && nbSecond == 0)
+                return $"{nbMinute} min";
+            if (nbMinute > 0 && nbSecond > 0)
+                return $"{nbMinute} min {nbSecond}";
+            else
+                return $"{nbSecond} sec";
+        }
+
+        if (!regroupExerciseUnitType.HasValue) // Multiple unit
+        {
+            if (unit == (int)TExerciseUnitType.RepetitionNumber)
+                return $"{repOrExecutionTime} rep";
+        }
+        return repOrExecutionTime.ToString();
+    }
+}
+
+
 <h2>@Translation.TRAINING_WEEK.</h2>
 
 <p>@date</p>
@@ -74,7 +114,7 @@
             <dd>
                 @Model.Item1.UserWeight
             </dd>
-         </dl>
+        </dl>
     </div>
 </div>
 <p>
@@ -109,42 +149,44 @@
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-               @foreach (var dayOfWeek in dayOfWeekList)
-               {
-                   if (dayOfWeek != ViewBag.CurrentDayOfWeek)
-                   {
+                @foreach (var dayOfWeek in dayOfWeekList)
+                {
+                    if (dayOfWeek != ViewBag.CurrentDayOfWeek)
+                    {
+                        <li>
+                            <a href="@Url.Action("SwitchTrainingDay", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeek = (int)ViewBag.CurrentDayOfWeek, dayOfWeekSelected = (int)dayOfWeek })">
+                                @Translation.Get((dayOfWeek).ToString().ToUpper())
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+
+        @if (currentTrainingDayList.Count > 0)
+        {
+
+            <div class="btn-group" role="group">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    @Translation.PRINT
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li>
-                        <a href="@Url.Action("SwitchTrainingDay", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeek = (int)ViewBag.CurrentDayOfWeek, dayOfWeekSelected = (int)dayOfWeek })">
-                            @Translation.Get((dayOfWeek).ToString().ToUpper())</a>
+                        <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true">@Translation.PRINT_WITH_IMAGES</a>
                     </li>
-                   }
-               }
-            </ul>
-        </div>
-		@if (currentTrainingDayList.Count > 0)
-		{
-		<div class="btn-group" role="group">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                @Translation.PRINT
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     <li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true">@Translation.PRINT_WITH_IMAGES</a>
-					</li>
-					<li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false">@Translation.PRINT_WITHOUT_IMAGES</a>
-					</li>
-					<li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITH_IMAGES</a>
-				   	</li>
-					<li>
-						<a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITHOUT_IMAGES</a>
-				   	</li>
-            </ul>
-        </div>
-		}
-        </div>
+                        <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Index" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false">@Translation.PRINT_WITHOUT_IMAGES</a>
+                    </li>
+                    <li>
+                        <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="true" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITH_IMAGES</a>
+                    </li>
+                    <li>
+                        <a asp-area="Report" asp-controller="TrainingDayReport" asp-action="Pdf" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)" asp-route-displayImages="false" asp-route-userIdViewer="@ViewBag.UserIdViewer">@Translation.PDF_WITHOUT_IMAGES</a>
+                    </li>
+                </ul>
+            </div>}
+    </div>
 </p>
 
 
@@ -162,26 +204,28 @@ else
 {
     @if (ViewBag.Editable)
     {
-		<p>
+
+        <p>
             <a asp-action="CreateTrainingDay" asp-route-userId="@Model.Item1.UserId" asp-route-year="@Model.Item1.Year" asp-route-weekOfYear="@Model.Item1.WeekOfYear" asp-route-dayOfWeek="@((int)ViewBag.CurrentDayOfWeek)">@Translation.CREATE</a>
-		</p>
+
+        </p>
     }
 
     @foreach (TrainingDayViewModel trainingDay in currentTrainingDayList)
     {
         <div class="panel panel-info">
             <div class="panel-heading">
-               @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
-               @if (ViewBag.Editable)
-               {
-                 <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT</a>
-                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="DeleteTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.DELETE]</a>
-               }
+                @Translation.FROM @Html.DisplayFor(modelItem => trainingDay.BeginHour) @Translation.TO @Html.DisplayFor(modelItem => trainingDay.EndHour)
+                @if (ViewBag.Editable)
+                {
+                    <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="EditTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">[@Translation.EDIT</a>
+                    <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="DeleteTrainingDay" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.DELETE]</a>
+                }
             </div>
             <div class="panel-body">
                 @if (ViewBag.Editable)
                 {
-                <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="AddTrainingExercises" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.ADD_EXERCISES</a>
+                    <a asp-route-area="User" asp-controller="TrainingJournal" asp-action="AddTrainingExercises" asp-route-userId="@trainingDay.UserId" asp-route-year="@trainingDay.Year" asp-route-weekOfYear="@trainingDay.WeekOfYear" asp-route-dayOfWeek="@trainingDay.DayOfWeek" asp-route-trainingDayId="@trainingDay.TrainingDayId">@Translation.ADD_EXERCISES</a>
                 }
                 <div>
                     <table class="table">
@@ -190,86 +234,86 @@ else
                                 Image
                             </th>
                             <th>
-                               @Translation.BODY_EXERCISES
+                                @Translation.BODY_EXERCISES
                             </th>
                             <th>
-                                @Translation.SETS / @Translation.REPS
+                                @Translation.SETS / @Html.Raw(GetRegroupExerciseUnitTypeTitle(trainingDay.RegroupExerciseUnitType))
                             </th>
                             <th>
-                                @Translation.WEIGHT<br/>(@weightUnit)
-                            </th>
-                            <th>
-                                @Translation.TEMPO<br/>(sec)
+                                @Translation.WEIGHT <br /> (@weightUnit)
                             </th>
                             <th>
                                 @Translation.REST_TIME<br />(sec)
                             </th>
+                            <th>
+                                @Translation.TEMPO<br />(sec)
+                            </th>
                             @if (ViewBag.Editable)
                             {
-                            <th>
-                                @Translation.ACTION
-                            </th>
+                                <th>
+                                    @Translation.ACTION
+                                </th>
                             }
                         </tr>
 
                         @if (Model.Item3 != null)
                         {
-                            @for(int i=0; i < Model.Item3.Count; i++)
+                            @for (int i = 0; i < Model.Item3.Count; i++)
                             {
                                 TrainingExerciseViewModel trainingExercise = Model.Item3[i];
-                                @if(trainingDay.TrainingDayId == trainingExercise.TrainingDayId)
+                                @if (trainingDay.TrainingDayId == trainingExercise.TrainingDayId)
                                 {
-                                <tr>
-                                    <td>
-                                        <img src="@trainingExercise.BodyExerciseImage" style="height:100px; width:100px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
-                                    </td>
-                                    <td>
-                                        @trainingExercise.BodyExerciseName
-                                    </td>
-                                    <td>
-                                        @if (trainingExercise.TupleSetReps != null)
-                                        {
+                                    <tr>
+                                        <td>
+                                            <img src="@trainingExercise.BodyExerciseImage" style="height:100px; width:100px" id="bodyExerciseImage" class="bodyExerciseImage" onerror='this.style.display="none"' />
+                                        </td>
+                                        <td>
+                                            @trainingExercise.BodyExerciseName
+                                        </td>
+                                        <td>
+                                            @if (trainingExercise.TupleSetReps != null)
+                                            {
+                                                @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
+                                                {  // Set * (Rep or time)
+                                                    @tupleSetRep.Item1 @: x @FormatRepOrTime(trainingDay.RegroupExerciseUnitType, tupleSetRep.Item2, trainingExercise.ExerciseUnitType)<br />
+                                                }
+                                            }
+                                        </td>
+                                        <td>
                                             @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
                                             {
-                                                @tupleSetRep.Item1 @: x @tupleSetRep.Item2<br/>
+                                                @Math.Round(tupleSetRep.Item3, 3) <br />
                                             }
-                                        }
-                                    </td>
-                                    <td>
-                                        @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
-                                        {
-                                            @Math.Round(tupleSetRep.Item3, 3)<br />
-                                        }
-                                    </td>
-                                    <td>
-                                        @trainingExercise.RestTime
-                                    </td>
+                                        </td>
+                                        <td>
+                                            @trainingExercise.RestTime
+                                        </td>
 
-                                    <td>
-                                        @trainingExercise.EccentricContractionTempo - @trainingExercise.StretchPositionTempo - @trainingExercise.ConcentricContractionTempo - @trainingExercise.ContractedPositionTempo
-                                    </td>
+                                        <td>
+                                            @trainingExercise.EccentricContractionTempo - @trainingExercise.StretchPositionTempo - @trainingExercise.ConcentricContractionTempo - @trainingExercise.ContractedPositionTempo
+                                        </td>
 
-                                    @if (ViewBag.Editable)
-                                    {
-                                    <td>
-                                        @if (i > 0)
+                                        @if (ViewBag.Editable)
                                         {
-                                        <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-upward="true">
-                                            <img src="/images/btn_up.png" width="25" />
-                                        </a> 
+                                            <td>
+                                                @if (i > 0)
+                                                {
+                                                    <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-upward="true">
+                                                        <img src="/images/btn_up.png" width="25" />
+                                                    </a>
+                                                }
+                                                @if (i != Model.Item3.Count - 1)
+                                                {
+                                                    <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-downward="true">
+                                                        <img src="/images/btn_down.png" width="25" />
+                                                    </a>
+                                                }
+                                                <br /><br />
+                                                <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.EDIT</a> |
+                                                <a asp-action="DeleteTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.DELETE</a>
+                                            </td>
                                         }
-                                        @if (i != Model.Item3.Count - 1)
-                                        {
-                                            <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId" asp-route-downward="true">
-                                                <img src="/images/btn_down.png" width="25" />
-                                            </a>
-                                        }
-                                        <br /><br />
-                                        <a asp-action="EditTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.EDIT</a> |
-                                        <a asp-action="DeleteTrainingExercise" asp-route-userId="@trainingExercise.UserId" asp-route-year="@trainingExercise.Year" asp-route-weekOfYear="@trainingExercise.WeekOfYear" asp-route-dayOfWeek="@trainingExercise.DayOfWeek" asp-route-trainingDayId="@trainingExercise.TrainingDayId" asp-route-trainingExerciseId="@trainingExercise.TrainingExerciseId">@Translation.DELETE</a>
-                                    </td>
-                                    }
-                                </tr>
+                                    </tr>
                                 }
                             }
                         }

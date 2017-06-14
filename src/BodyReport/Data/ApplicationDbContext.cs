@@ -53,6 +53,9 @@ namespace BodyReport.Data
 
             var bodyExerciseTable = builder.Entity<BodyExerciseRow>().ToTable("BodyExercise");
             bodyExerciseTable.Property(p => p.Id).ValueGeneratedNever();
+            bodyExerciseTable.Property(p => p.MuscleId).ValueGeneratedNever();
+            bodyExerciseTable.Property(p => p.ExerciseCategoryType).ValueGeneratedNever();
+            bodyExerciseTable.Property(p => p.ExerciseUnitType).ValueGeneratedNever();
             bodyExerciseTable.HasKey(s => new { s.Id });
 
             var muscleTable = builder.Entity<MuscleRow>().ToTable("Muscle");
@@ -96,15 +99,16 @@ namespace BodyReport.Data
             trainingDayTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
             trainingDayTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId });
 
-            var trainingJournalExerciseTable = builder.Entity<TrainingExerciseRow>().ToTable("TrainingExercise");
-            trainingJournalExerciseTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
-            trainingJournalExerciseTable.Property(p => p.Year).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.Id).ValueGeneratedNever();
-            trainingJournalExerciseTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
-            trainingJournalExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.Id });
+            var trainingExerciseTable = builder.Entity<TrainingExerciseRow>().ToTable("TrainingExercise");
+            trainingExerciseTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
+            trainingExerciseTable.Property(p => p.Year).ValueGeneratedNever();
+            trainingExerciseTable.Property(p => p.WeekOfYear).ValueGeneratedNever();
+            trainingExerciseTable.Property(p => p.DayOfWeek).ValueGeneratedNever();
+            trainingExerciseTable.Property(p => p.TrainingDayId).ValueGeneratedNever();
+            trainingExerciseTable.Property(p => p.Id).ValueGeneratedNever();
+            trainingExerciseTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
+            trainingExerciseTable.Property(p => p.ExerciseUnitType).ValueGeneratedNever();
+            trainingExerciseTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.Id });
 
             var trainingExerciseSetTable = builder.Entity<TrainingExerciseSetRow>().ToTable("TrainingExerciseSet");
             trainingExerciseSetTable.Property(p => p.UserId).ValueGeneratedNever().HasMaxLength(450);
@@ -115,6 +119,7 @@ namespace BodyReport.Data
             trainingExerciseSetTable.Property(p => p.TrainingExerciseId).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.Id).ValueGeneratedNever();
             trainingExerciseSetTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
+            trainingExerciseSetTable.Property(p => p.ExecutionTime).ValueGeneratedNever();
             trainingExerciseSetTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId, t.TrainingExerciseId, t.Id });
         }
 

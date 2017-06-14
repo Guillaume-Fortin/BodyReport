@@ -110,15 +110,20 @@ namespace BodyReport.Message
             get;
             set;
         }
+        /// <summary>
+        /// Exercise Unit Type
+        /// </summary>
+        public TExerciseUnitType ExerciseUnitType { get; set; }
 
         /// <summary>
         /// Version number of object for internal use
         /// 0: initial value
         /// 1: tempo values
+        /// 2: Exercise unit type
         /// </summary>
         [DefaultValue(0)]
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)] // poupalte default value attribute if not present
-        public int ObjectVersionNumber { get; set; } = 1;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)] // populate default value attribute if not present
+        public int ObjectVersionNumber { get; set; } = 2;
 
         public List<TrainingExerciseSet> TrainingExerciseSets { get; set; }
 
@@ -135,7 +140,12 @@ namespace BodyReport.Message
             var copy = new TrainingExercise(this);
             copy.BodyExerciseId = BodyExerciseId;
             copy.RestTime = RestTime;
+            copy.EccentricContractionTempo = EccentricContractionTempo;
+            copy.StretchPositionTempo = StretchPositionTempo;
+            copy.ConcentricContractionTempo = ConcentricContractionTempo;
+            copy.ContractedPositionTempo = ContractedPositionTempo;
             copy.ModificationDate = ModificationDate;
+            copy.ExerciseUnitType = ExerciseUnitType;
             if (TrainingExerciseSets != null)
             {
                 copy.TrainingExerciseSets = new List<TrainingExerciseSet>();

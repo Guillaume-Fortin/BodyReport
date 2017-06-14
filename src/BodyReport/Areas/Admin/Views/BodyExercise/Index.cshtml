@@ -1,8 +1,26 @@
 ﻿@model IEnumerable<BodyExerciseViewModel>
 @{
     ViewData["Title"] = Translation.BODY_EXERCISES;
+    
 }
 
+@functions {
+    string GetExerciseCategoryTypeTR(TExerciseCategoryType categoryType)
+    {
+        if (categoryType == TExerciseCategoryType.Fitness)
+            return Translation.FITNESS;
+        else
+            return Translation.BODYBUILDING;
+    }
+
+    string GetExerciseUnitTypeTR(TExerciseUnitType unitType)
+    {
+        if (unitType == TExerciseUnitType.Time)
+            return Translation.TIME;
+        else
+            return Translation.REPETITION_NUMBER;
+    }
+}
 <h2>@Translation.ADMIN : @ViewData["Title"].</h2>
 
 <p>
@@ -18,6 +36,12 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.MuscleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExerciseCategoryType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExerciseUnitType)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ImageUrl)
@@ -36,6 +60,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MuscleName)
+            </td>
+            <td>
+                @GetExerciseCategoryTypeTR((TExerciseCategoryType)item.ExerciseCategoryType)
+            </td>
+            <td>
+                @GetExerciseUnitTypeTR((TExerciseUnitType)item.ExerciseUnitType)
             </td>
             <td>
                 <img src="@item.ImageUrl" width="120" height="80"/>

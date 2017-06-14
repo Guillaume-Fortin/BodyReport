@@ -50,6 +50,44 @@
     }
 }
 
+@functions
+{
+    string GetRegroupExerciseUnitTypeTitle(TExerciseUnitType? regroupExerciseUnitType)
+    {
+        if (regroupExerciseUnitType.HasValue)
+        {
+            if (regroupExerciseUnitType.Value == TExerciseUnitType.RepetitionNumber)
+                return Translation.REPS;
+            else
+                return Translation.EXECUTION_TIME;
+        }
+        else
+            return $"<br/>({Translation.REPS} {Translation.OR} <br/>{Translation.EXECUTION_TIME})";
+    }
+
+    string FormatRepOrTime(TExerciseUnitType? regroupExerciseUnitType, int repOrExecutionTime, int unit)
+    {
+        if (unit == (int)TExerciseUnitType.Time)
+        {
+            int nbMinute = repOrExecutionTime / 60;
+            int nbSecond = repOrExecutionTime - nbMinute * 60;
+            if (nbMinute > 0 && nbSecond == 0)
+                return $"{nbMinute} min";
+            if (nbMinute > 0 && nbSecond > 0)
+                return $"{nbMinute} min {nbSecond}";
+            else
+                return $"{nbSecond} sec";
+        }
+
+        if (!regroupExerciseUnitType.HasValue) // Multiple unit
+        {
+            if (unit == (int)TExerciseUnitType.RepetitionNumber)
+                return $"{repOrExecutionTime} rep";
+        }
+        return repOrExecutionTime.ToString();
+    }
+}
+
 <table border="0" style="margin:8px">
     <thead>
         <tr>
@@ -87,15 +125,15 @@
                                 @Translation.BODY_EXERCISES
                             </th>
                             <th>
-                                @Translation.SETS / @Translation.REPS
+                                @Translation.SETS / @Html.Raw(GetRegroupExerciseUnitTypeTitle(trainingDay.RegroupExerciseUnitType))
                             </th>
                             <th>
-                                @Translation.WEIGHT (@weightUnit)
+                                @Translation.WEIGHT <br /> (@weightUnit)
                             </th>
                             <th>
-                                @Translation.REST_TIME (sec)
+                                @Translation.REST_TIME <br />(sec)
                             </th>
-                            <th>@Translation.TEMPO (sec)</th>
+                            <th>@Translation.TEMPO <br />(sec)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,8 +159,8 @@
                                             {
                                                 @foreach (Tuple<int, int, double> tupleSetRep in trainingExercise.TupleSetReps)
                                                 {
-                                                    @tupleSetRep.Item1 @: x @tupleSetRep.Item2<br />
-                            }
+                                                   @tupleSetRep.Item1 @: x @FormatRepOrTime(trainingDay.RegroupExerciseUnitType, tupleSetRep.Item2, trainingExercise.ExerciseUnitType)<br />
+                                                }
                                             }
                                         </td>
                                         <td>

@@ -82,25 +82,49 @@
         </div>
     </div>
 
-    @if (Model.Reps != null && Model.Weights != null)
+    <div class="form-group">
+        <label asp-for="ExerciseUnitType" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="ExerciseUnitType" asp-items="ViewBag.ExerciseUnitTypes" onchange="this.form.submit();"></select>
+            <span asp-validation-for="ExerciseUnitType" class="text-danger"></span>
+        </div>
+    </div>
+
+    @if ((Model.Reps != null || Model.ExecutionTimes != null) && Model.Weights != null)
     {
         <div class="form-group">
             <div class="col-md-12">
                 <table class="table">
                     <tr>
                         <th>
-                            @Translation.REPS
+                            @if (Model.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber)
+                            {
+                                @:@Translation.REPS
+                            }
+                            else
+                            {
+                                @:@Translation.EXECUTION_TIME (sec)
+                            }
                         </th>
                         <th>
                             @Translation.WEIGHT (@weightUnit)
                         </th>
                     </tr>
-
-                    @for (int i = 0; i < Model.Reps.Count; i++)
+                    @{
+                        int nbLines = (Model.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber) ? Model.Reps.Count : Model.ExecutionTimes.Count;
+                    }
+                    @for (int i = 0; i < nbLines; i++)
                     {
                     <tr>
                         <td>
-                            <input asp-for="@Model.Reps[i]" class="form-control" />
+                            @if (Model.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber)
+                            {
+                                <input asp-for="@Model.Reps[i]" class="form-control" />
+                            }
+                            else
+                            {
+                                <input asp-for="@Model.ExecutionTimes[i]" class="form-control" />
+                            }
                         </td>
                         <td>
                             <input asp-for="@Model.Weights[i]" class="form-control" />
@@ -109,9 +133,9 @@
 
                     <tr>
                         <td>
-                            @if (i == (Model.Reps.Count - 1))
+                            @if (i == (nbLines - 1))
                             {
-                                @if (Model.Reps.Count < 10)
+                                @if (nbLines < 10)
                                 {
                                 <button type="submit" name="buttonType" value="addRep" class="btn btn-default">@Translation.ADD_REPS</button>
                                 }

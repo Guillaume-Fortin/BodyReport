@@ -109,6 +109,22 @@ namespace BodyReport.Framework
             return result;
         }
 
+        public static List<SelectListItem> CreateSelectExerciseCategoryTypeItemList(int categoryType)
+        {
+            var result = new List<SelectListItem>();
+            result.Add(new SelectListItem { Text = Translation.BODYBUILDING, Value = ((int)TExerciseCategoryType.Bodybuilding).ToString(), Selected = categoryType == (int)TExerciseCategoryType.Bodybuilding });
+            result.Add(new SelectListItem { Text = Translation.FITNESS, Value = ((int)TExerciseCategoryType.Fitness).ToString(), Selected = categoryType == (int)TExerciseCategoryType.Fitness });
+            return result;
+        }
+
+        public static List<SelectListItem> CreateSelectExerciseUnitTypeItemList(int unitType)
+        {
+            var result = new List<SelectListItem>();
+            result.Add(new SelectListItem { Text = Translation.REPETITION_NUMBER, Value = ((int)TExerciseUnitType.RepetitionNumber).ToString(), Selected = unitType == (int)TExerciseUnitType.RepetitionNumber });
+            result.Add(new SelectListItem { Text = Translation.TIME, Value = ((int)TExerciseUnitType.Time).ToString(), Selected = unitType == (int)TExerciseUnitType.Time });
+            return result;
+        }
+
         public static List<SelectListItem> CreateSelectCountryItemList(List<Country> countryList, int userCountryId)
         {
             var result = new List<SelectListItem>();

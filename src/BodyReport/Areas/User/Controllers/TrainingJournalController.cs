@@ -775,8 +775,10 @@ namespace BodyReport.Areas.User.Controllers
                     maxId = trainingDay.TrainingExercises.Max(t => t.Id) + 1;
                 TrainingExercise trainingExercise;
                 var bodyExerciseSelectedList = viewModel.BodyExerciseList.Where(b => b.Selected == true);
-                foreach (var bodyExercise in bodyExerciseSelectedList)
+                BodyExercise bodyExercise;
+                foreach (var bodyExerciseSelected in bodyExerciseSelectedList)
                 {
+                    bodyExercise = _bodyExercisesService.GetBodyExercise(new BodyExerciseKey() { Id = bodyExerciseSelected.Id });
                     //Only manage add in this page
                     trainingExercise = new TrainingExercise()
                     {
@@ -786,12 +788,13 @@ namespace BodyReport.Areas.User.Controllers
                         DayOfWeek = viewModel.DayOfWeek,
                         TrainingDayId = viewModel.TrainingDayId,
                         Id = maxId,
-                        BodyExerciseId = bodyExercise.Id,
+                        BodyExerciseId = bodyExerciseSelected.Id,
                         RestTime = 0,
                         EccentricContractionTempo = 1,
                         StretchPositionTempo = 0,
                         ConcentricContractionTempo = 1,
-                        ContractedPositionTempo = 0
+                        ContractedPositionTempo = 0,
+                        ExerciseUnitType = bodyExercise?.ExerciseUnitType ?? TExerciseUnitType.RepetitionNumber
                     };
                     trainingDay.TrainingExercises.Add(trainingExercise);
                     maxId++;
@@ -939,8 +942,6 @@ namespace BodyReport.Areas.User.Controllers
                 return actionResult;
             }
 
-            ViewBag.UserUnit = GetUserUnit(userId);
-            
             var key = new TrainingExerciseKey()
             {
                 UserId = userId,
@@ -956,22 +957,25 @@ namespace BodyReport.Areas.User.Controllers
 
             var bodyExercise = _bodyExercisesService.GetBodyExercise(new BodyExerciseKey() { Id = trainingExercise.BodyExerciseId });
 
-            var viewModel = new TrainingExerciseViewModel();
-            viewModel.UserId = userId;
-            viewModel.Year = year;
-            viewModel.WeekOfYear = weekOfYear;
-            viewModel.DayOfWeek = dayOfWeek;
-            viewModel.TrainingDayId = trainingDayId;
-            viewModel.TrainingExerciseId = trainingExerciseId;
-            viewModel.BodyExerciseId = bodyExercise.Id;
-            viewModel.BodyExerciseName = bodyExercise.Name;
-            viewModel.BodyExerciseImage = bodyExercise.ImageName;
-            viewModel.RestTime = trainingExercise.RestTime;
-            viewModel.EccentricContractionTempo = trainingExercise.EccentricContractionTempo;
-            viewModel.StretchPositionTempo = trainingExercise.StretchPositionTempo;
-            viewModel.ConcentricContractionTempo = trainingExercise.ConcentricContractionTempo;
-            viewModel.ContractedPositionTempo = trainingExercise.ContractedPositionTempo;
-            viewModel.Unit = (int)GetUserUnit(userId);
+            var viewModel = new TrainingExerciseViewModel()
+            {
+                UserId = userId,
+                Year = year,
+                WeekOfYear = weekOfYear,
+                DayOfWeek = dayOfWeek,
+                TrainingDayId = trainingDayId,
+                TrainingExerciseId = trainingExerciseId,
+                BodyExerciseId = bodyExercise.Id,
+                BodyExerciseName = bodyExercise.Name,
+                BodyExerciseImage = bodyExercise.ImageName,
+                ExerciseUnitType = (int)trainingExercise.ExerciseUnitType,
+                RestTime = trainingExercise.RestTime,
+                EccentricContractionTempo = trainingExercise.EccentricContractionTempo,
+                StretchPositionTempo = trainingExercise.StretchPositionTempo,
+                ConcentricContractionTempo = trainingExercise.ConcentricContractionTempo,
+                ContractedPositionTempo = trainingExercise.ContractedPositionTempo,
+                Unit = (int)GetUserUnit(userId)
+            };
 
             if (trainingExercise.TrainingExerciseSets != null)
             {
@@ -983,16 +987,31 @@ namespace BodyReport.Areas.User.Controllers
                     for(int i=0; i < trainingExerciseSet.NumberOfSets; i++)
                     {
                         viewModel.Reps.Add(trainingExerciseSet.NumberOfReps);
+                        viewModel.ExecutionTimes.Add(trainingExerciseSet.ExecutionTime);
                         viewModel.Weights.Add(trainingExerciseSet.Weight);
                     }
                 }
             }
 
-            if(viewModel.Reps == null || viewModel.Reps.Count == 0)
-                viewModel.Reps = new List<int?>() { 8 };
+            if (viewModel.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber)
+            {
+                viewModel.ExecutionTimes = null; // Security
+                if (viewModel.Reps == null || viewModel.Reps.Count == 0) // Security
+                    viewModel.Reps = new List<int?>() { 8 };
+            }
+            else
+            {
+                viewModel.Reps = null; // Security
+                if (viewModel.ExecutionTimes == null || viewModel.ExecutionTimes.Count == 0) //Security
+                    viewModel.ExecutionTimes = new List<int?>() { 30 };
+            }
+
             if (viewModel.Weights == null || viewModel.Weights.Count == 0)
                 viewModel.Weights = new List<double?>() { 0 };
-           
+
+            ViewBag.UserUnit = GetUserUnit(userId);
+            ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList(viewModel.ExerciseUnitType);
+
             return View(viewModel);
         }
 
@@ -1001,49 +1020,74 @@ namespace BodyReport.Areas.User.Controllers
         [HttpPost]
         public IActionResult EditTrainingExercise(TrainingExerciseViewModel viewModel, string buttonType)
         {
-            const int MAX_REPS = 10;
+            const int MAX_LINES = 10;
             if(viewModel == null)
                 return RedirectToAction("Index");
 
             ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+            ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList((int)viewModel.ExerciseUnitType);
 
-            if (viewModel.Reps == null || viewModel.Reps.Count == 0) //Security
-                viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
-
-            if (viewModel.Weights == null)
-                viewModel.Weights = new List<double?>();
-
-            while (viewModel.Reps.Count > MAX_REPS)
+            bool reinitWeights = false;
+            List<int?> repsOrExecutionTimeList;
+            if (viewModel.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber)
             {
-                viewModel.Reps.RemoveAt(viewModel.Reps.Count - 1);
+                viewModel.ExecutionTimes = null; // Security
+                if (viewModel.Reps == null || viewModel.Reps.Count == 0) //Security
+                {
+                    viewModel.Reps = new List<int?>() { 8, 8, 8, 8 };
+                    reinitWeights = true;
+                }
+
+                repsOrExecutionTimeList = viewModel.Reps;
+            }
+            else
+            {
+                viewModel.Reps = null; // Security
+                if (viewModel.ExecutionTimes == null || viewModel.ExecutionTimes.Count == 0) //Security
+                {
+                    viewModel.ExecutionTimes = new List<int?>() { 30 }; // 1 X 30 second
+                    reinitWeights = true;
+                }
+
+                repsOrExecutionTimeList = viewModel.ExecutionTimes;
+            }
+            
+            while (repsOrExecutionTimeList.Count > MAX_LINES)
+            {
+                repsOrExecutionTimeList.RemoveAt(repsOrExecutionTimeList.Count - 1);
             }
 
-            while (viewModel.Weights.Count > MAX_REPS)
+            if (viewModel.Weights == null || reinitWeights)
+                viewModel.Weights = new List<double?>();
+            
+            while (viewModel.Weights.Count > MAX_LINES)
             {
                 viewModel.Weights.RemoveAt(viewModel.Weights.Count - 1);
             }
 
-            while (viewModel.Weights.Count < viewModel.Reps.Count)
+            while (viewModel.Weights.Count < repsOrExecutionTimeList.Count)
             {
                 viewModel.Weights.Add(0);
             }
 
-            for (int i = 0; i < viewModel.Reps.Count; i++)
+            // initialize values
+            for (int i = 0; i < repsOrExecutionTimeList.Count; i++)
             {
-                if(viewModel.Reps[i] == null)
-                    viewModel.Reps[i] = 0;
+                if(repsOrExecutionTimeList[i] == null)
+                    repsOrExecutionTimeList[i] = 0;
                 if (viewModel.Weights[i] == null)
                     viewModel.Weights[i] = 0;
             }
 
             if ("addRep" == buttonType)
             {
-                if (viewModel.Reps.Count < MAX_REPS)
+                if (repsOrExecutionTimeList.Count < MAX_LINES)
                 {
-                    int newRepValue = 8;
-                    if (viewModel.Reps.Count > 0)
-                        newRepValue = viewModel.Reps[viewModel.Reps.Count - 1].Value;
-                    viewModel.Reps.Add(newRepValue);
+                    //Add previous value inside added value
+                    int newAddedValue = (viewModel.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber) ? 8 : 30; // default value (8 rep or 30 sec)
+                    if (repsOrExecutionTimeList.Count > 0)
+                        newAddedValue = repsOrExecutionTimeList[repsOrExecutionTimeList.Count - 1].Value;
+                    repsOrExecutionTimeList.Add(newAddedValue);
 
                     double newWeightValue = 8;
                     if (viewModel.Weights.Count > 0)
@@ -1054,8 +1098,8 @@ namespace BodyReport.Areas.User.Controllers
             }
             else if ("delete" == buttonType)
             {
-                if (viewModel.Reps.Count > 1)
-                    viewModel.Reps.RemoveAt(viewModel.Reps.Count - 1);
+                if (repsOrExecutionTimeList.Count > 1)
+                    repsOrExecutionTimeList.RemoveAt(repsOrExecutionTimeList.Count - 1);
                 if (viewModel.Weights.Count > 1)
                     viewModel.Weights.RemoveAt(viewModel.Weights.Count - 1);
             }
@@ -1085,34 +1129,35 @@ namespace BodyReport.Areas.User.Controllers
 
                 trainingExercise.BodyExerciseId = viewModel.BodyExerciseId;
                 trainingExercise.RestTime = viewModel.RestTime;
-                
+                trainingExercise.ExerciseUnitType = Utils.IntToEnum<TExerciseUnitType>(viewModel.ExerciseUnitType);
+
                 //Tempos
                 trainingExercise.EccentricContractionTempo = viewModel.EccentricContractionTempo;
                 trainingExercise.StretchPositionTempo = viewModel.StretchPositionTempo;
                 trainingExercise.ConcentricContractionTempo = viewModel.ConcentricContractionTempo;
                 trainingExercise.ContractedPositionTempo = viewModel.ContractedPositionTempo;
 
-                if (viewModel.Reps != null && viewModel.Reps.Count > 0)
+                if (repsOrExecutionTimeList != null && repsOrExecutionTimeList.Count > 0)
                 {
                     //Regroup Reps with Set
-                    int nbSet = 0, currentRepValue = 0;
-                    var tupleSetRepList = new List<Tuple<int, int, double>>();
-                    int repValue;
+                    int nbSet = 0, currentRepOrExecTimeValue = 0;
+                    var tupleRegroupList = new List<Tuple<int, int, double>>(); // NumberOfSet, NumberOfRepetition or Execution time, Weight
+                    int repOrExecTimeValue;
                     double weightValue, currentWeightValue = 0;
-                    for (int i=0; i < viewModel.Reps.Count; i++)
+                    for (int i=0; i < repsOrExecutionTimeList.Count; i++)
                     {
-                        repValue = viewModel.Reps[i].Value;
+                        repOrExecTimeValue = repsOrExecutionTimeList[i].Value;
                         weightValue = viewModel.Weights[i].Value;
-                        if (repValue == 0)
+                        if (repOrExecTimeValue == 0)
                             continue;
 
-                        if (weightValue == currentWeightValue && repValue == currentRepValue)
+                        if (weightValue == currentWeightValue && repOrExecTimeValue == currentRepOrExecTimeValue)
                             nbSet++;
                         else
                         {
                             if (nbSet != 0)
-                                tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
-                            currentRepValue = repValue;
+                                tupleRegroupList.Add(new Tuple<int, int, double>(nbSet, currentRepOrExecTimeValue, currentWeightValue));
+                            currentRepOrExecTimeValue = repOrExecTimeValue;
                             currentWeightValue = weightValue;
                             nbSet = 1;
                         }
@@ -1120,12 +1165,12 @@ namespace BodyReport.Areas.User.Controllers
 
                     //last data
                     if (nbSet != 0)
-                        tupleSetRepList.Add(new Tuple<int, int, double>(nbSet, currentRepValue, currentWeightValue));
+                        tupleRegroupList.Add(new Tuple<int, int, double>(nbSet, currentRepOrExecTimeValue, currentWeightValue));
 
                     trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
                     int id = 1;
                     var unit = Utils.IntToEnum<TUnitType>(viewModel.Unit);
-                    foreach (Tuple<int, int, double> tupleSetRep in tupleSetRepList)
+                    foreach (Tuple<int, int, double> tupleSetRep in tupleRegroupList)
                     {
                         trainingExercise.TrainingExerciseSets.Add(new TrainingExerciseSet()
                         {
@@ -1137,7 +1182,8 @@ namespace BodyReport.Areas.User.Controllers
                             TrainingExerciseId = viewModel.TrainingExerciseId,
                             Id = id,
                             NumberOfSets = tupleSetRep.Item1,
-                            NumberOfReps = tupleSetRep.Item2,
+                            NumberOfReps = (viewModel.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber) ? tupleSetRep.Item2 : 0,
+                            ExecutionTime = (viewModel.ExerciseUnitType == (int)TExerciseUnitType.Time) ? tupleSetRep.Item2 : 0,
                             Weight = tupleSetRep.Item3,
                             Unit = unit
                         });
