@@ -59,10 +59,6 @@ namespace BodyReport.Models
             set;
         }
         /// <summary>
-        /// Execution time in second
-        /// </summary>
-        public int? ExecutionTime { get; set; }
-        /// <summary>
 		/// Modification Date
 		/// </summary>
 		public DateTime ModificationDate
@@ -70,5 +66,9 @@ namespace BodyReport.Models
             get;
             set;
         }
+        /// <summary>
+        /// Execution time in second
+        /// </summary>
+        public int? ExecutionTime { get; set; }
     }
 }
