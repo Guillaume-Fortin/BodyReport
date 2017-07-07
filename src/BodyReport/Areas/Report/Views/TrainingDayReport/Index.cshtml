@@ -128,7 +128,7 @@
                                 @Translation.SETS / @Html.Raw(GetRegroupExerciseUnitTypeTitle(trainingDay.RegroupExerciseUnitType))
                             </th>
                             <th>
-                                @Translation.WEIGHT <br /> (@weightUnit)
+                                @Translation.WEIGHT <br /> (@(trainingDay.Unit == TUnitType.Imperial ? Translation.POUND : "kg"))
                             </th>
                             <th>
                                 @Translation.REST_TIME <br />(sec)

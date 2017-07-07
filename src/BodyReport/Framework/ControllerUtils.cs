@@ -179,6 +179,7 @@ namespace BodyReport.Framework
             trainingDay.TrainingDayId = viewModel.TrainingDayId;
             trainingDay.BeginHour = viewModel.BeginHour.ToUniversalTime();
             trainingDay.EndHour = viewModel.EndHour.ToUniversalTime();
+            trainingDay.Unit = viewModel.Unit;
 
             return trainingDay;
         }

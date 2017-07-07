@@ -76,14 +76,6 @@ namespace BodyReport.Message
     public class TrainingExerciseSet : TrainingExerciseSetKey
     {
         /// <summary>
-        /// Unit Type
-        /// </summary>
-        public TUnitType Unit
-        {
-            get;
-            set;
-        }
-        /// <summary>
         /// Number of sets
         /// </summary>
         public int NumberOfSets { get; set; }
@@ -127,7 +119,6 @@ namespace BodyReport.Message
         new public TrainingExerciseSet Clone()
         {
             var copy = new TrainingExerciseSet(this);
-            copy.Unit = Unit;
             copy.NumberOfSets = NumberOfSets;
             copy.NumberOfReps = NumberOfReps;
             copy.Weight = Weight;

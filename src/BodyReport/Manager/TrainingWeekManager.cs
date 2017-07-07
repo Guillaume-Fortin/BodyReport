@@ -19,6 +19,7 @@ namespace BodyReport.Manager
     public class TrainingWeekManager : BodyReportManager
     {
         ITrainingDaysService _trainingDaysService = null;
+        IUserInfosService _userInfosService = null;
 
         TrainingWeekModule _trainingWeekModule = null;
         public TrainingWeekManager(ApplicationDbContext dbContext) : base(dbContext)
@@ -26,6 +27,7 @@ namespace BodyReport.Manager
             _trainingWeekModule = new TrainingWeekModule(DbContext);
 
             _trainingDaysService = WebAppConfiguration.ServiceProvider.GetService<ITrainingDaysService>();
+            _userInfosService = WebAppConfiguration.ServiceProvider.GetService<IUserInfosService>();
             ((BodyReportService)_trainingDaysService).SetDbContext(DbContext); // for use same transaction
         }
         
@@ -60,7 +62,7 @@ namespace BodyReport.Manager
                     Year = new IntegerCriteria() { Equal = trainingWeek.Year },
                     WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear }
                 };
-                var trainingDaysDb = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                var trainingDaysDb = _trainingDaysService.FindTrainingDay(AppUtils.GetUserUnit(_userInfosService, trainingWeek.UserId), trainingDayCriteria, trainingDayScenario);
                 if (trainingDaysDb != null && trainingDaysDb.Count > 0)
                 {
                     foreach (var trainingDayDb in trainingDaysDb)
@@ -100,7 +102,7 @@ namespace BodyReport.Manager
                     Year = new IntegerCriteria() { Equal = trainingWeek.Year },
                     WeekOfYear = new IntegerCriteria() { Equal = trainingWeek.WeekOfYear },
                 };
-                trainingWeek.TrainingDays = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                trainingWeek.TrainingDays = _trainingDaysService.FindTrainingDay(AppUtils.GetUserUnit(_userInfosService, trainingWeek.UserId), trainingDayCriteria, trainingDayScenario);
             }
         }
 

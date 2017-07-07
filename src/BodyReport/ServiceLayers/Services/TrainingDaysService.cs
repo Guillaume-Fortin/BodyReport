@@ -1,13 +1,10 @@
 ﻿using BodyReport.Data;
 using BodyReport.Framework;
-using BodyReport.Manager;
 using BodyReport.Message;
 using BodyReport.ServiceLayers.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BodyReport.ServiceLayers.Services
 {
@@ -49,9 +46,9 @@ namespace BodyReport.ServiceLayers.Services
             return GetTrainingDayManager().GetTrainingDay(key, trainingDayScenario);
         }
 
-        public List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
+        public List<TrainingDay> FindTrainingDay(TUnitType userUnit, TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario)
         {
-            return GetTrainingDayManager().FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+            return GetTrainingDayManager().FindTrainingDay(userUnit, trainingDayCriteria, trainingDayScenario);
         }
 
         public TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario)

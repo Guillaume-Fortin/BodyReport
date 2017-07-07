@@ -8,7 +8,6 @@ using BodyReport.Resources;
 using BodyReport.Message;
 using BodyReport.Message.Web;
 using BodyReport.Message.Web.MultipleParameters;
-using BodyReport.Data;
 using Microsoft.AspNetCore.Authorization;
 using BodyReport.ServiceLayers.Interfaces;
 
@@ -26,13 +25,19 @@ namespace BodyReport.Areas.Api.Controllers
         /// Service layer TrainingDays
         /// </summary>
         private readonly ITrainingWeeksService _trainingWeeksService;
+        /// <summary>
+        /// Service layer TrainingDays
+        /// </summary>
+        private readonly IUserInfosService _userInfosService;
 
         public TrainingDaysController(UserManager<ApplicationUser> userManager,
                                       ITrainingDaysService trainingDaysService,
-                                      ITrainingWeeksService trainingWeeksService) : base(userManager)
+                                      ITrainingWeeksService trainingWeeksService,
+                                      IUserInfosService userInfosService) : base(userManager)
         {
             _trainingDaysService = trainingDaysService;
             _trainingWeeksService = trainingWeeksService;
+            _userInfosService = userInfosService;
         }
 
         // Get api/TrainingDays/Get
@@ -67,7 +72,7 @@ namespace BodyReport.Areas.Api.Controllers
                 if (trainingDayCriteria == null || trainingDayCriteria.UserId == null)
                     return BadRequest();
 
-                var result = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+                var result = _trainingDaysService.FindTrainingDay(AppUtils.GetUserUnit(_userInfosService, SessionUserId), trainingDayCriteria, trainingDayScenario);
                 return new OkObjectResult(result); // List<TrainingDay>
             }
             catch (Exception exception)

@@ -70,9 +70,15 @@ namespace BodyReport.ServiceLayers.Services
         {
             return GetTrainingExerciseManager().GetTrainingExercise(key);
         }
+
         public List<TrainingExercise> FindTrainingExercise(TrainingExerciseCriteria trainingExerciseCriteria)
         {
             return GetTrainingExerciseManager().FindTrainingExercise(trainingExerciseCriteria);
+        }
+
+        public List<TrainingExercise> FindTrainingExercise(CriteriaList<TrainingExerciseCriteria> trainingExerciseCriteriaList)
+        {
+            return GetTrainingExerciseManager().FindTrainingExercise(trainingExerciseCriteriaList);
         }
 
         public void DeleteTrainingExercise(TrainingExerciseKey key)

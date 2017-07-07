@@ -66,19 +66,6 @@ namespace BodyReport.Areas.Report.Controllers
             _bodyExercisesService = bodyExercisesService;
         }
 
-        private TUnitType GetUserUnit(string userId)
-        {
-            TUnitType result = TUnitType.Imperial;
-
-            if (userId != null)
-            {
-                var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
-                if (userInfo != null)
-                    result = userInfo.Unit;
-            }
-            return result;
-        }
-
         private List<TrainingExercise> FindTrainingExercise(TrainingDay trainingDay)
         {
             if (trainingDay == null)
@@ -126,8 +113,8 @@ namespace BodyReport.Areas.Report.Controllers
             {
                 userIdViewer = SessionUserId;
             }
-            var viewerUnit = GetUserUnit(userIdViewer);
-            var userUnit = GetUserUnit(userId);
+            var viewerUnit = AppUtils.GetUserUnit(_userInfosService, userIdViewer);
+            var userUnit = AppUtils.GetUserUnit(_userInfosService, userId);
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
             trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, trainingWeek.UserWeight);
 

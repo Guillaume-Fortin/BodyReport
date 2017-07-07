@@ -19,9 +19,13 @@ namespace BodyReport.Crud.Transformer
             row.BeginHour = DbUtils.DateToUtc(bean.BeginHour);
             row.EndHour = DbUtils.DateToUtc(bean.EndHour);
             row.ModificationDate = DbUtils.DateToUtc(Utils.DateTimeWithoutMs); // Set modificationDate
+            if (bean.ObjectVersionNumber > 0) // Retrocompatibility
+            {
+                row.Unit = (int)bean.Unit;
+            }
         }
 
-        internal static TrainingDay ToBean(TrainingDayRow row)
+        internal static TrainingDay ToBean(TrainingDayRow row, TUnitType userUnit)
         {
             if (row == null)
                 return null;
@@ -35,6 +39,7 @@ namespace BodyReport.Crud.Transformer
             bean.BeginHour = DbUtils.DbDateToUtc(row.BeginHour);
             bean.EndHour = DbUtils.DbDateToUtc(row.EndHour);
             bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
+            bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit ?? (int)userUnit);
             return bean;
         }
     }

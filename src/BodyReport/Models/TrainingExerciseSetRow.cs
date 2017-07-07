@@ -51,14 +51,6 @@ namespace BodyReport.Models
         /// </summary>
         public double Weight { get; set; }
         /// <summary>
-        /// Unit Type
-        /// </summary>
-        public int Unit
-        {
-            get;
-            set;
-        }
-        /// <summary>
 		/// Modification Date
 		/// </summary>
 		public DateTime ModificationDate

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -88,9 +90,26 @@ namespace BodyReport.Message
             set;
         }
         /// <summary>
+        /// Unit Type
+        /// </summary>
+        public TUnitType Unit
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// Training journal day exercises
         /// </summary>
         public List<TrainingExercise> TrainingExercises { get; set; }
+
+        /// <summary>
+        /// Version number of object for internal use
+        /// 0: initial value
+        /// 1: unit type
+        /// </summary>
+        [DefaultValue(0)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)] // populate default value attribute if not present
+        public int ObjectVersionNumber { get; set; } = 1;
 
         public TrainingDay()
         { }
@@ -105,6 +124,7 @@ namespace BodyReport.Message
             copy.BeginHour = BeginHour;
             copy.EndHour = EndHour;
             copy.ModificationDate = ModificationDate;
+            copy.Unit = Unit;
             if (TrainingExercises != null)
             {
                 copy.TrainingExercises = new List<TrainingExercise>();

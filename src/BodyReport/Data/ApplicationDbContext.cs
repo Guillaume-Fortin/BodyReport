@@ -97,6 +97,7 @@ namespace BodyReport.Data
             trainingDayTable.Property(p => p.BeginHour).HasDefaultValue(defaultDate);
             trainingDayTable.Property(p => p.EndHour).HasDefaultValue(defaultDate);
             trainingDayTable.Property(p => p.ModificationDate).HasDefaultValue(defaultDate);
+            trainingDayTable.Property(p => p.Unit).ValueGeneratedNever();
             trainingDayTable.HasKey(t => new { t.UserId, t.Year, t.WeekOfYear, t.DayOfWeek, t.TrainingDayId });
 
             var trainingExerciseTable = builder.Entity<TrainingExerciseRow>().ToTable("TrainingExercise");

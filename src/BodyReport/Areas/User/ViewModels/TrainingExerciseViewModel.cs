@@ -65,10 +65,6 @@ namespace BodyReport.Areas.User.ViewModels
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public List<int?> Reps { get; set; } = new List<int?>();
 
-        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
-        [Display(Name = TRS.UNIT, ResourceType = typeof(Translation))]
-        public int Unit { get; set; }
-
         [Display(Name = TRS.WEIGHT, ResourceType = typeof(Translation))]
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public List<double?> Weights { get; set; } = new List<double?>();
@@ -81,5 +77,10 @@ namespace BodyReport.Areas.User.ViewModels
         public string BodyExerciseName { get; set; }
         public string BodyExerciseImage { get; set; }
         public List<Tuple<int, int, double>> TupleSetReps { get; set; }
+
+        /// <summary>
+        /// kg/livre (calculated)
+        /// </summary>
+        public TUnitType Unit { get; set; }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using BodyReport.Resources;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using BodyReport.Message;
 
 namespace BodyReport.Areas.User.ViewModels
@@ -44,5 +41,9 @@ namespace BodyReport.Areas.User.ViewModels
         /// null = mixte, 0=RepetitionNumber, 1=Time
         /// </summary>
         public TExerciseUnitType? RegroupExerciseUnitType { get; set; }
+        /// <summary>
+        /// kg/livre
+        /// </summary>
+        public TUnitType Unit { get; set; }
     }
 }

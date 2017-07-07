@@ -21,7 +21,6 @@ namespace BodyReport.Crud.Transformer
             row.NumberOfSets = bean.NumberOfSets;
             row.NumberOfReps = bean.NumberOfReps;
             row.Weight = bean.Weight;
-            row.Unit = (int)bean.Unit;
             row.ModificationDate = DbUtils.DateToUtc(Utils.DateTimeWithoutMs); // Set modificationDate
             if (bean.ObjectVersionNumber > 0) // Retrocompatibility
             {
@@ -45,7 +44,6 @@ namespace BodyReport.Crud.Transformer
             bean.NumberOfSets = row.NumberOfSets;
             bean.NumberOfReps = row.NumberOfReps;
             bean.Weight = row.Weight;
-            bean.Unit = Utils.IntToEnum<TUnitType>(row.Unit);
             bean.ModificationDate = DbUtils.DbDateToUtc(row.ModificationDate);
             bean.ExecutionTime = row.ExecutionTime.HasValue ? row.ExecutionTime.Value : 0;
             return bean;

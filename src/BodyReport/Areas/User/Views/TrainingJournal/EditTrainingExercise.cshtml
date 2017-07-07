@@ -1,16 +1,5 @@
 ﻿@model TrainingExerciseViewModel
 
-@{
-    string weightUnit = "kg", lengthUnit = "cm", unit = Translation.METRIC;
-
-    if (ViewBag.UserUnit == (int)TUnitType.Imperial)
-    {
-        weightUnit = Translation.POUND;
-        lengthUnit = Translation.INCH;
-        unit = Translation.IMPERIAL;
-    }
-}
-
 <h2>@Translation.TRAINING_EXERCISE. </h2>
 
 <form asp-action="EditTrainingExercise" method="post" class="form-horizontal" role="form">
@@ -82,6 +71,8 @@
         </div>
     </div>
 
+    <input asp-for="Unit" hidden="hidden" />
+
     <div class="form-group">
         <label asp-for="ExerciseUnitType" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -107,7 +98,7 @@
                             }
                         </th>
                         <th>
-                            @Translation.WEIGHT (@weightUnit)
+                            @Translation.WEIGHT (@(Model.Unit == TUnitType.Imperial ? Translation.POUND : "kg"))
                         </th>
                     </tr>
                     @{

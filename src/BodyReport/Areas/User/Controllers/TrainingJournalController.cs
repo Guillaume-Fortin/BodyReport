@@ -184,7 +184,7 @@ namespace BodyReport.Areas.User.Controllers
             if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
-            ViewBag.UserUnit = GetUserUnit(userId);
+            ViewBag.UserUnit = AppUtils.GetUserUnit(_userInfosService, userId);
             var key = new TrainingWeekKey()
             {
                 UserId = userId,
@@ -210,7 +210,7 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
-                ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+                ViewBag.UserUnit = AppUtils.GetUserUnit(_userInfosService, viewModel.UserId);
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
@@ -254,7 +254,7 @@ namespace BodyReport.Areas.User.Controllers
             if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || SessionUserId != userId)
                 return RedirectToAction("Index");
 
-            ViewBag.UserUnit = GetUserUnit(userId);
+            ViewBag.UserUnit = AppUtils.GetUserUnit(_userInfosService, userId);
             var key = new TrainingWeekKey()
             {
                 UserId = userId,
@@ -306,7 +306,7 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
-                ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+                ViewBag.UserUnit = AppUtils.GetUserUnit(_userInfosService, viewModel.UserId);
                 if(viewModel == null)
                     return View(viewModel);
 
@@ -407,8 +407,8 @@ namespace BodyReport.Areas.User.Controllers
 
             //Unit viewer convertion
             string userIdViewer = SessionUserId;
-            var viewerUnit = GetUserUnit(userIdViewer);
-            var userUnit = GetUserUnit(userId);
+            var viewerUnit = AppUtils.GetUserUnit(_userInfosService, userIdViewer);
+            var userUnit = AppUtils.GetUserUnit(_userInfosService, userId);
             trainingWeek.UserHeight = Utils.TransformLengthToUnitSytem(userUnit, viewerUnit, trainingWeek.UserHeight);
             trainingWeek.UserWeight = Utils.TransformWeightToUnitSytem(userUnit, viewerUnit, trainingWeek.UserWeight);
             
@@ -505,7 +505,7 @@ namespace BodyReport.Areas.User.Controllers
             {
                 ManageExercise = false
             };
-            var trainingDayList = _trainingDaysService.FindTrainingDay(trainingDayCriteria, trainingDayScenario);
+            var trainingDayList = _trainingDaysService.FindTrainingDay(AppUtils.GetUserUnit(_userInfosService, userId), trainingDayCriteria, trainingDayScenario);
 
             int trainingDayId = 0;
             if (trainingDayList != null && trainingDayList.Count > 0)
@@ -517,7 +517,8 @@ namespace BodyReport.Areas.User.Controllers
                 Year = year,
                 WeekOfYear = weekOfYear,
                 DayOfWeek = dayOfWeek,
-                TrainingDayId = trainingDayId
+                TrainingDayId = trainingDayId,
+                Unit = userInfo.Unit
             };
 
             ViewBag.UserUnit = userInfo.Unit;
@@ -942,6 +943,22 @@ namespace BodyReport.Areas.User.Controllers
                 return actionResult;
             }
 
+            var trainingDayScenario = new TrainingDayScenario()
+            {
+                ManageExercise = false
+            };
+            var trainingDayKey = new TrainingDayKey()
+            {
+                UserId = userId,
+                Year = year,
+                WeekOfYear = weekOfYear,
+                DayOfWeek = dayOfWeek,
+                TrainingDayId = trainingDayId
+            };
+            var trainingDay = _trainingDaysService.GetTrainingDay(trainingDayKey, trainingDayScenario);
+            if (trainingDay == null)
+                return actionResult;
+
             var key = new TrainingExerciseKey()
             {
                 UserId = userId,
@@ -974,14 +991,11 @@ namespace BodyReport.Areas.User.Controllers
                 StretchPositionTempo = trainingExercise.StretchPositionTempo,
                 ConcentricContractionTempo = trainingExercise.ConcentricContractionTempo,
                 ContractedPositionTempo = trainingExercise.ContractedPositionTempo,
-                Unit = (int)GetUserUnit(userId)
+                Unit = trainingDay.Unit
             };
 
             if (trainingExercise.TrainingExerciseSets != null)
             {
-                if(trainingExercise.TrainingExerciseSets.Count > 0) //Take unit of first user set if exist
-                    viewModel.Unit = (int)trainingExercise.TrainingExerciseSets[0].Unit;
-
                 foreach (var trainingExerciseSet in trainingExercise.TrainingExerciseSets)
                 {
                     for(int i=0; i < trainingExerciseSet.NumberOfSets; i++)
@@ -1008,23 +1022,21 @@ namespace BodyReport.Areas.User.Controllers
 
             if (viewModel.Weights == null || viewModel.Weights.Count == 0)
                 viewModel.Weights = new List<double?>() { 0 };
-
-            ViewBag.UserUnit = GetUserUnit(userId);
+            
             ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList(viewModel.ExerciseUnitType);
 
             return View(viewModel);
         }
 
         // Add a training exercise
-        // POST: /User/TrainingJournal/AddTrainingExercise
+        // POST: /User/TrainingJournal/EditTrainingExercise
         [HttpPost]
         public IActionResult EditTrainingExercise(TrainingExerciseViewModel viewModel, string buttonType)
         {
             const int MAX_LINES = 10;
             if(viewModel == null)
                 return RedirectToAction("Index");
-
-            ViewBag.UserUnit = GetUserUnit(viewModel.UserId);
+            
             ViewBag.ExerciseUnitTypes = ControllerUtils.CreateSelectExerciseUnitTypeItemList((int)viewModel.ExerciseUnitType);
 
             bool reinitWeights = false;
@@ -1107,8 +1119,7 @@ namespace BodyReport.Areas.User.Controllers
             {
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || SessionUserId != viewModel.UserId || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || viewModel.TrainingExerciseId == 0 ||
-                    viewModel.BodyExerciseId == 0 &&
-                    (viewModel.Unit == (int)TUnitType.Imperial || viewModel.Unit == (int)TUnitType.Metric))
+                    viewModel.BodyExerciseId == 0)
                     return View(viewModel);
                 
                 var key = new TrainingExerciseKey()
@@ -1169,7 +1180,6 @@ namespace BodyReport.Areas.User.Controllers
 
                     trainingExercise.TrainingExerciseSets = new List<TrainingExerciseSet>();
                     int id = 1;
-                    var unit = Utils.IntToEnum<TUnitType>(viewModel.Unit);
                     foreach (Tuple<int, int, double> tupleSetRep in tupleRegroupList)
                     {
                         trainingExercise.TrainingExerciseSets.Add(new TrainingExerciseSet()
@@ -1184,8 +1194,7 @@ namespace BodyReport.Areas.User.Controllers
                             NumberOfSets = tupleSetRep.Item1,
                             NumberOfReps = (viewModel.ExerciseUnitType == (int)TExerciseUnitType.RepetitionNumber) ? tupleSetRep.Item2 : 0,
                             ExecutionTime = (viewModel.ExerciseUnitType == (int)TExerciseUnitType.Time) ? tupleSetRep.Item2 : 0,
-                            Weight = tupleSetRep.Item3,
-                            Unit = unit
+                            Weight = tupleSetRep.Item3
                         });
                         id++;
                     }
@@ -1198,20 +1207,7 @@ namespace BodyReport.Areas.User.Controllers
             }
             return View(viewModel);
         }
-
-        private TUnitType GetUserUnit(string userId)
-        {
-            TUnitType result = TUnitType.Imperial;
-
-            if(userId != null)
-            {
-                var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = userId });
-                if(userInfo != null)
-                    result = userInfo.Unit;
-            }
-            return result;
-        }
-
+        
         // Delete a training journals
         // GET: /User/TrainingJournal/DeleteTrainingDay
         [HttpGet]

@@ -12,7 +12,7 @@ namespace BodyReport.ServiceLayers.Interfaces
 
         TrainingDay GetTrainingDay(TrainingDayKey key, TrainingDayScenario trainingDayScenario);
 
-        List<TrainingDay> FindTrainingDay(TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario);
+        List<TrainingDay> FindTrainingDay(TUnitType userUnit, TrainingDayCriteria trainingDayCriteria, TrainingDayScenario trainingDayScenario);
 
         TrainingDay UpdateTrainingDay(TrainingDay trainingDay, TrainingDayScenario trainingDayScenario);
 

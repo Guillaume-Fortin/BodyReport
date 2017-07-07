@@ -30,23 +30,24 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
 
         public static TrainingDayViewModel TrainingDayToViewModel(TrainingDay trainingDay, UserInfo userInfo)
         {
+            //convert date to user timezone
+            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
+            if (timeZoneInfo == null)
+                timeZoneInfo = TimeZoneInfo.Local;
+
             var result = new TrainingDayViewModel()
             {
                 UserId = trainingDay.UserId,
                 Year = trainingDay.Year,
                 WeekOfYear = trainingDay.WeekOfYear,
                 DayOfWeek = trainingDay.DayOfWeek,
-                TrainingDayId = trainingDay.TrainingDayId
+                TrainingDayId = trainingDay.TrainingDayId,
+                BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo),
+                EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo),
+                Unit = trainingDay.Unit
             };
 
-            //convert date to user timezone
-            var timeZoneInfo = TimeZoneMapper.GetTimeZoneByOlsonName(userInfo.TimeZoneName);
-            if (timeZoneInfo == null)
-                timeZoneInfo = TimeZoneInfo.Local;
-            result.BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo);
-            result.EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo);
-
-            if(trainingDay.TrainingExercises != null)
+            if (trainingDay.TrainingExercises != null)
             {
                 foreach (var trainingExercise in trainingDay.TrainingExercises)
                 {

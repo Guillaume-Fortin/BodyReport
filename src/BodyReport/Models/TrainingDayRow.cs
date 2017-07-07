@@ -46,5 +46,13 @@ namespace BodyReport.Models
             get;
             set;
         }
+        /// <summary>
+        /// Unit Type
+        /// </summary>
+        public int? Unit
+        {
+            get;
+            set;
+        }
     }
 }
