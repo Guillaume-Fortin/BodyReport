@@ -84,11 +84,12 @@ namespace BodyReport.Crud.Module
             IQueryable<MuscleRow> rowList = _dbContext.Muscle;
             CriteriaTransformer.CompleteQuery(ref rowList, muscleCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<Muscle>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<Muscle>();
                     resultList.Add(MuscleTransformer.ToBean(row));
                 }
             }

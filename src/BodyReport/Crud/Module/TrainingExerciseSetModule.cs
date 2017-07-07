@@ -84,6 +84,28 @@ namespace BodyReport.Crud.Module
         }
 
         /// <summary>
+        /// Find datas
+        /// </summary>
+        /// <returns></returns>
+        public List<TrainingExerciseSet> Find(CriteriaList<TrainingExerciseSetCriteria> trainingExerciseSetCriteriaList = null)
+        {
+            List<TrainingExerciseSet> resultList = null;
+            IQueryable<TrainingExerciseSetRow> rowList = _dbContext.TrainingExerciseSet;
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseSetCriteriaList);
+            rowList = rowList.OrderBy(t => t.TrainingExerciseId);
+            if (rowList != null)
+            {
+                foreach (var row in rowList)
+                {
+                    if(resultList == null)
+                        resultList = new List<TrainingExerciseSet>();
+                    resultList.Add(TrainingExerciseSetTransformer.ToBean(row));
+                }
+            }
+            return resultList;
+        }
+
+        /// <summary>
         /// Update data in database
         /// </summary>
         /// <param name="trainingExerciseSet">data</param>
@@ -122,18 +144,18 @@ namespace BodyReport.Crud.Module
         public void Delete(TrainingExerciseSetKey key)
         {
             if (key == null || string.IsNullOrWhiteSpace(key.UserId) || key.Year == 0 || key.WeekOfYear == 0 ||
-                key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0 || key.Id == 0)
+                key.DayOfWeek < 0 || key.DayOfWeek > 6 || key.TrainingExerciseId == 0)
                 return;
-
-            var row = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
+            
+            var rowList = _dbContext.TrainingExerciseSet.Where(t => t.UserId == key.UserId && t.Year == key.Year &&
                                                                  t.WeekOfYear == key.WeekOfYear && t.DayOfWeek == key.DayOfWeek &&
-                                                                 t.TrainingDayId == key.TrainingDayId && t.TrainingExerciseId == key.TrainingExerciseId &&
-                                                                 t.Id == key.Id).FirstOrDefault();
-            if (row != null)
-            {
-                _dbContext.TrainingExerciseSet.Remove(row);
-                _dbContext.SaveChanges();
-            }
+                                                                 t.TrainingDayId == key.TrainingDayId && t.TrainingExerciseId == key.TrainingExerciseId);
+
+            if (key.Id != 0) //key.Id == 0 -> massive delete
+                rowList = rowList.Where(t => t.Id == key.Id);
+            
+            _dbContext.TrainingExerciseSet.RemoveRange(rowList);
+            _dbContext.SaveChanges();
         }
     }
 }

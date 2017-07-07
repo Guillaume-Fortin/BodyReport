@@ -10,31 +10,38 @@ namespace BodyReport.Crud.Transformer
 {
     public static class CriteriaTransformer
     {
-        public static void CompleteQuery<TEntity, T>(ref IQueryable<TEntity> source, CriteriaList<T> criteriaFieldList) where TEntity : class 
-                                                                                                                         where T : CriteriaField
+        public static void CompleteQuery<TEntity, TCriteriaField>(ref IQueryable<TEntity> source, CriteriaList<TCriteriaField> criteriaFieldList) where TEntity : class
+                                                                                                                                                  where TCriteriaField : CriteriaField
         {
-            if (criteriaFieldList == null)
+            if (source == null || criteriaFieldList == null)
                 return;
 
-            Expression<Func<TEntity, bool>> queryExpression, globalQueryExpression;
-            globalQueryExpression = null;
-            foreach (T criteriaField in criteriaFieldList)
+            Expression<Func<TEntity, bool>> globalQueryExpression = null, queryExpression;
+
+            foreach (var criteriaField in criteriaFieldList)
             {
-                if (criteriaField != null)
+                queryExpression = null;
+                CompleteQueryInternal(ref queryExpression, criteriaField);
+                if (queryExpression != null)
                 {
-                    queryExpression = null;
-                    CompleteQueryInternal(ref queryExpression, criteriaField);
-                    if(queryExpression != null)
-                    {
-                        if (globalQueryExpression == null)
-                            globalQueryExpression = queryExpression;
-                        else
-                            globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
-                    }
+                    if (globalQueryExpression == null)
+                        globalQueryExpression = queryExpression;
+                    else
+                        globalQueryExpression = globalQueryExpression.OrElse(queryExpression);
                 }
             }
+
             if (globalQueryExpression != null)
                 source = source.Where(globalQueryExpression);
+
+            foreach (var criteriaField in criteriaFieldList)
+            {
+                if (criteriaField != null && criteriaField.FieldSortList != null && criteriaField.FieldSortList.Count > 0)
+                {
+                    ApplySort(ref source, criteriaField);
+                    break;
+                }
+            }
         }
 
         public static void CompleteQuery<TEntity>(ref IQueryable<TEntity> source, CriteriaField criteriaField) where TEntity : class
@@ -44,7 +51,13 @@ namespace BodyReport.Crud.Transformer
 
             Expression<Func<TEntity, bool>> queryExpression = null;
             CompleteQueryInternal(ref queryExpression, criteriaField);
-            if(queryExpression != null)
+            if (queryExpression != null)
+            {
+                Expression<Func<TEntity, bool>> queryExpression2 = null;
+                CompleteQueryInternal(ref queryExpression2, criteriaField);
+                queryExpression = queryExpression.Or(queryExpression2);
+            }
+            if (queryExpression != null)
                 source = source.Where(queryExpression);
 
             ApplySort(ref source, criteriaField);
@@ -141,18 +154,17 @@ namespace BodyReport.Crud.Transformer
 
         private static Expression AddEqualStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-            if (value == null)
+            if (ignoreCase)
             {
-                var compare = Expression.Equal(m, Expression.Constant(null));
-                return Expression.Equal(compare, Expression.Constant(true));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                return Expression.Equal(toLower, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
             }
             else
             {
-                ConstantExpression c = Expression.Constant(value, typeof(string));
-                MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(StringComparison) });
-                var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-                return Expression.Equal(expression, Expression.Constant(true));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                return Expression.Equal(Expression.Property(entityParameter, entityProperty),
+                                        Expression.Constant(value));
             }
         }
 
@@ -162,51 +174,76 @@ namespace BodyReport.Crud.Transformer
             {
                 return Expression.NotEqual(
                         Expression.Property(entityParameter, entityProperty),
-                        Expression.Constant(value)
-                       );
+                        Expression.Constant(value));
             }
             return null;
         }
 
         private static Expression AddNotEqualStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-
-            if (value == null)
+            if (ignoreCase)
             {
-                return Expression.NotEqual(m, Expression.Constant(null));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                return Expression.NotEqual(toLower, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
             }
             else
             {
-                ConstantExpression c = Expression.Constant(value, typeof(string));
-                MethodInfo mi = typeof(string).GetMethod("Equals", new Type[] { typeof(string), typeof(StringComparison) });
-                var expression = Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
-                return Expression.Equal(expression, Expression.Constant(false));
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                return Expression.NotEqual(Expression.Property(entityParameter, entityProperty),
+                                           Expression.Constant(value));
             }
         }
 
         private static Expression AddStartsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-            ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string), typeof(StringComparison) });
-            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
+            else
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string)});
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
+            }
         }
 
         private static Expression AddEndsWithStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-            ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string), typeof(StringComparison) });
-            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
+            else
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
+            }
         }
 
         private static Expression AddContainsStringExpression(ParameterExpression entityParameter, PropertyInfo entityProperty, string value, bool ignoreCase)
         {
-            MemberExpression m = Expression.MakeMemberAccess(entityParameter, entityProperty);
-            ConstantExpression c = Expression.Constant(value, typeof(string));
-            MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string), typeof(StringComparison) });
-            return Expression.Call(m, mi, c, Expression.Constant(ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal));
+            if (ignoreCase)
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                Expression toLower = Expression.Call(expressionProperty, "ToLower", null, null);
+                MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+                return Expression.Call(toLower, mi, Expression.Constant(value != null ? value.ToLowerInvariant() : null));
+            }
+            else
+            {
+                var expressionProperty = Expression.Property(entityParameter, entityProperty);
+                MethodInfo mi = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+                return Expression.Call(expressionProperty, mi, Expression.Constant(value));
+            }
         }
 
         private static void IntegerCriteriaTreatment(IntegerCriteria criteria, List<Expression> expressionList, Type propertyType,
@@ -275,7 +312,7 @@ namespace BodyReport.Crud.Transformer
             }
             if (criteria.EndsWithList != null)
             {
-                foreach (string value in criteria.NotEqualList)
+                foreach (string value in criteria.EndsWithList)
                 {
                     if (value != null)
                         expressionList.Add(AddEndsWithStringExpression(entityParameter, entityProperty, value, criteria.IgnoreCase));
@@ -283,7 +320,7 @@ namespace BodyReport.Crud.Transformer
             }
             if (criteria.ContainsList != null)
             {
-                foreach (string value in criteria.NotEqualList)
+                foreach (string value in criteria.ContainsList)
                 {
                     if (value != null)
                         expressionList.Add(AddContainsStringExpression(entityParameter, entityProperty, value, criteria.IgnoreCase));
@@ -299,6 +336,7 @@ namespace BodyReport.Crud.Transformer
             {
                 if (criteriaFieldProperty.Name.ToLower() == name.ToLower())
                 {
+
                     return criteriaFieldProperty;
                 }
             }

@@ -69,11 +69,12 @@ namespace BodyReport.Crud.Module
             List<TranslationVal> resultList = null;
             IQueryable<TranslationRow> rowList = _dbContext.Translation;
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<TranslationVal>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<TranslationVal>();
                     resultList.Add(TranslationTransformer.ToBean(row));
                 }
             }

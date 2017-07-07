@@ -55,11 +55,12 @@ namespace BodyReport.Crud.Module
             IQueryable<CityRow> rowList = _dbContext.City;
             CriteriaTransformer.CompleteQuery(ref rowList, cityCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<City>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<City>();
                     resultList.Add(CityTransformer.ToBean(row));
                 }
             }

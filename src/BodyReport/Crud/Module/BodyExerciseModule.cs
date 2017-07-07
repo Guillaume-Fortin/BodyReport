@@ -80,11 +80,12 @@ namespace BodyReport.Crud.Module
             IQueryable<BodyExerciseRow> muscularGroupRowList = _dbContext.BodyExercise;
             CriteriaTransformer.CompleteQuery(ref muscularGroupRowList, bodyExerciseCriteria);
 
-            if (muscularGroupRowList != null && muscularGroupRowList.Count() > 0)
+            if (muscularGroupRowList != null)
             {
-                resultList = new List<BodyExercise>();
                 foreach (var muscularGroupRow in muscularGroupRowList)
                 {
+                    if(resultList == null)
+                        resultList = new List<BodyExercise>();
                     resultList.Add(BodyExerciseTransformer.ToBean(muscularGroupRow));
                 }
             }

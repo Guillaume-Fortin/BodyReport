@@ -103,6 +103,25 @@ namespace BodyReport.Crud.Module
             return resultList;
         }
 
+        public List<TrainingExercise> Find(CriteriaList<TrainingExerciseCriteria> trainingExerciseCriteriaList = null)
+        {
+            List<TrainingExercise> resultList = null;
+            IQueryable<TrainingExerciseRow> rowList = _dbContext.TrainingExercise;
+            CriteriaTransformer.CompleteQuery(ref rowList, trainingExerciseCriteriaList);
+            rowList = rowList.OrderBy(t => t.Id);
+
+            if (rowList != null)
+            {
+                foreach (var row in rowList)
+                {
+                    if (resultList == null)
+                        resultList = new List<TrainingExercise>();
+                    resultList.Add(GetBean(row));
+                }
+            }
+            return resultList;
+        }
+
         /// <summary>
         /// Update data in database
         /// </summary>

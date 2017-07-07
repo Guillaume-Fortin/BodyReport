@@ -64,11 +64,12 @@ namespace BodyReport.Crud.Module
             IQueryable<UserInfoRow> rowList = _dbContext.UserInfo;
             CriteriaTransformer.CompleteQuery(ref rowList, userInfoCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<UserInfo>();
                 foreach (var userInfoRow in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<UserInfo>();
                     resultList.Add(UserInfoTransformer.ToBean(userInfoRow));
                 }
             }

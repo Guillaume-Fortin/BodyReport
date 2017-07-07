@@ -47,11 +47,12 @@ namespace BodyReport.Crud.Module
             IQueryable<CountryRow> rowList = _dbContext.Country;
             CriteriaTransformer.CompleteQuery(ref rowList, countryCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<Country>();
                 foreach (var row in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<Country>();
                     resultList.Add(CountryTransformer.ToBean(row));
                 }
             }

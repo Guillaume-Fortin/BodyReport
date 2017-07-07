@@ -68,11 +68,12 @@ namespace BodyReport.Crud.Module
             CriteriaTransformer.CompleteQuery(ref rowList, trainingWeekCriteriaList);
             rowList = rowList.OrderBy(t => t.UserId).OrderByDescending(t => t.Year).ThenByDescending(t => t.WeekOfYear);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<TrainingWeek>();
                 foreach (var trainingJournalRow in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<TrainingWeek>();
                     resultList.Add(TrainingWeekTransformer.ToBean(trainingJournalRow));
                 }
             }

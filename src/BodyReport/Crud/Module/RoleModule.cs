@@ -85,11 +85,12 @@ namespace BodyReport.Crud.Module
             IQueryable<IdentityRole> rowList = _dbContext.Roles;
             CriteriaTransformer.CompleteQuery(ref rowList, roleCriteria);
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<Role>();
                 foreach (var roleRow in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<Role>();
                     resultList.Add(RoleTransformer.ToBean(roleRow));
                 }
             }

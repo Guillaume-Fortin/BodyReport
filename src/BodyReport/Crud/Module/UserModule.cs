@@ -60,11 +60,12 @@ namespace BodyReport.Crud.Module
                 rowList = rowList.Skip(currentRecordIndex).Take(maxRecord);
             }
 
-            if (rowList != null && rowList.Count() > 0)
+            if (rowList != null)
             {
-                resultList = new List<User>();
                 foreach (var applicationUserRow in rowList)
                 {
+                    if (resultList == null)
+                        resultList = new List<User>();
                     resultList.Add(UserTransformer.ToBean(applicationUserRow));
                 }
             }
