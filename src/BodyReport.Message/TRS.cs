@@ -1017,5 +1017,10 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("or")]
         public const string OR = "OR";
+        /// <summary>
+		/// Progression
+		/// </summary>
+		[Translation("Progression")]
+        public const string PROGRESSION = "PROGRESSION";
     }
 }

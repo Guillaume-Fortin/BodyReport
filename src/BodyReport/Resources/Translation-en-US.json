@@ -203,5 +203,6 @@
   "TIME": "Time",
   "REPETITION_NUMBER": "Repetition number",
   "EXECUTION_TIME": "Execution time",
-  "OR": "or"
+  "OR": "or",
+  "PROGRESSION": "Progression"
 }
