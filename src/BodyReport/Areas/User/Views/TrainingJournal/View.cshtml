@@ -145,7 +145,7 @@
         }
         <div class="btn-group" role="group">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                @Translation.SWITCH_TRAINING_DAY
+                @Translation.SWITCH
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -155,6 +155,25 @@
                     {
                         <li>
                             <a href="@Url.Action("SwitchTrainingDay", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeek = (int)ViewBag.CurrentDayOfWeek, dayOfWeekSelected = (int)dayOfWeek })">
+                                @Translation.Get((dayOfWeek).ToString().ToUpper())
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="btn-group" role="group">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                @Translation.COPY
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                @foreach (var dayOfWeek in dayOfWeekList)
+                {
+                    if (dayOfWeek != ViewBag.CurrentDayOfWeek)
+                    {
+                        <li>
+                            <a href="@Url.Action("CopyTrainingDay", "TrainingJournal", new { Area = "User", userId = Model.Item1.UserId, year = Model.Item1.Year, weekOfYear = Model.Item1.WeekOfYear, dayOfWeek = (int)ViewBag.CurrentDayOfWeek, dayOfWeekSelected = (int)dayOfWeek })">
                                 @Translation.Get((dayOfWeek).ToString().ToUpper())
                             </a>
                         </li>

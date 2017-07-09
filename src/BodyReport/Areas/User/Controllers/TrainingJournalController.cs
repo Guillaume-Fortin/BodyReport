@@ -1284,5 +1284,27 @@ namespace BodyReport.Areas.User.Controllers
             }
             return actionResult;
         }
+
+        // Create a training day
+        // GET: /User/TrainingJournal/CopyTrainingDay
+        [HttpGet]
+        public IActionResult CopyTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int dayOfWeekSelected)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || year == 0 || weekOfYear == 0 || dayOfWeek < 0 || dayOfWeek > 6 ||
+                 dayOfWeekSelected < 0 || dayOfWeekSelected > 6 || SessionUserId != userId)
+                return RedirectToAction("Index");
+
+            var actionResult = RedirectToAction("View", "TrainingJournal", new { Area = "User", userId = userId, year = year, weekOfYear = weekOfYear, dayOfWeekSelected = dayOfWeek });
+
+            try
+            {
+                _trainingDaysService.CopyDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, dayOfWeekSelected);
+            }
+            catch (Exception except)
+            {
+                _logger.LogError("Unable to copy day of training day", except);
+            }
+            return actionResult;
+        }
     }
 }

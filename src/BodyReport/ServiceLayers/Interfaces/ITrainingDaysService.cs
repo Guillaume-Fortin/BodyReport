@@ -20,6 +20,8 @@ namespace BodyReport.ServiceLayers.Interfaces
 
         void SwitchDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int switchDayOfWeek);
 
+        void CopyDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int copyDayOfWeek);
+
         void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit);
     }
 }

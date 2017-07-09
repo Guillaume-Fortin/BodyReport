@@ -272,6 +272,31 @@ namespace BodyReport.Manager
             }
         }
 
+        public void CopyDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int copyDayOfWeek)
+        {
+            var trainingDayScenario = new TrainingDayScenario() { ManageExercise = true };
+            var userUnit = AppUtils.GetUserUnit(_userInfosService, userId);
+
+            //Search current training day
+            var trainingDayCriteria = new TrainingDayCriteria()
+            {
+                UserId = new StringCriteria() { Equal = userId },
+                Year = new IntegerCriteria() { Equal = year },
+                WeekOfYear = new IntegerCriteria() { Equal = weekOfYear },
+                DayOfWeek = new IntegerCriteria() { Equal = dayOfWeek }
+            };
+            var trainingDayList = FindTrainingDay(userUnit, trainingDayCriteria, trainingDayScenario);
+            
+            if (trainingDayList != null)
+            {
+                foreach (var trainingDay in trainingDayList)
+                {
+                    ChangeDayOnTrainingDay(trainingDay, copyDayOfWeek);
+                    UpdateTrainingDay(trainingDay, trainingDayScenario);
+                }
+            }
+        }
+
         public void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit)
         {
             if(trainingDay != null && trainingDay.Unit != oldUnit && trainingDay.TrainingExercises != null)

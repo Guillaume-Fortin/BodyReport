@@ -113,6 +113,26 @@ namespace BodyReport.ServiceLayers.Services
             }
         }
 
+        public void CopyDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int copyDayOfWeek)
+        {
+            BeginTransaction();
+            try
+            {
+                GetTrainingDayManager().CopyDayOnTrainingDay(userId, year, weekOfYear, dayOfWeek, copyDayOfWeek);
+                CommitTransaction();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogCritical("Unable to CopyDayOnTrainingDay", exception);
+                RollbackTransaction();
+                throw exception;
+            }
+            finally
+            {
+                EndTransaction();
+            }
+        }
+
         public void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit)
         {
             GetTrainingDayManager().ChangeUnitForTrainingExercises(trainingDay, oldUnit);

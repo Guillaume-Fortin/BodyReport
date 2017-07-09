@@ -1027,5 +1027,10 @@ namespace BodyReport.Message
         /// </summary>
         [Translation("Automatical unit conversion")]
         public const string AUTOMATICAL_UNIT_CONVERSION = "AUTOMATICAL_UNIT_CONVERSION";
+        // <summary>
+        /// Switch
+        /// </summary>
+        [Translation("Switch")]
+        public const string SWITCH = "SWITCH";
     }
 }

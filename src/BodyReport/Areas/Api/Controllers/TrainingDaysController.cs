@@ -210,5 +210,30 @@ namespace BodyReport.Areas.Api.Controllers
                 return BadRequest(new WebApiException("Error", exception));
             };
         }
+
+        // Post api/TrainingDays/CopyDay
+        [HttpPost]
+        public IActionResult CopyDay([FromBody]CopyDayParameter copyDayParameter)
+        {
+            if (copyDayParameter == null || copyDayParameter.TrainingDayKey == null)
+                return BadRequest();
+            try
+            {
+                TrainingDayKey trainingDayKey = copyDayParameter.TrainingDayKey;
+                int copyDayOfWeek = copyDayParameter.CopyDayOfWeek;
+
+                if (trainingDayKey == null || string.IsNullOrWhiteSpace(trainingDayKey.UserId) ||
+                    trainingDayKey.Year == 0 || trainingDayKey.WeekOfYear == 0 || trainingDayKey.DayOfWeek < 0 || trainingDayKey.DayOfWeek > 6 ||
+                    copyDayOfWeek < 0 || copyDayOfWeek > 6 || SessionUserId != trainingDayKey.UserId)
+                    return BadRequest();
+
+                _trainingDaysService.CopyDayOnTrainingDay(trainingDayKey.UserId, trainingDayKey.Year, trainingDayKey.WeekOfYear, trainingDayKey.DayOfWeek, copyDayOfWeek);
+                return new OkObjectResult(true); //bool
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new WebApiException("Error", exception));
+            };
+        }
     }
 }
