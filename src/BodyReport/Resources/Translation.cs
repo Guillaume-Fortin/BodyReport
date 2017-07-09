@@ -306,5 +306,6 @@ namespace BodyReport.Resources
         public static string REPETITION_NUMBER { get { return Get(TRS.REPETITION_NUMBER); } }
         public static string EXECUTION_TIME { get { return Get(TRS.EXECUTION_TIME); } }
         public static string OR { get { return Get(TRS.OR); } }
+        public static string AUTOMATICAL_UNIT_CONVERSION { get { return Get(TRS.AUTOMATICAL_UNIT_CONVERSION); } }
     }
 }

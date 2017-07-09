@@ -41,9 +41,12 @@ namespace BodyReport.Areas.User.ViewModels
         /// null = mixte, 0=RepetitionNumber, 1=Time
         /// </summary>
         public TExerciseUnitType? RegroupExerciseUnitType { get; set; }
-        /// <summary>
-        /// kg/livre
-        /// </summary>
-        public TUnitType Unit { get; set; }
+
+        [Required(ErrorMessageResourceName = TRS.THE_P0_FIELD_IS_REQUIRED, ErrorMessageResourceType = typeof(Translation))]
+        [Display(Name = TRS.UNIT, ResourceType = typeof(Translation))]
+        public int Unit { get; set; }
+
+        [Display(Name = TRS.AUTOMATICAL_UNIT_CONVERSION, ResourceType = typeof(Translation))]
+        public bool AutomaticalUnitConversion { get; set; }
     }
 }

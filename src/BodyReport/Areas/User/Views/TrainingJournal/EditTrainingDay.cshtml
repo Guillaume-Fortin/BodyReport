@@ -13,7 +13,6 @@
     <input asp-for="UserId" hidden="hidden" />
     <input asp-for="TrainingDayId" hidden="hidden" />
     <input asp-for="DayOfWeek" hidden="hidden" />
-    <input asp-for="Unit" hidden="hidden" />
     <div class="form-group">
         <label asp-for="Year" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -47,6 +46,23 @@
         <div class="col-md-10">
             <input asp-for="EndHour" class="form-control" type="time"/>
             <span asp-validation-for="EndHour" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Unit" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="Unit" asp-items="ViewBag.Units"></select>
+            <span asp-validation-for="Unit" class="text-danger"></span>
+            <span>@Translation.UNIT_SYSTEM_INFO</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+                <input asp-for="AutomaticalUnitConversion" type="checkbox" />
+                <label asp-for="AutomaticalUnitConversion"></label>
+            </div>
         </div>
     </div>
 

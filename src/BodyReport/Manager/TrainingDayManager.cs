@@ -271,5 +271,22 @@ namespace BodyReport.Manager
                 }
             }
         }
+
+        public void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit)
+        {
+            if(trainingDay != null && trainingDay.Unit != oldUnit && trainingDay.TrainingExercises != null)
+            {
+                foreach(var trainingExercise in trainingDay.TrainingExercises)
+                {
+                    if(trainingExercise.TrainingExerciseSets != null)
+                    {
+                        foreach(var set in trainingExercise.TrainingExerciseSets)
+                        {
+                            set.Weight = Utils.TransformWeightToUnitSytem(oldUnit, trainingDay.Unit, set.Weight);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

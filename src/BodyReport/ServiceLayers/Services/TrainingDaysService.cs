@@ -111,6 +111,11 @@ namespace BodyReport.ServiceLayers.Services
             {
                 EndTransaction();
             }
-            }
+        }
+
+        public void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit)
+        {
+            GetTrainingDayManager().ChangeUnitForTrainingExercises(trainingDay, oldUnit);
+        }
     }
 }

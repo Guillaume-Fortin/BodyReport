@@ -19,5 +19,7 @@ namespace BodyReport.ServiceLayers.Interfaces
         void DeleteTrainingDay(TrainingDayKey key);
 
         void SwitchDayOnTrainingDay(string userId, int year, int weekOfYear, int dayOfWeek, int switchDayOfWeek);
+
+        void ChangeUnitForTrainingExercises(TrainingDay trainingDay, TUnitType oldUnit);
     }
 }

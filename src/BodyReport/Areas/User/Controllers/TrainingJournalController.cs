@@ -520,8 +520,8 @@ namespace BodyReport.Areas.User.Controllers
                 TrainingDayId = trainingDayId,
                 Unit = userInfo.Unit
             };
-
-            ViewBag.UserUnit = userInfo.Unit;
+            
+            ViewBag.Units = ControllerUtils.CreateSelectUnitItemList((int)trainingDay.Unit);
             return View(TrainingViewModelTransformer.TrainingDayToViewModel(trainingDay, userInfo));
         }
         
@@ -532,9 +532,17 @@ namespace BodyReport.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
+                if (userInfo != null)
+                { // default ViewBag value
+                    ViewBag.Units = ControllerUtils.CreateSelectUnitItemList((int)userInfo.Unit);
+                }
                 if (string.IsNullOrWhiteSpace(viewModel.UserId) || viewModel.Year == 0 || viewModel.WeekOfYear == 0 ||
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
+
+                // viewModel ViewBag value
+                ViewBag.Units = ControllerUtils.CreateSelectUnitItemList(viewModel.Unit);
 
                 //Verify trainingWeek exist
                 var trainingWeekKey = new TrainingWeekKey()
@@ -592,6 +600,7 @@ namespace BodyReport.Areas.User.Controllers
             var userInfo = _userInfosService.GetUserInfo(new UserInfoKey() { UserId = SessionUserId });
             if (userInfo == null)
                 userInfo = new UserInfo();
+            ViewBag.Units = ControllerUtils.CreateSelectUnitItemList((int)userInfo.Unit);
             return View(TrainingViewModelTransformer.TrainingDayToViewModel(trainingDay, userInfo));
         }
 
@@ -606,11 +615,12 @@ namespace BodyReport.Areas.User.Controllers
                     viewModel.DayOfWeek < 0 || viewModel.DayOfWeek > 6 || viewModel.TrainingDayId == 0 || SessionUserId != viewModel.UserId)
                     return View(viewModel);
 
+                ViewBag.Units = ControllerUtils.CreateSelectUnitItemList((int)viewModel.Unit);
                 //Verify valide week of year
                 if (viewModel.WeekOfYear > 0 && viewModel.WeekOfYear <= 52)
                 {
                     var trainingDay = ControllerUtils.TransformViewModelToTrainingDay(viewModel);
-                    
+
                     var key = new TrainingDayKey()
                     {
                         UserId = trainingDay.UserId,
@@ -619,14 +629,21 @@ namespace BodyReport.Areas.User.Controllers
                         DayOfWeek = trainingDay.DayOfWeek,
                         TrainingDayId = trainingDay.TrainingDayId
                     };
-                    var trainingDayScenario = new TrainingDayScenario() { ManageExercise = false };
-                    var foundTrainingDay = _trainingDaysService.GetTrainingDay(key, trainingDayScenario);
-                    if (foundTrainingDay == null) // no data found
+                    // Warning, here need reload with exercise if AutomaticalUnitConversion activated
+                    var trainingDayScenario = new TrainingDayScenario() { ManageExercise = viewModel.AutomaticalUnitConversion };
+                    var databaseTrainingDay = _trainingDaysService.GetTrainingDay(key, trainingDayScenario);
+                    if (databaseTrainingDay == null) // no data found
                     {
                         ModelState.AddModelError(string.Empty, string.Format(Translation.P0_NOT_EXIST, Translation.TRAINING_DAY));
                         return View(viewModel);
                     }
-
+                    
+                    if(viewModel.AutomaticalUnitConversion && databaseTrainingDay.Unit != trainingDay.Unit && databaseTrainingDay.TrainingExercises != null)
+                    { // Copy exercises references
+                        trainingDay.TrainingExercises = databaseTrainingDay.TrainingExercises;
+                        _trainingDaysService.ChangeUnitForTrainingExercises(trainingDay, databaseTrainingDay.Unit);
+                    }
+                    //update trainingDay
                     trainingDay = _trainingDaysService.UpdateTrainingDay(trainingDay, trainingDayScenario);
 
                     if (trainingDay != null)

@@ -44,7 +44,7 @@ namespace BodyReport.Areas.User.ViewModels.Transformer
                 TrainingDayId = trainingDay.TrainingDayId,
                 BeginHour = TimeZoneInfo.ConvertTime(trainingDay.BeginHour, timeZoneInfo),
                 EndHour = TimeZoneInfo.ConvertTime(trainingDay.EndHour, timeZoneInfo),
-                Unit = trainingDay.Unit
+                Unit = (int)trainingDay.Unit
             };
 
             if (trainingDay.TrainingExercises != null)

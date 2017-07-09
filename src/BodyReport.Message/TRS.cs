@@ -1022,5 +1022,10 @@ namespace BodyReport.Message
 		/// </summary>
 		[Translation("Progression")]
         public const string PROGRESSION = "PROGRESSION";
+        // <summary>
+        /// Automatical unit conversion
+        /// </summary>
+        [Translation("Automatical unit conversion")]
+        public const string AUTOMATICAL_UNIT_CONVERSION = "AUTOMATICAL_UNIT_CONVERSION";
     }
 }
